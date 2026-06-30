@@ -91,4 +91,4 @@ latexmk -C                     # clean all build artifacts
 
 ## Python dependencies
 
-`numpy`, `matplotlib`, `seaborn`, `astropy`, plus the full SGA software stack (which pulls in `fitsio`, `scipy`, etc.). The SGA environment is documented at https://sga.readthedocs.io and in `/Users/ioannis/code/SGA/CLAUDE.md`.
+`numpy`, `matplotlib`, `seaborn`, `astropy`, `healpy`, plus the full SGA software stack (which pulls in `fitsio`, `scipy`, etc.). The SGA environment is documented at https://sga.readthedocs.io and in `/Users/ioannis/code/SGA/CLAUDE.md`.
