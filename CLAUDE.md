@@ -82,12 +82,40 @@ python code/build-figures.py --all   # all figures
 
 ## Building the paper
 
+The paper source is `tex/ms.tex`, submitted to AJ (`\submitjournal{\aj}`).
+
 ```bash
 cd tex
-latexmk -pdf <paper>.tex       # build PDF
-latexmk -pdf -pvc <paper>.tex  # continuous rebuild on save
-latexmk -C                     # clean all build artifacts
+latexmk -pdf ms.tex       # build PDF
+latexmk -pdf -pvc ms.tex  # continuous rebuild on save
+latexmk -C                # clean all build artifacts
 ```
+
+Editorial macros defined in `ms.tex`:
+- `\JM{text}` — blue inline note from John
+- `\todo{text}` — red bold TODO marker
+
+**Bibliography:** `tex/refs.bib` is managed exclusively by BibDesk. Never edit
+it directly. If a citation is missing, tell John what reference is needed and
+let him add it in BibDesk.
+
+## Writing style
+
+When drafting or revising prose in `tex/ms.tex`, follow John's published
+style (reference: Moustakas et al. 2023, ApJS 269:3):
+
+- **Active voice, "we" as subject** — every sentence. Never use passive
+  constructions ("are measured", "is distributed", etc.); convert them to
+  "We measure", "We distribute", etc.
+- **Long, layered sentences** with em-dashes and semicolons; subordinate
+  clauses stack qualifications before the main point.
+- **Front-loaded paragraphs** — broad context first, specific detail after.
+- **Roadmap in "we" form** — "We organize the remainder of the paper as
+  follows. In Section X, we ..."
+- **Concrete hedging** — "we suspect", "presumably due to", not "may" or
+  "could".
+
+Full style guide: `~/.claude/memory/user_writing_style.md`
 
 ## Python dependencies
 
