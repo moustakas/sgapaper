@@ -1,0 +1,412 @@
+\documentclass[modern,linenumbers]{aastex701}
+
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{xfrac}
+\usepackage{ulem}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{afterpage}
+\usepackage{longtable}
+
+% color macros for editorial notes
+\newcommand{\JM}[1]{{\color{blue}#1}}
+\newcommand{\todo}[1]{{\color{red}\textbf{TODO:} #1}}
+
+\graphicspath{{./}{figures/}}
+
+\submitjournal{\aj}
+
+\shorttitle{SGA-2025}
+\shortauthors{Moustakas et al.}
+
+\begin{document}
+
+\title{The Siena Galaxy Atlas 2025}
+
+\correspondingauthor{John Moustakas}
+
+\author[0000-0002-2733-4559]{John Moustakas}
+\email{jmoustakas@siena.edu}
+\affiliation{Department of Physics and Astronomy, Siena University,
+  515 Loudon Road, Loudonville, NY 12211, USA}
+
+% \author{...}
+% \affiliation{...}
+
+\author{Imaging Team}
+\email{team@teamtastic.edu}
+\affiliation{INSTITUTION, ADDRESS}
+
+
+\begin{abstract}
+
+We present the Siena Galaxy Atlas 2025 (SGA-2025), a photometric catalog of
+$\sim\!486{,}000$ large, angularly resolved galaxies selected from the DESI
+Legacy Imaging Surveys Data Release 11 (DR11).  The SGA-2025 covers
+$\sim\!30{,}000$~deg$^{2}$ of the extragalactic sky and delivers
+multiwavelength imaging mosaics and ellipse photometry in up to ten bands:
+optical $grz$ or $griz$ imaging from DECam (south) and BASS+MzLS (north),
+mid-infrared $W1$--$W4$ from unWISE, and ultraviolet FUV and NUV from
+GALEX.  For each galaxy we provide curve-of-growth total magnitudes, the
+isophotal diameter at a surface-brightness threshold of
+$\mu = 26~\mathrm{mag~arcsec^{-2}}$ ($D_{26}$), the half-light semi-major
+axis, isophotal sizes at several other thresholds, and fitted ellipse
+geometry.  Spectroscopic redshifts from DESI DR1, the NASA/IPAC Extragalactic
+Database (NED), and the Local Volume Database (LVD) are cross-matched and
+included.  The SGA-2025 supersedes the SGA-2020 \citep{Moustakas2023}, more
+than doubling the number of catalogued galaxies while extending coverage into
+the ultraviolet and mid-infrared.  The full catalog, mosaics, and this
+companion analysis code are publicly available at \url{https://sga.legacysurvey.org}.
+
+\end{abstract}
+
+\keywords{catalogs --- galaxies: photometry --- galaxies: fundamental
+parameters --- surveys}
+
+%%----------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+%%----------------------------------------------------------------------
+
+Resolved photometry of nearby galaxies --- sizes, shapes, and integrated
+fluxes measured consistently across the sky --- underpins a wide range of
+science: the galaxy luminosity and stellar-mass functions, the
+size--luminosity and Tully--Fisher relations, environmental studies, targets
+for spectroscopic surveys, and training sets for machine-learning
+morphology classifiers.  Despite this importance, no comprehensive
+all-sky photometric catalog of resolved galaxies in modern wide-field
+imaging data existed until the SGA-2020 \citep{Moustakas2023}.
+
+The DESI Legacy Imaging Surveys \citep{Dey2019} have since concluded
+observations with Data Release 11, providing deeper, wider, and better-
+calibrated optical imaging than any previous data release, together with
+forced-photometry measurements from the Tractor source model
+\citep{Lang2016}.  Combined with the full-depth unWISE mid-infrared coadds
+\citep{Lang2014,Meisner2023} and the GALEX ultraviolet sky \citep{Martin2005},
+DR11 enables a new generation of large-galaxy photometry spanning four
+decades in wavelength.
+
+Here we describe the SGA-2025, which exploits DR11 to deliver mosaics and
+ellipse photometry for $\sim\!486{,}000$ galaxies over the extragalactic
+footprint of the Legacy Surveys.  The SGA-2025 includes all sources from
+the SGA-2020 that fall within the DR11 footprint, supplemented by newly
+identified large galaxies from HyperLeda \citep{Makarov2014}, the Local
+Volume Database \citep{Leaman2024}, and other auxiliary catalogs.
+
+This paper is organized as follows.  Section~\ref{sec:overview} gives a
+brief survey overview and describes the sky footprint.
+Section~\ref{sec:input} describes the input catalog and sample selection.
+Section~\ref{sec:imaging} summarizes the imaging data.
+Section~\ref{sec:pipeline} describes the photometric pipeline, including
+image coaddition, Tractor source detection, and ellipse fitting.
+Section~\ref{sec:redshifts} presents the spectroscopic redshift
+cross-matching.  Section~\ref{sec:catalog} describes the catalog structure
+and data model.  We summarize in Section~\ref{sec:summary}.
+
+Throughout we adopt a flat $\Lambda$CDM cosmology with
+$H_0 = 70~\mathrm{km~s^{-1}~Mpc^{-1}}$ and $\Omega_m = 0.3$.
+All magnitudes are in the AB system.
+
+%%----------------------------------------------------------------------
+\section{Survey Overview}
+\label{sec:overview}
+%%----------------------------------------------------------------------
+
+The SGA-2025 covers two contiguous imaging regions defined by the DR11
+footprint (Figure~\ref{fig:sky}).  The southern region (\texttt{dr11-south};
+$\sim\!XX{,}000$~deg$^2$) is imaged by the Dark Energy Camera (DECam) on
+the Cerro Tololo 4-m Blanco telescope in the $g$, $r$, $i$, and $z$ bands
+and contains $\sim\!363{,}000$ galaxies.  The northern region
+(\texttt{dr11-north}; $\sim\!XX{,}000$~deg$^2$; decl.\ $\gtrsim +32\arcdeg$)
+is imaged by the Beijing--Arizona Sky Survey (BASS) and the Mayall
+$z$-band Legacy Survey (MzLS) in $g$, $r$, and $z$ and contains
+$\sim\!82{,}000$ galaxies.  Together the two regions span
+$\sim\!30{,}000$~deg$^2$ and encompass $\sim\!486{,}000$ resolved galaxies.
+
+Both regions receive additional forced photometry in the mid-infrared
+($W1$--$W4$, 3.4--22~$\mu$m) from unWISE \citep{Lang2014,Meisner2023}
+and in the ultraviolet (FUV, 1528~\AA{}; NUV, 2271~\AA{}) from
+GALEX \citep{Martin2005}, where sky coverage exists.
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=\textwidth]{figures/sga2025-sky.png}
+  \caption{Mollweide equal-area projection of the SGA-2025 galaxy surface
+    density (galaxies deg$^{-2}$) in equatorial coordinates (J2000),
+    centered at RA $= 120\arcdeg$.  The sample shown is restricted to
+    group-primary objects ($N = 445{,}726$; one representative per galaxy
+    group).  The solid black line traces the Galactic plane ($b = 0\arcdeg$)
+    and the dashed lines mark $|b| = 10\arcdeg$, the approximate
+    exclusion boundary applied during source selection.  The DR11 footprint
+    defines two contiguous regions: the DECam south (low-latitude southern
+    sky) and the BASS+MzLS north (decl.\ $\gtrsim +32\arcdeg$).}
+  \label{fig:sky}
+\end{figure*}
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=\textwidth]{figures/sga2025-sky-south.png}
+  \includegraphics[width=\textwidth]{figures/sga2025-sky-north.png}
+  \caption{Galaxy surface density for the two imaging regions separately,
+    in the same projection as Figure~\ref{fig:sky}.
+    \textit{Top:} DR11 South imaged with DECam ($N = 363{,}633$).
+    \textit{Bottom:} DR11 North imaged with BASS+MzLS ($N = 82{,}093$).}
+  \label{fig:sky-regions}
+\end{figure*}
+
+%%----------------------------------------------------------------------
+\section{Input Catalog and Sample Selection}
+\label{sec:input}
+%%----------------------------------------------------------------------
+
+\subsection{Parent Sample}
+\label{sec:input:parent}
+
+The SGA-2025 parent sample is constructed from several source lists that
+together provide a nearly complete census of large, angularly resolved
+galaxies over the DR11 footprint.  The primary input is the HyperLeda
+database \citep{Makarov2014}, supplemented by the Local Volume Database
+\citep[LVD;][]{Leaman2024}, which contains a carefully vetted compilation
+of nearby galaxies within $\sim\!20$~Mpc.  Additional galaxies from the
+SGA-2020 that lie within the DR11 footprint are included directly.
+
+\subsection{Angular Size Selection}
+\label{sec:input:size}
+
+We apply an angular diameter threshold of $D > X\arcmin$ to select
+galaxies likely to be resolved by the $\sim\!1\arcsec$ PSF of the Legacy
+Surveys imaging.  This threshold is designed to be inclusive: the SGA-2025
+pipeline is capable of modelling any galaxy whose isophotal extent exceeds
+a single PSF FWHM, and we prefer to err on the side of inclusion.
+
+\subsection{Grouping}
+\label{sec:input:groups}
+
+Spatially overlapping galaxies are merged into groups, and a single
+\texttt{GROUP\_PRIMARY} flag identifies the dominant group member used for
+most analyses.  Groups containing satellite systems or companion galaxies
+of a brighter host are preserved as multi-member entries with
+\texttt{GROUP\_MULT} $> 1$.
+
+%%----------------------------------------------------------------------
+\section{Imaging Data}
+\label{sec:imaging}
+%%----------------------------------------------------------------------
+
+\subsection{Optical Imaging: DESI Legacy Surveys DR11}
+\label{sec:imaging:optical}
+
+The DESI Legacy Imaging Surveys \citep{Dey2019} cover the extragalactic
+sky in two regions.  The southern region is observed by the
+Dark Energy Camera \citep[DECam;][]{Flaugher2015} on the Blanco 4-m
+telescope at CTIO in $g$, $r$, $i$, and $z$ bands.  The northern region
+is covered jointly by BASS \citep{Zou2017} ($g$ and $r$ bands on the
+Steward Observatory 2.3-m Bok telescope) and MzLS \citep{Silva2016} ($z$
+band on the KPNO 4-m Mayall telescope).  DR11 represents the final data
+release and offers significant improvements in depth, area, and
+photometric calibration relative to earlier releases.
+
+\subsection{Mid-Infrared: unWISE}
+\label{sec:imaging:wise}
+
+We incorporate mid-infrared imaging from unWISE \citep{Lang2014,Meisner2023},
+full-depth coadds of the Wide-field Infrared Survey Explorer
+\citep[WISE;][]{Wright2010} in bands $W1$ (3.4~$\mu$m), $W2$ (4.6~$\mu$m),
+$W3$ (12~$\mu$m), and $W4$ (22~$\mu$m).  The unWISE coadds provide
+nearly uniform coverage across the sky at angular resolutions of
+$6\arcsec$--$12\arcsec$.
+
+\subsection{Ultraviolet: GALEX}
+\label{sec:imaging:galex}
+
+Ultraviolet photometry is obtained from the Galaxy Evolution Explorer
+\citep[GALEX;][]{Martin2005} GR6/GR7 data release in the FUV (1528~\AA{})
+and NUV (2271~\AA{}) bands.  GALEX coverage is non-uniform; approximately
+$X$\% of SGA-2025 galaxies have at least one GALEX band.
+
+%%----------------------------------------------------------------------
+\section{Photometric Pipeline}
+\label{sec:pipeline}
+%%----------------------------------------------------------------------
+
+\subsection{Image Coadds}
+\label{sec:pipeline:coadds}
+
+For each galaxy in the parent sample, we construct custom image coadds
+centered on the galaxy position.  The mosaic size is set to encompass
+at least $2\times D_{\rm init}$ on a side, where $D_{\rm init}$ is the
+initial diameter estimate from the parent catalog.  Coadds are constructed
+using the Legacy Pipeline coaddition machinery [CITE], which performs
+astrometric registration, PSF homogenization, and inverse-variance weighting
+of individual CCD images.
+
+\subsection{Source Detection and Tractor Photometry}
+\label{sec:pipeline:tractor}
+
+Point and extended sources in each mosaic are detected and modelled with the
+Tractor image-modeling framework \citep{Lang2016}.  Tractor fits
+parameterized light profiles (PSF, round exponential, de~Vaucouleurs, or
+composite S\'ersic) to each detected source simultaneously, using the
+position- and band-dependent PSF model of the co-added image.
+
+\subsection{Ellipse Fitting}
+\label{sec:pipeline:ellipse}
+
+Custom ellipse fits are performed on the optical imaging using an iterative
+procedure similar to that described in \citet{Moustakas2023}.  We fit
+concentric elliptical isophotes to each galaxy, masking companion sources
+identified by Tractor.  The position angle (PA) and axis ratio ($b/a$) are
+determined from the intensity-weighted moments within a fiducial aperture.
+We record the isophotal semi-major axis at surface-brightness levels of
+$\mu = 22$, 23, 24, 25, and 26~mag~arcsec$^{-2}$ in each available optical
+band.  The $\mu = 26$~mag~arcsec$^{-2}$ isophote in the $r$ band defines
+the SGA-2025 diameter $D_{26}$ (arcmin).
+
+\subsection{Curve-of-Growth Photometry}
+\label{sec:pipeline:cog}
+
+Total fluxes are measured via a curve-of-growth (COG) technique applied
+within elliptical apertures defined by the fitted geometry.  The aperture
+radius is grown until the integrated flux converges to better than $X$\%
+over $X$ consecutive aperture steps.  Total magnitudes
+(\texttt{COG\_MTOT\_$\langle$band$\rangle$}) are reported in the AB system
+for all ten bands: $G$, $R$, $I$, $Z$ (optical), $W1$--$W4$ (WISE), and
+FUV, NUV (GALEX).  The half-light semi-major axis
+(\texttt{SMA50\_$\langle$band$\rangle$}) is the aperture enclosing half the
+total COG flux.
+
+%%----------------------------------------------------------------------
+\section{Spectroscopic Redshifts}
+\label{sec:redshifts}
+%%----------------------------------------------------------------------
+
+Spectroscopic redshifts are compiled from three sources in order of
+decreasing priority.
+
+\textit{LVD.}  Redshifts from the Local Volume Database \citep{Leaman2024}
+are adopted first, as the LVD contains carefully curated distances and
+velocities for galaxies within $\sim\!20$~Mpc.
+
+\textit{DESI DR1.}  Cross-matching against the DESI DR1 spectroscopic
+catalog \citep[DESI Collaboration et al.~2025;][]{DESI2025} provides
+redshifts for $\sim\!X{,}000$ SGA-2025 galaxies observed by the DESI
+Bright Galaxy Survey (BGS) or other DESI programs.  The column
+\texttt{NSPEC\_DESI} records the number of DESI spectra per galaxy; the
+adopted best redshift and its inverse variance are stored in
+\texttt{Z\_DESI} and \texttt{Z\_IVAR\_DESI}.
+
+\textit{NED.}  Redshifts from the NASA/IPAC Extragalactic Database are
+used for the remainder.
+
+The adopted redshift (\texttt{Z}), its inverse variance (\texttt{Z\_IVAR}),
+and its source flag (\texttt{Z\_REF} $\in \{$\texttt{LVD}, \texttt{DESI},
+\texttt{NED}$\}$) are stored in the catalog.  Galaxies lacking a
+spectroscopic redshift have \texttt{Z\_IVAR} $= 0$; \texttt{Z} $= 0$ alone
+is insufficient to identify a missing redshift.
+
+%%----------------------------------------------------------------------
+\section{The SGA-2025 Catalog}
+\label{sec:catalog}
+%%----------------------------------------------------------------------
+
+\subsection{Catalog Structure}
+\label{sec:catalog:structure}
+
+The SGA-2025 is distributed as two FITS files, one per imaging region:
+
+\begin{itemize}
+  \item \texttt{SGA2025-dr11-south-v1.0.fits} ($\sim\!395{,}000$ entries)
+  \item \texttt{SGA2025-dr11-north-v1.0.fits} ($\sim\!90{,}000$ entries)
+\end{itemize}
+
+Each file contains two binary table extensions.  The primary extension
+(\texttt{SGA2025}) holds the science catalog described here.  The
+row-matched \texttt{TRACTOR} extension contains band-specific forced
+Tractor photometry quantities.
+
+\subsection{Key Columns}
+\label{sec:catalog:columns}
+
+Table~\ref{tab:columns} summarizes the most frequently used catalog
+columns.  A complete data model is available in the online documentation
+at \url{https://sga.readthedocs.io}.
+
+% \input{tables/catalog_columns.tex}
+
+\subsection{Data Access}
+\label{sec:catalog:access}
+
+The catalog files, postage-stamp mosaics, and ellipse-photometry outputs
+are publicly available through the Legacy Survey data portal at
+\url{https://sga.legacysurvey.org}.  The companion analysis code used to
+generate the figures in this paper is archived at Zenodo
+\citep{Moustakas2025code} and mirrored on GitHub at
+\url{https://github.com/moustakas/sgapaper}.
+
+%%----------------------------------------------------------------------
+\section{Summary}
+\label{sec:summary}
+%%----------------------------------------------------------------------
+
+We have presented the Siena Galaxy Atlas 2025 (SGA-2025), a multiwavelength
+photometric catalog of $\sim\!486{,}000$ large, angularly resolved galaxies
+selected from the final DESI Legacy Surveys Data Release 11 footprint.
+The principal data products are:
+
+\begin{enumerate}
+  \item Postage-stamp image mosaics in up to ten bands ($grz/griz$,
+    $W1$--$W4$, FUV, NUV) for each catalogued galaxy.
+  \item Ellipse-fit geometry (position angle, axis ratio) and isophotal
+    diameters at $\mu = 22$--26~mag~arcsec$^{-2}$.
+  \item Curve-of-growth total magnitudes and half-light radii in all
+    available bands.
+  \item Cross-matched spectroscopic redshifts from LVD, DESI DR1, and NED.
+\end{enumerate}
+
+The SGA-2025 supersedes the SGA-2020 \citep{Moustakas2023} and increases
+the galaxy count by a factor of $\sim\!X$, extending coverage to bluer and
+redder wavelengths.  Future work will incorporate improved photometric
+redshifts, stellar mass estimates, and star-formation rate indicators.
+
+%%----------------------------------------------------------------------
+\begin{acknowledgments}
+
+J.M.\ gratefully acknowledges support from XXX.
+
+The DESI Legacy Imaging Surveys are supported by the U.S.\ Department of
+Energy, Office of Science, Office of High Energy Physics, under Contract
+No.\ DE-AC02-05CH11231, and by the National Energy Research Scientific
+Computing Center, a DOE Office of Science User Facility, under the same
+contract.
+
+GALEX is a NASA Small Explorer mission.  The GALEX data used in this work
+were obtained from the Mikulski Archive for Space Telescopes (MAST) at the
+Space Telescope Science Institute.
+
+This research has made use of the NASA/IPAC Extragalactic Database (NED),
+which is funded by the National Aeronautics and Space Administration and
+operated by the California Institute of Technology.
+
+\end{acknowledgments}
+
+\facilities{Blanco (DECam), Bok (BASS), Mayall (MzLS), WISE, GALEX}
+
+\software{
+  \texttt{astropy} \citep{AstropyCollaboration2022},
+  \texttt{fitsio} \citep{Sheldon2023},
+  \texttt{healpy} \citep{Zonca2019},
+  \texttt{matplotlib} \citep{Hunter2007},
+  \texttt{numpy} \citep{Harris2020},
+  \texttt{scipy} \citep{Virtanen2020},
+  \texttt{seaborn} \citep{Waskom2021},
+  Tractor \citep{Lang2016}
+}
+
+\bibliographystyle{aasjournalv7}
+\bibliography{refs}
+
+\end{document}
