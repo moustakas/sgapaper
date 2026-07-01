@@ -77,6 +77,7 @@ python code/build-figures.py --size-mag
 python code/build-figures.py --redshifts
 python code/build-figures.py --desi-completeness
 python code/build-figures.py --sga2025-vs-sga2020
+python code/build-figures.py --wxsc100
 python code/build-figures.py --all   # all figures
 ```
 

@@ -480,6 +480,189 @@ def fig_sga2025_vs_sga2020(cat, sga2020_path=None, png='sga2025-vs-sga2020.png')
     plt.close(fig)
 
 
+def fig_sga_vs_wxsc100(cat, png='sga2025-vs-wxsc100.png', match_radius=10.0):
+    """2x2 comparison of SGA-2025 geometry vs. WXSC-100 (Jarrett et al. 2019).
+
+    Panels: (a) ΔRA/ΔDec astrometric offsets, (b) D26 vs 2*R_W1 diameters,
+    (c) position angle, (d) ellipticity. Points are colored by Hubble type.
+    """
+    from astropy.coordinates import SkyCoord
+    from astropy.io import ascii as asc
+    from astropy.table import Table
+    import astropy.units as u
+    from matplotlib.colors import BoundaryNorm, LinearSegmentedColormap
+    from matplotlib.cm import ScalarMappable
+    from scipy.stats import sigmaclip
+
+    _, colors = plot_style(talk=True, font_scale=1.1)
+
+    # --- Table 1: geometry (pipe-delimited, no header) ---
+    wxsc_file = os.path.join(REPO_DIR, 'data', 'wxsc100-table-1.tbl')
+    col_names = ['rank', 'galaxy', 'ra', 'dec', 'ba', 'pa',
+                 'W1_radius', 'W1_mag', 'W1_mag_err',
+                 'W2_radius', 'W2_mag', 'W2_mag_err',
+                 'W3_radius', 'W3_mag', 'W3_mag_err',
+                 'W4_radius', 'W4_mag', 'W4_mag_err',
+                 'W1_W2', 'W1_W2_err', 'W2_W3', 'W2_W3_err']
+    wxsc = asc.read(wxsc_file, format='no_header', delimiter='|',
+                    names=col_names, comment='#',
+                    fill_values=[('null', '0')])
+
+    # --- Table 3: morphological types (IPAC format) ---
+    tab3 = asc.read(os.path.join(REPO_DIR, 'data', 'wxsc100-table-3.tbl'),
+                    format='ipac', fill_values=[('null', '0')])
+    morph = np.array([str(m).strip() if str(m).strip() not in ('', '--') else 'S?'
+                      for m in tab3['Morph']])
+
+    # --- Cross-match SGA-2025 vs. WXSC-100 ---
+    c_sga  = SkyCoord(ra=np.asarray(cat['RA'],   dtype=float) * u.deg,
+                      dec=np.asarray(cat['DEC'],  dtype=float) * u.deg)
+    c_wxsc = SkyCoord(ra=np.asarray(wxsc['ra'],  dtype=float) * u.deg,
+                      dec=np.asarray(wxsc['dec'], dtype=float) * u.deg)
+    indx_wxsc, indx_sga, _, _ = c_sga.search_around_sky(
+        c_wxsc, match_radius * u.arcsec)
+    print(f'  Matched {len(indx_wxsc):,d}/{len(wxsc):,d} WXSC-100 galaxies '
+          f'within {match_radius:.0f} arcsec.')
+
+    msga  = cat[indx_sga]
+    mwxsc = wxsc[indx_wxsc]
+
+    # --- Hubble-type integer codes ---
+    morphkey = {
+        'E': -5, 'E1pec': -5, 'dE': -5, 'dsph': -5, 'Sph': -5,
+        'E-S0': -3,
+        'S0': -2, 'dS0': -2,
+        'S0/a': 0, 'S0-a': 0, 'dS0/a': 0, 'dS0-a': 0,
+        'Sa': 1, 'SABa': 1, 'dSa': 1,
+        'Sab': 2, 'Sa-b': 2, 'dSab': 2, 'dSa-b': 2,
+        'Sb': 3, 'SABb': 3, 'SBb': 3, 'dSb': 3,
+        'Sbc': 4, 'Sb-c': 4, 'dSbc': 4, 'dSb-c': 4,
+        'Sc': 5, 'SABc': 5, 'dSc': 5,
+        'Scd': 6, 'SBcd': 6, 'Sc-d': 6, 'dScd': 6, 'dSc-d': 6,
+        'Sd': 7, 'dSd': 7,
+        'Sdm': 8, 'Sd-m': 8, 'S?': 8, 'Sc-Irr': 8,
+        'Sm': 9, 'SBm': 9, 'SBm-pec': 9,
+        'Irr': 9, 'Ir': 9, 'IB': 9, 'dIr': 9, 'dIrr': 9,
+    }
+    hubblet = np.zeros(len(indx_wxsc), dtype=int)
+    for i, mx in enumerate(indx_wxsc):
+        t = morph[mx]
+        if t not in morphkey:
+            print(f'  Unknown morph type: {t!r} — treating as S?')
+            t = 'S?'
+        hubblet[i] = morphkey[t]
+
+    # --- Discrete Hubble-type colormap ---
+    base = plt.cm.jet
+    cmap = LinearSegmentedColormap.from_list(
+        'hubblet', [base(i) for i in range(base.N)], base.N)
+    bounds = np.arange(hubblet.min(), hubblet.max() + 1, 1)
+    norm   = BoundaryNorm(bounds, cmap.N)
+
+    # --- Derived quantities ---
+    d26_sga  = np.log10(np.asarray(msga['D26'],        dtype=float))
+    dw1_wxsc = np.log10(2 * np.asarray(mwxsc['W1_radius'], dtype=float))
+    pa_sga   = np.asarray(msga['PA'],  dtype=float)
+    pa_wxsc  = np.asarray(mwxsc['pa'], dtype=float)
+    eps_sga  = 1 - np.asarray(msga['BA'],  dtype=float)
+    eps_wxsc = 1 - np.asarray(mwxsc['ba'], dtype=float)
+    dra  = (np.cos(np.radians(np.asarray(msga['DEC'], dtype=float)))
+            * 3600 * (np.asarray(msga['RA'],  dtype=float)
+                    - np.asarray(mwxsc['ra'], dtype=float)))
+    ddec = (3600 * (np.asarray(msga['DEC'], dtype=float)
+                  - np.asarray(mwxsc['dec'], dtype=float)))
+
+    cdpa, _, _ = sigmaclip(pa_sga - pa_wxsc, low=3, high=3)
+    print(f'  ΔD26: median={np.median(d26_sga - dw1_wxsc):.3f}  '
+          f'σ={np.std(d26_sga - dw1_wxsc):.3f} dex')
+    print(f'  ΔPA:  median={np.median(cdpa):.2f}  σ={np.std(cdpa):.2f} deg')
+    print(f'  Δε:   median={np.median(eps_sga - eps_wxsc):.3f}  '
+          f'σ={np.std(eps_sga - eps_wxsc):.3f}')
+
+    # --- Plot ---
+    kw = dict(s=80, marker='o', c=hubblet, cmap=cmap, norm=norm,
+              alpha=0.9, edgecolor='k')
+    xpos, ypos = 0.06, 0.88
+    fig, ax = plt.subplots(2, 2, figsize=(13, 10))
+
+    # (a) Astrometric offsets
+    lim = 20 * np.array([-1, 1])
+    ax[0, 0].scatter(dra, ddec, **kw)
+    ax[0, 0].axhline(0, color='k', lw=2, alpha=0.7)
+    ax[0, 0].axvline(0, color='k', lw=2, alpha=0.7)
+    ax[0, 0].set_xlim(lim); ax[0, 0].set_ylim(lim)
+    ax[0, 0].set_xlabel(r'$\Delta\,\mathrm{RA}$ (arcsec)')
+    ax[0, 0].set_ylabel(r'$\Delta\,\mathrm{Dec}$ (arcsec)')
+    ax[0, 0].xaxis.set_major_locator(ticker.MultipleLocator(10))
+    ax[0, 0].yaxis.set_major_locator(ticker.MultipleLocator(10))
+    ax[0, 0].text(xpos, ypos, '(a)', ha='left', va='bottom',
+                  transform=ax[0, 0].transAxes)
+    for gal, xytext, ha in [('NGC2403', (14,  7), 'center'),
+                              ('NGC0247', (-15, 2), 'center'),
+                              ('NGC4395', ( 8, -10), 'center')]:
+        mask = np.array([str(g).strip() == gal for g in msga['GALAXY']])
+        if mask.any():
+            ax[0, 0].annotate(gal, (dra[mask][0], ddec[mask][0]),
+                              xytext=xytext, ha=ha, va='bottom', fontsize=11,
+                              arrowprops=dict(facecolor='k', shrink=0.1))
+
+    # (b) Diameter comparison (log scale)
+    @ticker.FuncFormatter
+    def _arcmin_fmt(x, pos):
+        v = 10**x
+        return f'{v:.0f}' if v >= 1 else f'{v:.1f}'
+
+    lim = [np.log10(3), np.log10(50)]
+    ax[0, 1].scatter(d26_sga, dw1_wxsc, **kw)
+    ax[0, 1].plot(lim, lim, color='k', lw=2, alpha=0.7)
+    ax[0, 1].set_xlim(lim); ax[0, 1].set_ylim(lim)
+    ax[0, 1].set_xlabel(r'$D(26)$ (SGA-2025, arcmin)')
+    ax[0, 1].set_ylabel(r'$2\times R_{W1}$ (WXSC-100, arcmin)')
+    ax[0, 1].xaxis.set_major_formatter(_arcmin_fmt)
+    ax[0, 1].yaxis.set_major_formatter(_arcmin_fmt)
+    ax[0, 1].set_xticks(np.log10([5, 7, 10, 15, 25, 40]))
+    ax[0, 1].set_yticks(np.log10([5, 7, 10, 15, 25, 40]))
+    ax[0, 1].text(xpos, ypos, '(b)', ha='left', va='bottom',
+                  transform=ax[0, 1].transAxes)
+
+    # (c) Position angle
+    lim = [-10, 190]
+    ax[1, 0].scatter(pa_sga, pa_wxsc, **kw)
+    ax[1, 0].plot(lim, lim, color='k', lw=2, alpha=0.7)
+    ax[1, 0].set_xlim(lim); ax[1, 0].set_ylim(lim)
+    ax[1, 0].set_xlabel(r'$\phi$ (SGA-2025, deg)')
+    ax[1, 0].set_ylabel(r'$\phi$ (WXSC-100, deg)')
+    ax[1, 0].xaxis.set_major_locator(ticker.MultipleLocator(50))
+    ax[1, 0].yaxis.set_major_locator(ticker.MultipleLocator(50))
+    ax[1, 0].text(xpos, ypos, '(c)', ha='left', va='bottom',
+                  transform=ax[1, 0].transAxes)
+
+    # (d) Ellipticity
+    lim = [-0.1, 1.0]
+    ax[1, 1].scatter(eps_sga, eps_wxsc, **kw)
+    ax[1, 1].plot(lim, lim, color='k', lw=2, alpha=0.7)
+    ax[1, 1].set_xlim(lim); ax[1, 1].set_ylim(lim)
+    ax[1, 1].set_xlabel(r'$\epsilon$ (SGA-2025)')
+    ax[1, 1].set_ylabel(r'$\epsilon$ (WXSC-100)')
+    ax[1, 1].xaxis.set_major_locator(ticker.MultipleLocator(0.2))
+    ax[1, 1].yaxis.set_major_locator(ticker.MultipleLocator(0.2))
+    ax[1, 1].text(xpos, ypos, '(d)', ha='left', va='bottom',
+                  transform=ax[1, 1].transAxes)
+
+    # Colorbar (Hubble type) — right margin
+    cbax = fig.add_axes([0.9, 0.1, 0.03, 0.8])
+    fig.colorbar(ScalarMappable(cmap=cmap, norm=norm), cax=cbax,
+                 label='Hubble Type', spacing='proportional',
+                 ticks=bounds, boundaries=bounds, format='%1i')
+
+    fig.subplots_adjust(left=0.11, bottom=0.09, right=0.87, top=0.95,
+                        hspace=0.25, wspace=0.3)
+    outfile = os.path.join(FIG_DIR, png)
+    fig.savefig(outfile, dpi=150)
+    print(f'  Wrote {outfile}')
+    plt.close(fig)
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -493,6 +676,7 @@ def main():
     parser.add_argument('--redshifts',        action='store_true')
     parser.add_argument('--desi-completeness', action='store_true')
     parser.add_argument('--sga2025-vs-sga2020', action='store_true')
+    parser.add_argument('--wxsc100',            action='store_true')
     parser.add_argument('--all',              action='store_true',
                         help='Run all figures')
     args = parser.parse_args()
@@ -501,7 +685,7 @@ def main():
 
     run_all = args.all or not any([
         args.sky, args.sample, args.size_mag, args.redshifts,
-        args.desi_completeness, args.sga2025_vs_sga2020,
+        args.desi_completeness, args.sga2025_vs_sga2020, args.wxsc100,
     ])
 
     cat = read_catalogs()
@@ -531,6 +715,9 @@ def main():
 
     if args.sga2025_vs_sga2020 or run_all:
         fig_sga2025_vs_sga2020(cat)
+
+    if args.wxsc100 or run_all:
+        fig_sga_vs_wxsc100(cat)
 
 
 if __name__ == '__main__':
