@@ -1,0 +1,26 @@
+\begin{deluxetable*}{lcl}
+\tablecaption{Shared Low-Order Bits of \texttt{OPTMASKBITS}, \texttt{GALEXMASKBITS}, and \texttt{UNWISEMASKBITS}
+  \label{tab:maskbits-common}}
+\tablewidth{\textwidth}
+\tablehead{\colhead{Bit Name} & \colhead{Value} & \colhead{Description}}
+\startdata
+\texttt{brightstar} & 1 & \parbox{4.0in}{Bright star, medium star, or star cluster (\textsl{legacypipe} \texttt{MASKBITS}).} \\
+\texttt{gaiastar}   & 2 & \parbox{4.0in}{Gaia point source (\texttt{TYPE = PSF}).} \\
+\texttt{galaxy}     & 4 & \parbox{4.0in}{Extended (non-reference) source.} \\
+\texttt{reference}  & 8 & \parbox{4.0in}{SGA-2025 reference source.} \\
+\enddata
+\tablecomments{Per-band imaging mask bits stored in the per-group \texttt{-maskbits.fits[.fz]} files and the per-galaxy \texttt{-ellipse-\{dataset\}.fits} files (Section~\ref{sec:pipeline}). All three masks share this low-order encoding; the higher-order, per-band bits are listed separately in Table~\ref{tab:maskbits-bands}.}
+\end{deluxetable*}
+
+\begin{deluxetable}{lccc}
+\tablecaption{Per-Band Bits of \texttt{OPTMASKBITS}, \texttt{GALEXMASKBITS}, and \texttt{UNWISEMASKBITS}
+  \label{tab:maskbits-bands}}
+\tablehead{\colhead{Value} & \colhead{\texttt{OPTMASKBITS}} & \colhead{\texttt{GALEXMASKBITS}} & \colhead{\texttt{UNWISEMASKBITS}}}
+\startdata
+16  & $g$   & FUV      & W1 \\
+32  & $r$   & NUV      & W2 \\
+64  & $i$   & \nodata  & W3 \\
+128 & $z$   & \nodata  & W4 \\
+\enddata
+\tablecomments{Each mask assigns its own bands to bits 16, 32, 64, and 128, on top of the shared low-order bits of Table~\ref{tab:maskbits-common}; \textsl{griz} imaging uses all four band bits, while GALEX (FUV/NUV) uses only the first two.}
+\end{deluxetable}

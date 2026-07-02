@@ -1,0 +1,15 @@
+\begin{deluxetable*}{lcl}
+\tablecaption{\texttt{SAMPLE} Bitmask Definitions
+  \label{tab:sample-bitmask}}
+\tablewidth{\textwidth}
+\tablehead{\colhead{Bit Name} & \colhead{Value} & \colhead{Description}}
+\startdata
+\texttt{LVD}      & 1  & \parbox{4.0in}{Source from the Local Volume Database of nearby galaxies (Section~\ref{sec:parent}).} \\
+\texttt{MCLOUDS}  & 2  & \parbox{4.0in}{Located within the Magellanic Cloud footprint.} \\
+\texttt{GCLPNE}   & 4  & \parbox{4.0in}{Located within a globular cluster or planetary nebula mask.} \\
+\texttt{NEARSTAR} & 8  & \parbox{4.0in}{Near a bright star (star--galaxy separation $<1.2\times$ the Gaia/Tycho mask radius).} \\
+\texttt{INSTAR}   & 16 & \parbox{4.0in}{Inside a bright star (star--galaxy separation $<0.5\times$ the Gaia/Tycho mask radius).} \\
+\texttt{OVERLAP}  & 32 & \parbox{4.0in}{Initial ellipse overlaps another (initial) SGA-2025 ellipse.} \\
+\enddata
+\tablecomments{Set in the parent catalog (Section~\ref{sec:parent}) and propagated to the merged catalog; a source may have more than one bit set simultaneously.}
+\end{deluxetable*}

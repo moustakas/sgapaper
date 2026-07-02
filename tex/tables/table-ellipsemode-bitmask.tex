@@ -1,0 +1,18 @@
+\begin{deluxetable*}{lcl}
+\tablecaption{\texttt{ELLIPSEMODE} Bitmask Definitions
+  \label{tab:ellipsemode-bitmask}}
+\tablewidth{\textwidth}
+\tablehead{\colhead{Bit Name} & \colhead{Value} & \colhead{Description}}
+\startdata
+\texttt{FIXGEO}       & 1   & \parbox{4.0in}{Fix the ellipse geometry to its initial values (no free fitting).} \\
+\texttt{RESOLVED}     & 2   & \parbox{4.0in}{Milky Way satellite, effectively resolved into individual stars; Tractor fitting is not performed.} \\
+\texttt{FORCEPSF}     & 4   & \parbox{4.0in}{Force all Tractor sources in the mosaic to be fitted as point sources.} \\
+\texttt{FORCEGAIA}    & 8   & \parbox{4.0in}{Force Tractor to fit only Gaia sources (not used in the SGA-2025 processing).} \\
+\texttt{LESSMASKING}  & 16  & \parbox{4.0in}{Apply less aggressive neighbor masking during ellipse-fitting (Section~\ref{sec:pipeline:ellipse:mask}).} \\
+\texttt{MOREMASKING}  & 32  & \parbox{4.0in}{Apply more aggressive neighbor masking during ellipse-fitting.} \\
+\texttt{MOMENTPOS}    & 64  & \parbox{4.0in}{Adopt the moment-based center instead of the Tractor position.} \\
+\texttt{TRACTORGEO}   & 128 & \parbox{4.0in}{Adopt the Tractor geometry instead of the ellipse-fit geometry.} \\
+\texttt{NORADWEIGHT}  & 256 & \parbox{4.0in}{Disable radial weighting when determining the light-weighted geometry.} \\
+\enddata
+\tablecomments{Requested prior to processing; describes the intended fitting strategy for a given object (Section~\ref{sec:pipeline:ellipse}). Populated in part from the hand-curated resources of Table~\ref{tab:parent-archive} and consolidated across releases in each overlay's \texttt{flags.csv} (Section~\ref{sec:parent:final}).}
+\end{deluxetable*}

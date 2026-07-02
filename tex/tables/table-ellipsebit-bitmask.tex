@@ -1,0 +1,25 @@
+\begin{deluxetable*}{lcl}
+\tablecaption{\texttt{ELLIPSEBIT} Bitmask Definitions
+  \label{tab:ellipsebit-bitmask}}
+\tablewidth{\textwidth}
+\tablehead{\colhead{Bit Name} & \colhead{Value} & \colhead{Description}}
+\startdata
+\texttt{NOTRACTOR}          & 1     & \parbox{4.0in}{No Tractor model available (object dropped or never fitted).} \\
+\texttt{TRACTORPSF}         & 2     & \parbox{4.0in}{Tractor fit this source as a point source (PSF model).} \\
+\texttt{FIXGEO}             & 4     & \parbox{4.0in}{The ellipse geometry was held fixed rather than freely fitted.} \\
+\texttt{BLENDED}            & 8     & \parbox{4.0in}{The source center falls within the ellipse of another SGA-2025 source.} \\
+\texttt{LARGESHIFT}         & 16    & \parbox{4.0in}{Large positional shift between the initial and moment-refined ellipse center.} \\
+\texttt{LARGESHIFT\_TRACTOR}& 32    & \parbox{4.0in}{Large positional shift between the initial center and the Tractor position.} \\
+\texttt{MAJORGAL}           & 64    & \parbox{4.0in}{Major galaxy requiring special processing treatment.} \\
+\texttt{OVERLAP}            & 128   & \parbox{4.0in}{The fitted ellipse overlaps another SGA-2025 ellipse.} \\
+\texttt{SATELLITE}          & 256   & \parbox{4.0in}{Satellite galaxy located within the ellipse of a larger system.} \\
+\texttt{MOMENTPOS}          & 512   & \parbox{4.0in}{The moment-based center was adopted.} \\
+\texttt{TRACTORGEO}         & 1024  & \parbox{4.0in}{The Tractor geometry was adopted.} \\
+\texttt{NORADWEIGHT}        & 2048  & \parbox{4.0in}{Radial weighting was not applied during isophote fitting.} \\
+\texttt{LESSMASKING}        & 4096  & \parbox{4.0in}{Less aggressive neighbor masking was applied.} \\
+\texttt{MOREMASKING}        & 8192  & \parbox{4.0in}{More aggressive neighbor masking was applied.} \\
+\texttt{FAILGEO}            & 16384 & \parbox{4.0in}{Isophote fitting failed; \texttt{D26} may be unreliable.} \\
+\texttt{SKIPTRACTOR}        & 32768 & \parbox{4.0in}{Tractor fitting was skipped entirely for this mosaic.} \\
+\enddata
+\tablecomments{Set after processing; records the fitting outcome and data quality actually realized for a given object (Section~\ref{sec:pipeline:ellipse}), as opposed to \texttt{ELLIPSEMODE} (Table~\ref{tab:ellipsemode-bitmask}), which records the intended strategy requested beforehand.}
+\end{deluxetable*}

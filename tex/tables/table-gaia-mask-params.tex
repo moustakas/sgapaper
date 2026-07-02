@@ -1,0 +1,19 @@
+\begin{deluxetable*}{lcl}
+\tablecaption{Gaia+Tycho Bright-Star Mask: Adopted Parameters
+  \label{tab:gaia-mask-params}}
+\tablewidth{\textwidth}
+\tablehead{\colhead{Parameter} & \colhead{Value} & \colhead{Description}}
+\startdata
+$r_{\rm mask}$                    & $1630\farcs0 \times 1.396^{-m_{\rm mask}}$ & \parbox{3.6in}{Adopted magnitude-radius relation (Rongpu Zhou; identical to the one used by the DR11 \textsl{legacypipe} reference-source masking).} \\
+$m_{\rm mask}$ (Gaia)              & $\min(G,\,z_{\rm guess}+1)$                & \parbox{3.6in}{Masking magnitude: the brighter of the Gaia $G$ magnitude and the $z$-band magnitude guess plus 1~mag, so masks expand appropriately around very red stars.} \\
+Bright threshold (Gaia)            & $m_{\rm mask} < 13$                        & \parbox{3.6in}{Classified \texttt{isbright}.} \\
+Medium threshold (Gaia)            & $13 \le m_{\rm mask} < 16$                 & \parbox{3.6in}{Classified \texttt{ismedium}; both bright and medium Gaia stars are retained in the mask catalog.} \\
+Bright threshold (Tycho-2)         & $m_{\rm mask} < 13$                        & \parbox{3.6in}{Only bright Tycho-2 stars are retained (no medium category); drops $\sim\!13{,}000$ of 2.5 million Tycho-2 stars.} \\
+Keep radius (Gaia)                 & $4\, r_{\rm mask}$                         & \parbox{3.6in}{Radius within which a source is retained as a Tractor reference source (e.g., for stellar-halo subtraction), not merely masked.} \\
+Keep radius (Tycho-2)              & $2\, r_{\rm mask}$                         & \parbox{3.6in}{As above, for Tycho-2 stars.} \\
+Galactic-latitude trim             & $|b| > 9\arcdeg$                           & \parbox{3.6in}{Footprint of the ``extragalactic'' mask catalog actually consumed by the SGA-2025 pipeline.} \\
+\texttt{NEARSTAR} threshold        & $d/r_{\rm mask} < 1.2$                     & \parbox{3.6in}{\texttt{SAMPLE} bit (Table~\ref{tab:sample-bitmask}) set from \texttt{STARFDIST}.} \\
+\texttt{INSTAR} threshold          & $d/r_{\rm mask} < 0.5$                     & \parbox{3.6in}{\texttt{SAMPLE} bit (Table~\ref{tab:sample-bitmask}) set from \texttt{STARFDIST}.} \\
+\enddata
+\tablecomments{$m_{\rm mask}$, $r_{\rm mask}$, and the bright/medium classification are computed once, for every star in the all-sky mask catalog, by \texttt{SGA/archive/bin-SGA2025/build-gaia-mask}; $d$ is the projected separation between a parent-catalog object and its nearest bright/medium star, computed by \texttt{SGA.parent.add\_gaia\_masking} (Section~\ref{sec:parent:gaiamask}).}
+\end{deluxetable*}

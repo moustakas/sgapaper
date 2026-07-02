@@ -430,6 +430,77 @@ dropped.  \todo{Report the net vicuts-to-archive object count for the
 
 \input{tables/table-parent-archive.tex}
 
+\subsection{Bright-Star Masking}
+\label{sec:parent:gaiamask}
+
+We build the Gaia+Tycho bright-star mask that underlies both the
+\texttt{NEARSTAR}/\texttt{INSTAR} sample flags and the pixel-level
+\texttt{brightstar}/\texttt{gaiastar} imaging-mask bits (Table~\ref{tab:maskbits-common})
+in two stages: a one-time construction of an all-sky catalog of bright
+and medium-bright stars and their adopted masking radii
+(\texttt{SGA/archive/bin-SGA2025/build-gaia-mask}), and a per-catalog
+association step that measures every parent-sample object's proximity
+to its nearest such star (\texttt{SGA.parent.add\_gaia\_masking}).
+
+To build the star-mask catalog, we loop over the full grid of DR9
+imaging bricks in batches of 10,000, and for each brick query
+\textsl{legacypipe}'s reference-source machinery
+(\texttt{legacypipe.reference.get\_reference\_sources}) for every Gaia
+DR3 and Tycho-2 star it flags as ``bright'' or ``medium,'' restricting
+each per-brick query to a zero-margin footprint so that a star near a
+brick boundary is picked up by exactly one neighboring brick rather
+than double-counted.  We merge the resulting per-brick tables into a
+single all-sky catalog and additionally write a Galactic-latitude-trimmed
+($|b|>9\arcdeg$) ``extragalactic'' version, which is the one the
+SGA-2025 pipeline actually consumes.
+
+The adopted magnitude-radius relation --
+\begin{equation}
+  r_{\rm mask} = 1630\farcs0 \times 1.396^{-m_{\rm mask}},
+  \label{eq:gaiamaskradius}
+\end{equation}
+where $m_{\rm mask}$ is the star's masking magnitude -- is the same
+relation used by the DR11 \textsl{legacypipe} pipeline itself
+(Section~\ref{sec:imaging:optical}) to mask reference sources during
+Tractor photometry, so that the footprint we exclude from automated
+galaxy detection is, by construction, consistent with the footprint
+DR11 excludes from its own source modeling.  We define $m_{\rm mask}$
+as the brighter of a star's optical magnitude (Gaia $G$, or, for
+Tycho-2 stars, a Gaia-$G$-equivalent magnitude estimated from
+$V_T$) and its $z$-band magnitude guess plus 1~mag, which expands the
+mask appropriately around very red stars whose optical light
+underrepresents their true angular extent.  We classify Gaia stars
+with $m_{\rm mask}<13$ as ``bright'' and those with
+$13\le m_{\rm mask}<16$ as ``medium,'' retaining both categories in the
+mask catalog; Tycho-2 stars, which duplicate the brightest Gaia
+sources, are instead restricted to $m_{\rm mask}<13$ only, dropping
+roughly 13,000 of 2.5 million candidates (Table~\ref{tab:gaia-mask-params}).
+
+Given this master catalog, \texttt{add\_gaia\_masking} measures, for
+every object in a working parent-sample catalog, the angular
+separation to its nearest bright or medium star, normalized by that
+star's masking radius (\texttt{STARFDIST}); we process stars in
+1-magnitude bins from faintest to brightest to keep each
+nearest-neighbor search computationally tractable, and retain, for
+each object, the smallest \texttt{STARFDIST} found across all bins
+(capping consideration at twice a star's masking radius) so that the
+final value reflects genuine proximity rather than an artifact of bin
+ordering.  We call \texttt{add\_gaia\_masking} at two points in the
+pipeline: once when the archive-stage catalog is finalized
+(Section~\ref{sec:parent:archive}), and again for every subsequent
+\texttt{build\_parent} release (Section~\ref{sec:parent:final}), since
+each release's additions and geometry corrections can change which
+star is nearest to a given object.  The resulting \texttt{STARFDIST}
+values set the \texttt{NEARSTAR} and \texttt{INSTAR} \texttt{SAMPLE}
+bits (Table~\ref{tab:sample-bitmask}) and, together with
+\texttt{MCLOUDS} and \texttt{GCLPNE}, force the \texttt{NORADWEIGHT}
+\texttt{ELLIPSEMODE} bit (Table~\ref{tab:ellipsemode-bitmask}) during
+ellipse-fitting (Section~\ref{sec:pipeline:ellipse}), since
+radially-weighted light centroids are unreliable for objects
+contaminated by a nearby star's flux.
+
+\input{tables/table-gaia-mask-params.tex}
+
 \subsection{Assembling the Final Parent Sample}
 \label{sec:parent:final}
 
@@ -500,6 +571,16 @@ the final parent-sample version adopted for the SGA-2025 release.
 \section{Input Catalog and Sample Selection}
 \label{sec:input}
 %%----------------------------------------------------------------------
+
+\JM{Stub refs, placement TBD: Table~\ref{tab:sample-bitmask} (\texttt{SAMPLE}),
+Table~\ref{tab:ellipsemode-bitmask} (\texttt{ELLIPSEMODE}),
+Table~\ref{tab:ellipsebit-bitmask} (\texttt{ELLIPSEBIT}),
+Table~\ref{tab:maskbits-common} and Table~\ref{tab:maskbits-bands}
+(\texttt{OPTMASKBITS}/\texttt{GALEXMASKBITS}/\texttt{UNWISEMASKBITS}).}
+\input{tables/table-sample-bitmask.tex}
+\input{tables/table-ellipsemode-bitmask.tex}
+\input{tables/table-ellipsebit-bitmask.tex}
+\input{tables/table-maskbits.tex}
 
 \subsection{Angular Size Selection}
 \label{sec:input:size}
