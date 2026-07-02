@@ -255,15 +255,121 @@ position- and band-dependent PSF model of the co-added image.
 \subsection{Ellipse Fitting}
 \label{sec:pipeline:ellipse}
 
-We perform custom ellipse fits on the optical imaging using an iterative
-procedure similar to that described in \citet{moustakas23a}.  We fit
-concentric elliptical isophotes to each galaxy, masking companion sources
-identified by Tractor, and we determine the position angle (PA) and axis
-ratio ($b/a$) from the intensity-weighted moments within a fiducial
-aperture.  We record the isophotal semi-major axis at surface-brightness
-levels of $\mu = 22$, 23, 24, 25, and 26~mag~arcsec$^{-2}$ in each
-available optical band; the $\mu = 26$~mag~arcsec$^{-2}$ isophote in the
-$r$ band defines the SGA-2025 diameter $D_{26}$ (arcmin).
+We perform ellipse photometry on entire galaxy groups at once, rather
+than on each galaxy in isolation, using a three-stage iterative
+procedure closely related to the methodology we describe in
+\citet{moustakas23a}: we first assemble each group's imaging and source
+catalogs (Section~\ref{sec:pipeline:ellipse:read}); we then iteratively
+refine every member's elliptical geometry and construct a hierarchy of
+source masks (Section~\ref{sec:pipeline:ellipse:mask}); and we finally
+fit the resulting surface-brightness profiles in two passes across all
+available imaging datasets (Section~\ref{sec:pipeline:ellipse:fit}).  We
+adopt a group-level architecture because SGA galaxies frequently overlap
+physically associated or line-of-sight companions -- fitting each galaxy
+independently, blind to its neighbors' light, would systematically bias
+the recovered geometry and isophotal radii; instead, every stage below
+operates simultaneously on all group members, so that the mask we build
+for one object accounts for the position, geometry, and flux of every
+other cataloged source in the same mosaic.
+
+\subsubsection{Imaging Preparation}
+\label{sec:pipeline:ellipse:read}
+
+For each group, we first read the coadded optical, unWISE, and (where
+available) GALEX mosaics -- images, inverse-variance maps, PSF models,
+and Tractor model images -- together with the full Tractor catalog for
+the mosaic footprint and the group's sample catalog of SGA targets.  We
+construct a bright-star mask from the \texttt{MASKBITS} image (the
+\texttt{BRIGHT}, \texttt{MEDIUM}, and \texttt{CLUSTER} bits) together
+with an independent Gaia/Tycho-based core mask, and we match each SGA
+object in the sample catalog to its corresponding Tractor source by
+reference ID.  Galaxies large or diffuse enough to require visual
+inspection bypass this matching, and every fitting stage that follows,
+entirely; we instead populate their geometry directly from the parent
+catalog.
+
+\subsubsection{Masking and Geometry Refinement}
+\label{sec:pipeline:ellipse:mask}
+
+Beginning from each object's initial position and geometry -- taken from
+the parent catalog or, where preferred, from the Tractor model -- we
+iteratively refine the elliptical geometry from light-weighted second
+moments of the image, alternating between remeasuring the moments and
+rebuilding the elliptical mask used to compute them until the solution
+converges (Table~\ref{tab:ellipsefit-params}).  We weight the moments
+radially, down-weighting the galaxy's core relative to its outskirts, so
+that the recovered semi-major axis, axis ratio, and position angle trace
+the extended, low-surface-brightness envelope rather than the often
+rounder, bulge-dominated central light.  We flag objects whose
+moment-based center shifts by more than $\Delta_{\rm max}$ from its
+starting position as having an unreliable geometry solution, and we flag
+objects whose semi-major axis falls below $f_{\rm sat}$ times that of
+the largest overlapping neighbor as physically blended satellites
+requiring closer scrutiny.
+
+Once the geometry converges, we build a final mask for each object by
+combining, in addition to the per-band data-quality mask: (1) the
+bright-star mask described above; (2) the elliptical footprint of every
+other SGA source in the group, protected out to $f_{\rm ref}$ times its
+own semi-major axis; and (3) the footprints of neighboring
+Tractor-detected galaxies, which we classify as major companions --
+masked unconditionally, including within the target's own ellipse -- if
+their flux exceeds $F_{\rm major}^{\rm final}$ times the target's, and
+otherwise, optionally, as minor companions masked only outside the
+target's own ellipse.  We then subtract the Tractor model of every
+masked source, so that the images entering the fitting stage
+(Section~\ref{sec:pipeline:ellipse:fit}) contain only the flux of the
+target galaxy and any unmasked, unmodeled structure; we propagate the
+same reference/bright-star/companion masking, rescaled to the
+appropriate pixel scale, to the unWISE and GALEX mosaics, so that the
+optical, mid-infrared, and ultraviolet photometry we describe in
+Section~\ref{sec:pipeline:cog} share a consistent masking footprint.
+
+\todo{Figure: illustrate the mask hierarchy for one representative
+  group, e.g., three panels showing (a) the initial, Tractor-based
+  mask, (b) the moment-refined mask after geometry convergence, and (c)
+  the final mask, with major/minor companions and bright stars masked
+  and their Tractor models subtracted.}
+
+Table~\ref{tab:ellipsefit-params} summarizes the free parameters
+governing the masking and fitting stages described in this section,
+together with their adopted default values.
+
+\input{tables/table-ellipse-params.tex}
+
+\subsubsection{Two-Pass Isophotal Fitting}
+\label{sec:pipeline:ellipse:fit}
+
+We fit the masked, model-subtracted mosaics in two passes.  In the first
+pass, we build an aggressive initial mask -- classifying companions as
+major down to a flux ratio of just $F_{\rm major}^{\rm geo}$ and masking
+minor companions throughout -- and we fit only the optical bands,
+without Monte Carlo resampling, to obtain a first-pass estimate of the
+$\mu = 26$~mag~arcsec$^{-2}$ isophotal radius, $R(26)$, for every object
+in the group.  In the second pass, we rebuild the mask using this
+refined geometry -- relaxing the major-companion threshold to
+$F_{\rm major}^{\rm final}$ and, by default, leaving minor companions
+unmasked -- and we fit the full complement of requested imaging datasets
+(optical, unWISE, and GALEX) simultaneously.
+
+For each object, band, and dataset, we measure elliptical-aperture
+surface photometry on a grid of semi-major axes using the
+isophote-fitting machinery of \texttt{photutils} \citep{bradley23a},
+sigma-clipping outlier pixels within each isophote before averaging; we
+anchor the sampling grid to the object's moment-refined semi-major axis
+and rescale it, band to band and dataset to dataset, to hold a roughly
+constant number of pixels -- and hence roughly constant signal-to-noise
+-- per annulus.  We derive isophotal radii at surface-brightness levels
+of $\mu = 22$, 23, 24, 25, and 26~mag~arcsec$^{-2}$ in each available
+optical band from a Monte Carlo resampling of the surface-brightness
+profile ($N_{\rm MC}$ realizations by default), which we use to assign
+an asymmetric uncertainty from the interquartile range of the resulting
+radius distribution rather than propagating formal photometric errors
+alone; we adopt the $\mu = 26$~mag~arcsec$^{-2}$ isophote in the $r$
+band as the SGA-2025 diameter, $D_{26}$ (arcmin).  We derive the
+curve-of-growth photometry and half-light radii that we report in all
+ten photometric bands from these same per-annulus measurements, as we
+describe next in Section~\ref{sec:pipeline:cog}.
 
 \subsection{Curve-of-Growth Photometry}
 \label{sec:pipeline:cog}
