@@ -1,0 +1,14 @@
+\begin{deluxetable*}{llrl}
+\tablecaption{Hand-Curated Resources Applied During Visual-Inspection-Driven Cleanup
+  \label{tab:parent-vicuts}}
+\tablewidth{\textwidth}
+\tablehead{\colhead{Resource} & \colhead{Type} & \colhead{$N$} & \colhead{Role}}
+\startdata
+\texttt{SGA2025-vi-properties.csv}       & file        & 1,171  & \parbox{3.0in}{Hand-corrected coordinates and geometry (position, diameter, axis ratio, position angle) for individual objects identified during visual inspection.} \\
+\texttt{SGA2025-crossid-errors.csv}      & file        & 1,777  & \parbox{3.0in}{NED cross-identification corrections: HyperLeda-derived properties mistakenly associated with a multi-galaxy \texttt{GPair}/\texttt{GTrpl} system entry instead of the correct individual galaxy.} \\
+\texttt{SGA2025-vi-actions.csv}          & file        & 32,011 & \parbox{3.0in}{Object-level visual-inspection actions: 28,144 outright drops and 3,867 replacements of NED coordinates with HyperLeda coordinates.} \\
+\texttt{LVD-geometry-updates-v1.0.5.csv} & file        & 165    & \parbox{3.0in}{Hand-corrected positions and structural parameters for individual LVD dwarf galaxies.} \\
+Uncommon-prefix exclusion lists          & in-source   & 201    & \parbox{3.0in}{Hand-curated object-name prefixes (8 dropped only without a measured diameter, 119 dropped regardless) and embedded reference tags (74) identifying non-galaxy contaminants -- literature X-ray/radio source catalogs, deep-field photometric catalogs, and cluster/group member lists -- plus 14 individually vetoed object names always protected from removal.} \\
+\enddata
+\tablecomments{$N$ counts rows (for CSV files) or hand-curated list entries (for the in-source exclusion lists) as of the current processing version; see Section~\ref{sec:parent:vicuts}.}
+\end{deluxetable*}

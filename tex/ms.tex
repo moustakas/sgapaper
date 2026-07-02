@@ -224,12 +224,9 @@ footprint; approximately $X$\% of SGA-2025 galaxies have at least one
 GALEX band available.
 
 %%----------------------------------------------------------------------
-\section{Input Catalog and Sample Selection}
-\label{sec:input}
+\section{Building the Parent Sample}
+\label{sec:parent}
 %%----------------------------------------------------------------------
-
-\subsection{Parent Sample}
-\label{sec:input:parent}
 
 We assemble the SGA-2025 parent sample through a sequence of discrete
 processing stages, each building on the output of the one before:
@@ -243,7 +240,7 @@ lists (Table~\ref{tab:parent-external}); we describe the angular-size
 threshold and grouping stages that follow it in
 Sections~\ref{sec:input:size} and~\ref{sec:input:groups}.
 
-\subsubsection{External Catalogs}
+\subsection{External Catalogs}
 \label{sec:input:parent:external}
 
 Table~\ref{tab:parent-external} summarizes the six external catalogs we
@@ -275,7 +272,7 @@ into a formal external catalog.
 
 \input{tables/table-parent-external.tex}
 
-\subsubsection{Cross-Matching and Merging}
+\subsection{Cross-Matching and Merging}
 \label{sec:input:parent:merge}
 
 We merge these six catalogs through a sequence of cross-matching stages,
@@ -316,7 +313,7 @@ while retaining separate, catalog-specific geometry columns (e.g.,
 diameters from HyperLeda and from SGA-2020 individually) for later
 comparison.
 
-\subsubsection{Geometry Standardization}
+\subsection{Geometry Standardization}
 \label{sec:input:parent:geometry}
 
 Each external catalog reports size, shape, and magnitude information in
@@ -340,6 +337,56 @@ Section~\ref{sec:input:parent:merge} -- we instead merge together
 whichever of the RC3, Two Micron All Sky Survey (2MASS), Sloan Digital
 Sky Survey (SDSS), or ESO literature measurements NED provides, in that
 decreasing order of priority.
+
+\subsection{Visual-Inspection-Driven Cleanup}
+\label{sec:parent:vicuts}
+
+The no-cuts merge described above is deliberately inclusive: because
+HyperLeda and NED resolve object names and positions independently and
+imperfectly, the resulting candidate list also contains a substantial
+population of non-galaxy contaminants -- literature galaxy-cluster and
+-group catalogs, X-ray and radio source lists, deep-field photometric
+catalogs, and other NED entries that are not resolved galaxies at all --
+together with a smaller number of genuine cross-identification errors
+and close, duplicate detections of the same object.  We remove this
+contamination, and correct what visual inspection (VI) reveals to be
+wrong, in a fixed sequence of cleanup steps applied to the no-cuts
+catalog.  We first overwrite each affected object's coordinates and
+geometry with hand-vetted values from a dedicated VI-properties file
+(Table~\ref{tab:parent-vicuts}), which also corrects a further $\sim\!60$
+SGA-2020 diameters we found, by inspection, to be grossly over- or
+underestimated.  We then drop non-galaxy contaminants across the full
+catalog using large, hand-curated lists of object-name prefixes and
+embedded reference tags -- built up over many rounds of VI and
+distinguishing contaminants that must always be dropped from those
+protected whenever they carry a measured diameter -- and separately
+correct NED cross-identification errors in which HyperLeda properties
+(coordinates, diameter, PGC number) were erroneously associated with a
+multi-galaxy \texttt{GPair}/\texttt{GTrpl} system entry rather than the
+correct individual galaxy.  We next resolve close ($<1\arcsec$) pairs of
+candidate entries that duplicate the same physical object, before
+applying a final, narrower prefix-based cleanup that visually removes
+remaining \texttt{GPair}/\texttt{GTrpl} merger systems: those lacking any
+measured diameter are dropped outright, while those with a measured
+diameter are dropped only if named explicitly in our VI-actions record.
+Table~\ref{tab:parent-vicuts} summarizes the size of each hand-curated
+resource this cleanup draws on; in total, the VI-actions record alone
+encodes more than 32,000 individual object-level decisions.  Because
+this cleanup is aggressive enough to risk discarding genuine
+low-surface-brightness dwarfs, we verify after every step that every
+LVD galaxy (Section~\ref{sec:input:parent:external}) remains present in
+the catalog, and we abort the build if one has been inadvertently
+dropped.  \todo{Report the net nocuts-to-vicuts object count for the
+  final (v1.0) processing version once available; in the current
+  development version this stage reduces the candidate list from
+  $\sim\!5.10$ million to $\sim\!4.79$ million objects.}
+
+\input{tables/table-parent-vicuts.tex}
+
+%%----------------------------------------------------------------------
+\section{Input Catalog and Sample Selection}
+\label{sec:input}
+%%----------------------------------------------------------------------
 
 \subsection{Angular Size Selection}
 \label{sec:input:size}
