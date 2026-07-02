@@ -55,7 +55,7 @@ axis, isophotal sizes at several other thresholds, and fitted ellipse
 geometry.  We cross-match spectroscopic redshifts from DESI DR1, the NASA/IPAC
 Extragalactic Database (NED), and the Local Volume Database (LVD) and include
 them in the catalog.  The SGA-2025 supersedes the SGA-2020
-\citep{Moustakas2023}, more than doubling the number of catalogued galaxies
+\citep{moustakas23a}, more than doubling the number of catalogued galaxies
 while extending coverage into the ultraviolet and mid-infrared.  We make the
 full catalog, mosaics, and companion analysis code publicly available at
 \url{https://sga.legacysurvey.org}.
@@ -77,30 +77,29 @@ size--luminosity and Tully--Fisher relations, environmental studies, targets
 for spectroscopic surveys, and training sets for machine-learning
 morphology classifiers.  Despite this importance, no comprehensive
 all-sky photometric catalog of resolved galaxies in modern wide-field
-imaging data existed until the SGA-2020 \citep{Moustakas2023}.
+imaging data existed until the SGA-2020 \citep{moustakas23a}.
 
-The DESI Legacy Imaging Surveys \citep{Dey2019} have since concluded
+The DESI Legacy Imaging Surveys \citep{dey19a} have since concluded
 observations with Data Release 11, providing deeper, wider, and better-
 calibrated optical imaging than any previous data release, together with
 forced-photometry measurements from the Tractor source model
 \citep{Lang2016}.  We combine the DR11 optical imaging with full-depth
-unWISE mid-infrared coadds \citep{Lang2014,Meisner2023} and the GALEX
-ultraviolet sky \citep{Martin2005} to assemble a new generation of
+unWISE mid-infrared coadds \citep{lang14a,meisner23a} and the GALEX
+ultraviolet sky \citep{martin05a} to assemble a new generation of
 large-galaxy photometry spanning four decades in wavelength.
 
 Here we describe the SGA-2025, which exploits DR11 to deliver mosaics and
 ellipse photometry for $\sim\!486{,}000$ galaxies over the extragalactic
 footprint of the Legacy Surveys.  The SGA-2025 includes all sources from
 the SGA-2020 that fall within the DR11 footprint, supplemented by newly
-identified large galaxies from HyperLeda \citep{Makarov2014}, the Local
-Volume Database \citep{Leaman2024}, and other auxiliary catalogs.
+identified large galaxies from HyperLeda \citep{makarov14a}, the Local
+Volume Database \citep{leaman24a}, and other auxiliary catalogs.
 
 We organize the remainder of the paper as follows.
-In Section~\ref{sec:overview} we give a brief survey overview and describe
-the sky footprint.
+In Section~\ref{sec:imaging} we describe the sky footprint and the
+optical, mid-infrared, and ultraviolet imaging data.
 In Section~\ref{sec:input} we describe the input catalog and sample
 selection.
-In Section~\ref{sec:imaging} we summarize the imaging data.
 In Section~\ref{sec:pipeline} we describe the photometric pipeline,
 including image coaddition, Tractor source detection, and ellipse fitting.
 In Section~\ref{sec:redshifts} we present the spectroscopic redshift
@@ -114,8 +113,8 @@ $H_0 = 70~\mathrm{km~s^{-1}~Mpc^{-1}}$ and $\Omega_m = 0.3$.
 All magnitudes are in the AB system.
 
 %%----------------------------------------------------------------------
-\section{Survey Overview}
-\label{sec:overview}
+\section{Imaging Data}
+\label{sec:imaging}
 %%----------------------------------------------------------------------
 
 We define the SGA-2025 sky coverage using two contiguous imaging regions
@@ -128,13 +127,9 @@ $\sim\!XX{,}000$~deg$^2$; decl.\ $\gtrsim +32\arcdeg$) with the
 Beijing--Arizona Sky Survey (BASS) and the Mayall $z$-band Legacy Survey
 (MzLS) in $g$, $r$, and $z$; it contains $\sim\!82{,}000$ galaxies.
 Together the two regions span $\sim\!30{,}000$~deg$^2$ and encompass
-$\sim\!486{,}000$ resolved galaxies.
-
-We obtain additional forced photometry for both regions in the
-mid-infrared ($W1$--$W4$, 3.4--22~$\mu$m) from unWISE
-\citep{Lang2014,Meisner2023} and in the ultraviolet (FUV, 1528~\AA{};
-NUV, 2271~\AA{}) from GALEX \citep{Martin2005}, where sky coverage
-exists.
+$\sim\!486{,}000$ resolved galaxies.  We describe the optical, mid-infrared,
+and ultraviolet imaging that make up this dataset, in turn, in the three
+subsections below.
 
 \begin{figure*}
   \centering
@@ -162,6 +157,72 @@ exists.
   \label{fig:sky-regions}
 \end{figure*}
 
+\subsection{Optical Imaging: DESI Legacy Surveys DR11}
+\label{sec:imaging:optical}
+
+The DESI Legacy Imaging Surveys \citep{dey19a} combine three public
+imaging programs -- the DECam Legacy Survey (DECaLS), the
+Beijing--Arizona Sky Survey (BASS), and the Mayall $z$-band Legacy
+Survey (MzLS) -- to cover the extragalactic sky in $g$, $r$, $i$, and
+$z$ over \texttt{dr11-south} and in $g$, $r$, and $z$ over
+\texttt{dr11-north}.  The Dark Energy Camera \citep[DECam;][]{flaugher15a},
+a 3~deg$^2$ mosaic imager with a pixel scale of $0\farcs262$ on the
+Blanco 4-m telescope at CTIO, provides the DECaLS imaging; by DR11, the
+\texttt{dr11-south} footprint aggregates not only DECaLS's own exposures
+but also public archival DECam data from the Dark Energy Survey, the
+DECam Local Volume Exploration Survey, and the DECam eROSITA Survey, all
+reprocessed with a common pipeline to achieve uniform depth and
+photometric calibration over the combined footprint.  We image
+\texttt{dr11-north} by combining $g$- and $r$-band imaging from BASS
+(the 90Prime imager on the Steward Observatory 2.3-m Bok telescope;
+\citealt{zou17a}) with $z$-band imaging from MzLS (the Mosaic-3 imager
+on the KPNO 4-m Mayall telescope; \citealt{silva16a}).
+
+We detect and model sources across all three imaging programs jointly
+with the Tractor forward-modeling pipeline (Section~\ref{sec:pipeline:tractor}),
+which poses source characterization as a $\chi^2$ minimization applied
+directly to the pixel data from every overlapping exposure -- extracting
+the full depth and resolution of the combined dataset without resorting
+to heuristic deblending -- using spatially varying point-spread-function
+models built with PSFEx and astrometric and photometric zero-points tied,
+CCD by CCD, to Gaia and Pan-STARRS1.  DR11 is the most complete and
+uniform Legacy Surveys release to date, covering $\sim\!31{,}000$~deg$^2$
+across both hemispheres to typical $5\sigma$ point-source depths of
+$g\approx24.7$, $r\approx24.2$, $i\approx23.8$, and $z\approx23.3$~mag.
+\todo{Confirm final DR11 depths and area against the published DR11
+  paper once available; the draft we consulted still marks these
+  values TBC.}  Notably, DR11 is also the first Legacy Surveys release
+to incorporate the SGA-2025 itself: our galaxy geometries are pre-loaded
+as fitting priors (\texttt{REF\_CAT} $=$ \texttt{`L4'}) so that Tractor
+treats each large galaxy as a single system rather than fragmenting its
+disk into spurious compact sources or absorbing its outer envelope into
+the sky background, a reciprocal dependence we revisit in
+Section~\ref{sec:pipeline}.
+
+\subsection{Mid-Infrared: unWISE}
+\label{sec:imaging:wise}
+
+We incorporate mid-infrared imaging from unWISE \citep{lang14a,meisner23a},
+full-depth coadds of the Wide-field Infrared Survey Explorer
+\citep[WISE;][]{wright10a} in bands $W1$ (3.4~$\mu$m), $W2$ (4.6~$\mu$m),
+$W3$ (12~$\mu$m), and $W4$ (22~$\mu$m).  The unWISE coadds we use
+incorporate every NEOWISE epoch through the end of the mission,
+providing the deepest possible $W1$/$W2$ coverage, while $W3$ and $W4$
+retain the original full-mission depth from the cryogenic phase of the
+WISE mission.  The unWISE coadds provide nearly uniform coverage across
+the sky at angular resolutions of $6\arcsec$--$12\arcsec$, set by the
+WISE point-spread function.
+
+\subsection{Ultraviolet: GALEX}
+\label{sec:imaging:galex}
+
+We obtain ultraviolet photometry from the Galaxy Evolution Explorer
+\citep[GALEX;][]{martin05a} GR6/GR7 data release in the FUV (1528~\AA{})
+and NUV (2271~\AA{}) bands.  Unlike the optical and mid-infrared imaging,
+GALEX coverage is non-uniform and does not extend over the full DR11
+footprint; approximately $X$\% of SGA-2025 galaxies have at least one
+GALEX band available.
+
 %%----------------------------------------------------------------------
 \section{Input Catalog and Sample Selection}
 \label{sec:input}
@@ -170,13 +231,115 @@ exists.
 \subsection{Parent Sample}
 \label{sec:input:parent}
 
-We construct the SGA-2025 parent sample from several source lists that
-together provide a nearly complete census of large, angularly resolved
-galaxies over the DR11 footprint.  The primary input is the HyperLeda
-database \citep{Makarov2014}, supplemented by the Local Volume Database
-\citep[LVD;][]{Leaman2024}, which contains a carefully vetted compilation
-of nearby galaxies within $\sim\!20$~Mpc.  We also include directly all
-galaxies from the SGA-2020 that lie within the DR11 footprint.
+We assemble the SGA-2025 parent sample through a sequence of discrete
+processing stages, each building on the output of the one before:
+merging every external catalog into a single, uncut candidate list;
+applying an angular-size threshold and visual-inspection-driven cleanup;
+matching candidates against the DR11 CCD footprint; and, finally,
+identifying galaxy groups and assigning each group a primary member.  In
+this section we describe the first of these stages, in which we
+construct the ``no-cuts'' candidate catalog from six external source
+lists (Table~\ref{tab:parent-external}); we describe the angular-size
+threshold and grouping stages that follow it in
+Sections~\ref{sec:input:size} and~\ref{sec:input:groups}.
+
+\subsubsection{External Catalogs}
+\label{sec:input:parent:external}
+
+Table~\ref{tab:parent-external} summarizes the six external catalogs we
+merge to build the no-cuts parent sample, together with each catalog's
+size prior to any cross-matching or cuts.  HyperLeda \citep{makarov14a}
+is our primary input, since it is the most complete all-sky compilation
+of galaxy positions and $D_{25}$ diameters available; we assembled it
+from three successive database queries, executed on separate dates,
+that together select confirmed galaxies, known multiple systems, and a
+small number of remaining ambiguous-type entries -- the third query
+was itself motivated by our discovery that nine SGA-2020 galaxies were
+absent from the first two exports, all sharing an object-type code that
+the initial query had inadvertently excluded.  We reconcile HyperLeda
+against NED-LVS \citep[NED Local Volume Sample;][]{cook23a}, an
+independently assembled NED cross-identification and redshift
+compilation, to identify a high-confidence overlap sample and to recover
+HyperLeda objects that NED resolves under a different name or position.
+We supplement these two all-sky compilations with the Local Volume
+Database \citep[LVD;][]{leaman24a}, a hand-vetted census of confirmed
+dwarf and Local Group galaxies within $\sim\!20$~Mpc that supplies the
+most reliable positions, distances, and structural parameters for this
+population; every SGA-2020 galaxy \citep{moustakas23a} within the DR11
+footprint, carried forward directly; a hand-curated ``custom'' catalog
+of one-off additions not resolved by any of the above, dominated by the
+SMUDGes ultra-diffuse and low-surface-brightness galaxy sample
+\citep{zaritsky23a}; and a supplemental list of large galaxies
+identified during earlier (DR9/DR10) SGA processing but never folded
+into a formal external catalog.
+
+\input{tables/table-parent-external.tex}
+
+\subsubsection{Cross-Matching and Merging}
+\label{sec:input:parent:merge}
+
+We merge these six catalogs through a sequence of cross-matching stages,
+each of which adds one catalog's remaining, not-yet-represented objects
+to a running parent table.  We first deduplicate and clean the NED
+cross-identification products for HyperLeda and NED-LVS individually --
+dropping exact and near-position duplicates and known non-galaxy NED
+object types (QSOs, stars, and \ion{H}{2} regions, among others) -- and
+then join them against one another wherever NED independently resolves
+both to the same object, which yields our highest-confidence
+cross-identifications.  We next add whichever HyperLeda and NED-LVS
+objects remain unmatched by this join, in turn, followed by any
+remaining HyperLeda objects that NED does not resolve at all but that
+have both a measured diameter and a plausible object classification.
+Onto this NED/HyperLeda backbone we then merge LVD (first by NED name,
+then by PGC number, then as new objects entirely), SGA-2020 (by PGC
+number), the custom catalog (matching SMUDGes and other one-off entries
+to existing rows within $5\arcsec$ before adding the remainder as new
+objects; SMUDGes half-light radii are converted to Holmberg diameters
+via a $1.2\times$ correction upstream of this step), and finally the
+DR9/DR10 supplement.  Because no two literature catalogs agree
+perfectly on object names, positions, or classifications, we hard-code
+dozens of individual corrections throughout this process -- resolving
+duplicate or conflicting NED cross-identifications, correcting
+mis-assigned PGC numbers, and excluding known erroneous matches -- and
+we guard every stage with internal consistency checks that raise an
+error if an object's identifier is unexpectedly duplicated.
+
+Once every catalog has been merged, we resolve each object's final
+adopted position, name, and redshift by source priority: LVD takes
+precedence for position and name, followed in order by NED, NED-LVS,
+SGA-2020, HyperLeda, and the DR9/DR10 supplement, while for redshift we
+instead prefer NED-LVS, then NED, then HyperLeda.  We apply an
+analogous priority ordering -- LVD and the custom catalog ahead of
+HyperLeda, NED-LVS, and the DR9/DR10 supplement -- to select each
+object's adopted diameter, axis ratio, position angle, and magnitude,
+while retaining separate, catalog-specific geometry columns (e.g.,
+diameters from HyperLeda and from SGA-2020 individually) for later
+comparison.
+
+\subsubsection{Geometry Standardization}
+\label{sec:input:parent:geometry}
+
+Each external catalog reports size, shape, and magnitude information in
+its own native system, so before the priority ordering described above
+can be applied we first reduce every catalog to a common set of columns
+-- diameter, axis ratio, position angle, and magnitude -- using
+whichever conversion its native columns require.  For HyperLeda, we
+adopt the $D_{25}$ diameter and axis ratio directly from its tabulated
+$\log D_{25}$ and $\log R_{25}$ and pair them with its $B$-band total
+magnitude.  For SGA-2020, we carry the diameter, axis ratio, position
+angle, and magnitude forward unchanged.  For LVD, we convert the
+tabulated half-light radius to a diameter via a $2.4\times$ correction
+and take the axis ratio as one minus the reported ellipticity, pairing
+both with the $V$-band apparent magnitude.  For the DR9/DR10
+supplement, we derive the diameter, axis ratio, and position angle from
+the Tractor S\'ersic shape parameters and adopt the $r$-band model flux
+as the magnitude.  Where a catalog supplies no direct size or shape
+measurement at all -- true of the raw NED cross-identification products
+underlying the HyperLeda/NED-LVS join in
+Section~\ref{sec:input:parent:merge} -- we instead merge together
+whichever of the RC3, Two Micron All Sky Survey (2MASS), Sloan Digital
+Sky Survey (SDSS), or ESO literature measurements NED provides, in that
+decreasing order of priority.
 
 \subsection{Angular Size Selection}
 \label{sec:input:size}
@@ -195,41 +358,6 @@ We merge spatially overlapping galaxies into groups; the
 most analyses.  We preserve groups containing satellite systems or
 companion galaxies of a brighter host as multi-member entries with
 \texttt{GROUP\_MULT} $> 1$.
-
-%%----------------------------------------------------------------------
-\section{Imaging Data}
-\label{sec:imaging}
-%%----------------------------------------------------------------------
-
-\subsection{Optical Imaging: DESI Legacy Surveys DR11}
-\label{sec:imaging:optical}
-
-The DESI Legacy Imaging Surveys \citep{Dey2019} cover the extragalactic
-sky in two regions.  The Dark Energy Camera \citep[DECam;][]{Flaugher2015}
-on the Blanco 4-m telescope at CTIO images the southern region in $g$,
-$r$, $i$, and $z$ bands.  BASS \citep{Zou2017} ($g$ and $r$ bands on the
-Steward Observatory 2.3-m Bok telescope) and MzLS \citep{Silva2016} ($z$
-band on the KPNO 4-m Mayall telescope) jointly cover the northern region.
-DR11 represents the final data release and offers significant improvements
-in depth, area, and photometric calibration relative to earlier releases.
-
-\subsection{Mid-Infrared: unWISE}
-\label{sec:imaging:wise}
-
-We incorporate mid-infrared imaging from unWISE \citep{Lang2014,Meisner2023},
-full-depth coadds of the Wide-field Infrared Survey Explorer
-\citep[WISE;][]{wright10a} in bands $W1$ (3.4~$\mu$m), $W2$ (4.6~$\mu$m),
-$W3$ (12~$\mu$m), and $W4$ (22~$\mu$m).  The unWISE coadds provide
-nearly uniform coverage across the sky at angular resolutions of
-$6\arcsec$--$12\arcsec$.
-
-\subsection{Ultraviolet: GALEX}
-\label{sec:imaging:galex}
-
-We obtain ultraviolet photometry from the Galaxy Evolution Explorer
-\citep[GALEX;][]{Martin2005} GR6/GR7 data release in the FUV (1528~\AA{})
-and NUV (2271~\AA{}) bands.  GALEX coverage is non-uniform; approximately
-$X$\% of SGA-2025 galaxies have at least one GALEX band.
 
 %%----------------------------------------------------------------------
 \section{Photometric Pipeline}
@@ -469,7 +597,7 @@ curve-of-growth fit.
 We compile spectroscopic redshifts from three sources in order of
 decreasing priority.
 
-\textit{LVD.}  We adopt LVD \citep{Leaman2024} redshifts first, as the
+\textit{LVD.}  We adopt LVD \citep{leaman24a} redshifts first, as the
 LVD contains carefully curated distances and velocities for galaxies within
 $\sim\!20$~Mpc.
 
@@ -604,7 +732,7 @@ The principal data products we deliver are:
     and NED.
 \end{enumerate}
 
-The SGA-2025 supersedes the SGA-2020 \citep{Moustakas2023} and increases
+The SGA-2025 supersedes the SGA-2020 \citep{moustakas23a} and increases
 the galaxy count by a factor of $\sim\!X$, extending coverage to bluer and
 redder wavelengths.  Future work will incorporate improved photometric
 redshifts, stellar mass estimates, and star-formation rate indicators.
@@ -612,7 +740,8 @@ redshifts, stellar mass estimates, and star-formation rate indicators.
 %%----------------------------------------------------------------------
 \begin{acknowledgments}
 
-\textbf{Tom Jarrett} Dmitry, David Cooke and the NED team. Rose.
+\textbf{Tom Jarrett} Dmitry, David Cooke and the NED
+team. Rose. Trishotfury.
 
 J.M.\ gratefully acknowledges support from XXX.
 

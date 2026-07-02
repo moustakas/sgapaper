@@ -1,0 +1,15 @@
+\begin{deluxetable*}{llrl}
+\tablecaption{External Catalogs Merged into the SGA-2025 ``No-Cuts'' Parent Sample
+  \label{tab:parent-external}}
+\tablewidth{\textwidth}
+\tablehead{\colhead{Catalog} & \colhead{Reference} & \colhead{$N$} & \colhead{Role}}
+\startdata
+HyperLeda            & \citet{makarov14a} & 4,855,956 & \parbox{3.0in}{Primary all-sky compilation of galaxy positions, diameters ($D_{25}$), axis ratios, position angles, and $B$-band magnitudes; combines separate ``galaxies,'' ``multiples,'' and ambiguous-type exports.} \\
+NED-LVS               & \citet{cook23a}     & 1,872,475 & \parbox{3.0in}{NASA/IPAC Extragalactic Database Local Volume Sample; an independent cross-identification and redshift compilation against which we reconcile HyperLeda.} \\
+LVD                    & \citet{leaman24a}   & 704       & \parbox{3.0in}{Local Volume Database; a hand-vetted compilation of confirmed dwarf and Local Group galaxies within $\sim\!20$~Mpc, with the most reliable positions, distances, and structural parameters for this population.} \\
+SGA-2020               & \citet{moustakas23a}& 383,620   & \parbox{3.0in}{Prior SGA release; every SGA-2020 galaxy within the DR11 footprint is carried forward directly.} \\
+Custom                 & \citet{zaritsky23a} & 2,927     & \parbox{3.0in}{Hand-curated one-off additions not resolved by any of the above catalogs, including the SMUDGes ultra-diffuse/low-surface-brightness galaxy sample.} \\
+DR9/DR10 supplement    & \nodata             & 44,207    & \parbox{3.0in}{Large galaxies identified during earlier (DR9/DR10) SGA processing but not yet folded into a formal external catalog.} \\
+\enddata
+\tablecomments{$N$ is the number of rows in each cached external-catalog file prior to any cross-matching, deduplication, or angular-size cut; the same physical object is frequently present in more than one catalog (Section~\ref{sec:input:parent:merge}).}
+\end{deluxetable*}
