@@ -1,0 +1,15 @@
+\begin{deluxetable*}{llrl}
+\tablecaption{Hand-Curated Resources Applied During SSL Classification and Photometric Curation
+  \label{tab:parent-archive}}
+\tablewidth{\textwidth}
+\tablehead{\colhead{Resource} & \colhead{Type} & \colhead{$N$} & \colhead{Role}}
+\startdata
+SSL veto lists                        & files (2) & 222 & \parbox{3.0in}{Objects manually exempted from the automated SSL-based classification veto (Section~\ref{sec:parent:archive}), on top of the properties- and VI-actions-file exemptions applied automatically.} \\
+\texttt{SGA2025-resolved.csv}         & file      & 49  & \parbox{3.0in}{Objects flagged \texttt{RESOLVED}: too large or diffuse for automated ellipse-fitting, and therefore also forced \texttt{FIXGEO}.} \\
+\texttt{SGA2025-fixgeo.csv}           & file      & 117 & \parbox{3.0in}{Objects for which we hold the elliptical geometry fixed during ellipse-fitting (Section~\ref{sec:pipeline:ellipse:mask}) rather than allowing moment-based refinement.} \\
+\texttt{SGA2025-lessmasking.csv}      & file      & 23  & \parbox{3.0in}{Objects for which we relax the default masking of neighboring sources during ellipse-fitting.} \\
+\texttt{SGA2025-moremasking.csv}      & file      & 15  & \parbox{3.0in}{Objects for which we apply more aggressive masking of neighboring sources during ellipse-fitting.} \\
+\texttt{SGA2025-forcepsf.csv}         & file      & 9   & \parbox{3.0in}{Objects for which newly detected neighboring sources are forced to a point-source (PSF) Tractor model.} \\
+\enddata
+\tablecomments{$N$ counts rows (for CSV files) or object entries (for the SSL veto lists) as of the current processing version; see Section~\ref{sec:parent:archive}. Every listed action column (\texttt{IN\_RESOLVED}, \texttt{IN\_FIXGEO}, \texttt{IN\_LESSMASKING}, \texttt{IN\_MOREMASKING}, \texttt{IN\_FORCEPSF}) is carried forward into the final parent catalog and consulted directly by the ellipse-fitting pipeline (Section~\ref{sec:pipeline:ellipse}).}
+\end{deluxetable*}

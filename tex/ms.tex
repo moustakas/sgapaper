@@ -272,7 +272,7 @@ into a formal external catalog.
 
 \input{tables/table-parent-external.tex}
 
-\subsection{Cross-Matching and Merging}
+\subsubsection{Cross-Matching and Merging}
 \label{sec:input:parent:merge}
 
 We merge these six catalogs through a sequence of cross-matching stages,
@@ -313,7 +313,7 @@ while retaining separate, catalog-specific geometry columns (e.g.,
 diameters from HyperLeda and from SGA-2020 individually) for later
 comparison.
 
-\subsection{Geometry Standardization}
+\subsubsection{Geometry Standardization}
 \label{sec:input:parent:geometry}
 
 Each external catalog reports size, shape, and magnitude information in
@@ -382,6 +382,53 @@ dropped.  \todo{Report the net nocuts-to-vicuts object count for the
   $\sim\!5.10$ million to $\sim\!4.79$ million objects.}
 
 \input{tables/table-parent-vicuts.tex}
+
+\subsection{SSL Classification and Photometric Curation}
+\label{sec:parent:archive}
+
+We apply a third round of automated and semi-automated curation to the
+VI-cuts catalog, combining a machine-learning classification veto with
+additional close-pair resolution, Local Group and Galactic-contaminant
+flagging, and a photometry-based cut on the smallest candidates.  We
+first remove every object flagged by a self-supervised-learning (SSL)
+classifier trained to distinguish genuine galaxies from spurious or
+non-galaxy sources, with three categories of exception: objects present
+in a hand-curated veto list (Table~\ref{tab:parent-archive}), objects
+already corrected by hand in the VI-properties file
+(Section~\ref{sec:parent:vicuts}), and objects whose NED coordinates we
+have already replaced with HyperLeda coordinates via the VI-actions
+file; we treat any exception-list object absent from the classifier's
+output as a consistency error, since these lists are meant to override
+the classifier rather than introduce new objects.  \todo{The SSL
+  classification step itself was run by a collaborator using an earlier,
+  since-modified version of the ssl-legacysurvey pipeline (see
+  \texttt{SGA/CLAUDE.md}); pin down the exact commit/methodology used
+  and summarize it here, including how the training set was constructed
+  and what performance we quote for it.}  We then resolve a second round
+of close ($<5\arcsec$) pairs, breaking ties in favor of the lower-PGC
+(and hence typically better-known) name; flag objects falling within the
+Large or Small Magellanic Cloud's footprint or within a Galactic
+globular cluster or planetary nebula's footprint, both of which we treat
+separately from ordinary extragalactic sources; and remove small
+candidates ($D_{\rm init} < 20\arcsec$) that fail an automated
+photometry check, except those already protected by the custom,
+properties, or VI-actions overrides, or those within a low-redshift
+($z < 0.1$) projected radius of the Coma or Virgo cluster, whose
+satellite populations we retain for dedicated visual inspection.
+Finally, we add several boolean columns from additional hand-curated
+action files (Table~\ref{tab:parent-archive}) -- flagging objects with
+fixed ellipse-fitting geometry, relaxed or strengthened neighbor
+masking, and Tractor sources forced to a point-source model -- and, for
+every object, the projected distance to and masking radius of the
+nearest bright Gaia star.  As in the previous stage, we verify after
+every major removal step that no LVD dwarf has been inadvertently
+dropped.  \todo{Report the net vicuts-to-archive object count for the
+  final (v1.0) processing version once available; in the current
+  development version this stage reduces the candidate list from
+  $\sim\!4.79$ million to $\sim\!1.19$ million objects, the large drop
+  being dominated by the $D_{\rm init} < 20\arcsec$ photometric cut.}
+
+\input{tables/table-parent-archive.tex}
 
 %%----------------------------------------------------------------------
 \section{Input Catalog and Sample Selection}
