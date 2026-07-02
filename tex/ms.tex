@@ -306,6 +306,32 @@ We store the adopted redshift (\texttt{Z}), its inverse variance
 Galaxies lacking a spectroscopic redshift have \texttt{Z\_IVAR} $= 0$;
 \texttt{Z} $= 0$ alone is insufficient to identify a missing redshift.
 
+We quantify the resulting redshift completeness in
+Figure~\ref{fig:redshift-completeness}, where we show, as a function of
+isophotal diameter $D(26)$, the fraction of all group members (not just
+group primaries) with an adopted spectroscopic redshift, broken down by
+source catalog.  We find that completeness rises steeply with increasing
+angular size, as expected given the target selection of the legacy
+spectroscopic surveys underlying NED and the DESI Bright Galaxy Survey;
+at the largest diameters the catalog is nearly complete, while toward the
+angular-size limit of the sample the NED and DESI contributions
+increasingly dominate the incremental gain over LVD, whose reach is
+confined to the Local Volume.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{figures/redshift-completeness.png}
+  \caption{Fraction of SGA-2025 galaxies (all group members, not just
+    group primaries) with an adopted spectroscopic redshift as a function
+    of isophotal diameter $D(26)$, broken down by source catalog: LVD
+    (green), DESI DR1 (blue), and NED (orange).  The black curve shows
+    the total completeness fraction, \texttt{Z\_IVAR} $> 0$, summed over
+    all three sources.  Completeness increases toward larger angular
+    size, where legacy spectroscopic surveys and NED cross-identifications
+    are most complete.}
+  \label{fig:redshift-completeness}
+\end{figure}
+
 %%----------------------------------------------------------------------
 \section{The SGA-2025 Catalog}
 \label{sec:catalog}
@@ -345,6 +371,35 @@ code --- which we use to generate the figures in this paper --- at Zenodo
 \citep{Moustakas2025code} and mirror it on GitHub at
 \url{https://github.com/moustakas/sgapaper}.
 
+\subsection{Validation}
+\label{sec:catalog:validation}
+
+We validate our ellipse-fit geometry against the WISE Extended Source
+Catalog hundred sample \citep[WXSC-100;][]{Jarrett2019}, an independent,
+near-infrared reference sample of the 100 largest, brightest galaxies on
+the sky.  We cross-match SGA-2025 against WXSC-100 by position and
+compare, in Figure~\ref{fig:wxsc100}, our astrometry, isophotal diameters,
+position angles, and ellipticities against the corresponding WXSC-100
+measurements, color-coded by Hubble type.  We find good overall agreement
+across all four quantities, with the residual scatter consistent with the
+combination of measurement uncertainty and the intrinsically different
+isophotal definitions ($\mu_{26}$ optical versus $W1$-band) underlying the
+two catalogs.
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=\textwidth]{figures/sga2025-vs-wxsc100.png}
+  \caption{Comparison of SGA-2025 geometry against the WXSC-100 sample
+    \citep{Jarrett2019}, color-coded by Hubble type.
+    \textit{(a)} Astrometric offsets, $\Delta$R.A.\ and $\Delta$decl.
+    \textit{(b)} Isophotal diameter $D(26)$ versus twice the WXSC-100
+    $W1$-band radius, $2\,R_{W1}$.
+    \textit{(c)} Position angle $\phi$.
+    \textit{(d)} Ellipticity $\epsilon = 1-b/a$.
+    In each panel the solid black line marks one-to-one agreement.}
+  \label{fig:wxsc100}
+\end{figure*}
+
 %%----------------------------------------------------------------------
 \section{Summary}
 \label{sec:summary}
@@ -373,6 +428,8 @@ redshifts, stellar mass estimates, and star-formation rate indicators.
 
 %%----------------------------------------------------------------------
 \begin{acknowledgments}
+
+\textbf{Tom Jarrett} Dmitry, David Cooke and the NED team. Rose.
 
 J.M.\ gratefully acknowledges support from XXX.
 
