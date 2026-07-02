@@ -9,6 +9,10 @@
 \newcommand{\JM}[1]{{\color{blue}#1}}
 \newcommand{\todo}[1]{{\color{red}\textbf{TODO:} #1}}
 
+% wrapped-text deluxetable column (deluxetable's preamble scanner chokes
+% on a bare p{...} column, so alias it to a single letter)
+\newcolumntype{W}{>{\raggedright\arraybackslash}p{3.5in}}
+
 \graphicspath{{./}{figures/}}
 
 \submitjournal{\aj}

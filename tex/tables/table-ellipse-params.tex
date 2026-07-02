@@ -1,17 +1,17 @@
-\begin{deluxetable*}{l c p{3.5in}}
-\tablewidth{\textwidth}
+\begin{deluxetable*}{lcl}
 \tablecaption{Free Parameters of the Ellipse-Fitting Pipeline
   \label{tab:ellipsefit-params}}
+\tablewidth{\textwidth}
 \tablehead{\colhead{Parameter} & \colhead{Default} & \colhead{Description}}
 \startdata
-$n_{\rm geo}$               & 2                  & Number of moment-based geometry-refinement iterations per object \\
-$F_{\rm major}^{\rm geo}$   & 0.01               & Minimum flux ratio (relative to the target) for a neighbor to be classified ``major'' during geometry refinement \\
-$F_{\rm major}^{\rm final}$ & 0.1                & As above, applied when building the final mask after the geometry has converged \\
-$f_{\rm ref}$               & 2.0                & Factor by which another SGA source's semi-major axis is extended when protecting its flux from masking \\
-$\alpha_{\rm rad}$          & 0.7                & Exponent of the radial weight applied to the flux in the second-moment calculation \\
-$f_{\rm sat}$               & 0.3                & Semi-major-axis ratio (relative to the largest overlapping neighbor) below which an object is flagged a satellite \\
-$\Delta_{\rm max}$          & 3\farcs5           & Maximum allowed shift between the initial and moment-refined center before flagging an unreliable solution \\
-$\mu_{\rm iso}$             & 22, 23, 24, 25, 26 & Surface-brightness thresholds (mag~arcsec$^{-2}$) for isophotal-radius measurements \\
-$N_{\rm MC}$                & 50                 & Number of Monte Carlo realizations for isophotal-radius uncertainties \\
+$n_{\rm geo}$               & 2                  & \parbox{4.0in}{Number of moment-based geometry-refinement iterations per object.} \\
+$F_{\rm major}^{\rm geo}$   & 0.01               & \parbox{4.0in}{Minimum flux ratio (relative to the target) for a neighbor to be classified ``major'' during geometry refinement.} \\
+$F_{\rm major}^{\rm final}$ & 0.1                & \parbox{4.0in}{As above, applied when building the final mask after the geometry has converged.} \\
+$f_{\rm ref}$               & 2.0                & \parbox{4.0in}{Factor by which another SGA source's semi-major axis is extended when protecting its flux from masking.} \\
+$\alpha_{\rm rad}$          & 0.7                & \parbox{4.0in}{Exponent of the radial weight applied to the flux in the second-moment calculation.} \\
+$f_{\rm sat}$               & 0.3                & \parbox{4.0in}{Semi-major-axis ratio (relative to the largest overlapping neighbor) below which an object is flagged a satellite.} \\
+$\Delta_{\rm max}$          & 3\farcs5           & \parbox{4.0in}{Maximum allowed shift between the initial and moment-refined center before flagging an unreliable solution.} \\
+$\mu_{\rm iso}$             & 22, 23, 24, 25, 26 & \parbox{4.0in}{Surface-brightness thresholds (mag~arcsec$^{-2}$) for isophotal-radius measurements.} \\
+$N_{\rm MC}$                & 50                 & \parbox{4.0in}{Number of Monte Carlo realizations for isophotal-radius uncertainties.} \\
 \enddata
 \end{deluxetable*}

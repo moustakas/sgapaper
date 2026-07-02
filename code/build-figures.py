@@ -20,9 +20,9 @@ import numpy as np
 import numpy.ma as ma
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from astropy.table import vstack
 
 from SGA.SGA import read_sga_sample
+from SGA.coadds import REGIONBITS
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -31,29 +31,22 @@ from SGA.SGA import read_sga_sample
 REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIG_DIR  = os.path.join(REPO_DIR, 'tex', 'figures')
 
-REGIONS  = ['dr11-south', 'dr11-north']
 
+def read_catalogs(primary_only=False):
+    """Read the merged (region-combined) SGA2025 catalog.
 
-def read_catalogs(regions=None):
-    """Read and concatenate SGA2025 group-primary catalogs for all regions.
-
-    Adds a REGION_LABEL string column to distinguish north from south.
+    With primary_only=True returns only GROUP_PRIMARY rows.  With
+    primary_only=False (default) returns the full merged catalog
+    including group members. Region membership is available via the
+    REGION bitmask column (see REGIONBITS).
 
     Returns
     -------
     cat : astropy.table.Table
-        All GROUP_PRIMARY rows from the requested regions.
+
     """
-    if regions is None:
-        regions = REGIONS
-
-    parts = []
-    for region in regions:
-        sample, _ = read_sga_sample(region=region, beta=False, verbose=True)
-        sample['REGION_LABEL'] = region
-        parts.append(sample)
-
-    return vstack(parts)
+    sample, fullsample = read_sga_sample(beta=False, verbose=True)
+    return sample if primary_only else fullsample
 
 
 # ---------------------------------------------------------------------------
@@ -297,7 +290,7 @@ def fig_sample(cat, png='sga2025-sample.png'):
         ('dr11-south', 'DR11-South', colors[0]),
         ('dr11-north', 'DR11-North', colors[1]),
     ]:
-        sub = cat[cat['REGION_LABEL'] == region]
+        sub = cat[(cat['REGION'] & REGIONBITS[region]) != 0]
         good = sub['D26'] > 0
         ax.hist(sub['D26'][good], bins=bins, histtype='step',
                 color=color, lw=1.5, label=f'{label} ({good.sum():,})')
@@ -369,7 +362,7 @@ def fig_redshifts(cat, png='sga2025-redshifts.png'):
             continue
         ra = cat['RA'][mask].data.copy()
         ra[ra > 300] -= 360
-        ax.scatter(ra, cat['DEC'][mask], s=0.5, c=color,
+        ax.scatter(ra, cat['DEC'][mask], s=0.5, color=color,
                    rasterized=True, label=f'{src} ({mask.sum():,})')
     ax.set_xlabel('Right Ascension (deg)')
     ax.set_ylabel('Declination (deg)')
@@ -395,45 +388,52 @@ def fig_redshifts(cat, png='sga2025-redshifts.png'):
     plt.close(fig)
 
 
-def fig_desi_completeness(cat, png='sga2025-desi-completeness.png'):
-    """DESI DR1 spectroscopic completeness fraction as a function of D26."""
+def fig_redshift_completeness(cat, png='redshift-completeness.png'):
+    """Spectroscopic redshift completeness vs. D26, broken down by source.
+
+    cat should be the full (non-primary-only) merged catalog so that group
+    members are counted.  Curves show the fraction of all galaxies in each
+    D26 bin whose adopted redshift (Z_REF) comes from LVD, DESI, or NED,
+    plus the total fraction with any redshift (Z_IVAR > 0).
+    """
     _, colors = plot_style()
 
-    bins = np.logspace(np.log10(0.1), np.log10(20), 40)
-    bin_cen = 0.5 * (bins[:-1] + bins[1:])
+    sub  = cat[cat['D26'] > 0]
+    zref = np.array([r.strip() for r in sub['Z_REF']])
+    hasz = np.asarray(sub['Z_IVAR']) > 0
+
+    bins  = np.logspace(np.log10(0.3), np.log10(30), 50)
+    n_all, _ = np.histogram(sub['D26'], bins=bins)
+
+    def _frac(mask):
+        n, _ = np.histogram(np.asarray(sub['D26'])[mask], bins=bins)
+        return np.where(n_all > 0, n / n_all, np.nan)
+
+    curves = [
+        (hasz & (zref == 'LVD'),  'LVD',   colors[2], 1.5),
+        (hasz & (zref == 'DESI'), 'DESI',  colors[0], 1.5),
+        (hasz & (zref == 'NED'),  'NED',   colors[1], 1.5),
+        (hasz,                    'Total', 'k',        2.5),
+    ]
 
     fig, ax = plt.subplots(figsize=(7, 5))
-
-    for region, label, color in [
-        ('dr11-south', 'DR11-South', colors[0]),
-        ('dr11-north', 'DR11-North', colors[1]),
-        (None,         'Combined',   colors[3]),
-    ]:
-        sub = cat if region is None else cat[cat['REGION_LABEL'] == region]
-        good = sub['D26'] > 0
-        sub  = sub[good]
-
-        has_desi = sub['Z_IVAR_DESI'] > 0
-        n_all, _  = np.histogram(sub['D26'], bins=bins)
-        n_desi, _ = np.histogram(sub['D26'][has_desi], bins=bins)
-
-        frac = np.where(n_all > 0, n_desi / n_all, np.nan)
-        ls   = '-' if region is None else '--'
-        ax.plot(bin_cen, frac, color=color, lw=1.5, ls=ls,
-                label=f'{label}  ({has_desi.sum():,} / {good.sum():,})')
+    for mask, label, color, lw in curves:
+        ax.stairs(_frac(mask), bins, color=color, lw=lw, baseline=None,
+                  label=f'{label}  ({mask.sum():,})')
 
     ax.set_xscale('log')
-    ax.set_xlabel(r'$D_{26}$ (arcmin)')
-    ax.set_ylabel('DESI DR1 redshift completeness')
-    ax.set_ylim(0, 1.05)
+    ax.set_xlabel(r'$D(26)$ (arcmin)')
+    ax.set_ylabel('Fraction with spectroscopic redshift')
+    ax.set_ylim(0, 1.05) # 1.2)
+    ax.margins(x=0)
     ax.axhline(1.0, color='k', lw=0.5, ls=':')
-    ax.legend(fontsize=9)
+    ax.legend(fontsize=10)#, loc='upper left', ncol=2)
     ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
 
     fig.tight_layout()
     outfile = os.path.join(FIG_DIR, png)
     fig.savefig(outfile, dpi=150, bbox_inches='tight')
-    print(f'Wrote {outfile}')
+    print(f'  Wrote {outfile}')
     plt.close(fig)
 
 
@@ -511,6 +511,8 @@ def fig_sga_vs_wxsc100(cat, png='sga2025-vs-wxsc100.png', match_radius=10.0):
     # --- Table 3: morphological types (IPAC format) ---
     tab3 = asc.read(os.path.join(REPO_DIR, 'data', 'wxsc100-table-3.tbl'),
                     format='ipac', fill_values=[('null', '0')])
+    tab3['Morph'][tab3['Gname'] == 'NGC4217'] = 'Sb'
+
     morph = np.array([str(m).strip() if str(m).strip() not in ('', '--') else 'S?'
                       for m in tab3['Morph']])
 
@@ -539,7 +541,7 @@ def fig_sga_vs_wxsc100(cat, png='sga2025-vs-wxsc100.png', match_radius=10.0):
         'Sbc': 4, 'Sb-c': 4, 'dSbc': 4, 'dSb-c': 4,
         'Sc': 5, 'SABc': 5, 'dSc': 5,
         'Scd': 6, 'SBcd': 6, 'Sc-d': 6, 'dScd': 6, 'dSc-d': 6,
-        'Sd': 7, 'dSd': 7,
+        'Sd': 7, 'SAd': 7, 'dSd': 7,
         'Sdm': 8, 'Sd-m': 8, 'S?': 8, 'Sc-Irr': 8,
         'Sm': 9, 'SBm': 9, 'SBm-pec': 9,
         'Irr': 9, 'Ir': 9, 'IB': 9, 'dIr': 9, 'dIrr': 9,
@@ -674,7 +676,7 @@ def main():
     parser.add_argument('--sample',           action='store_true')
     parser.add_argument('--size-mag',         action='store_true')
     parser.add_argument('--redshifts',        action='store_true')
-    parser.add_argument('--desi-completeness', action='store_true')
+    parser.add_argument('--redshift-completeness', action='store_true')
     parser.add_argument('--sga2025-vs-sga2020', action='store_true')
     parser.add_argument('--wxsc100',            action='store_true')
     parser.add_argument('--all',              action='store_true',
@@ -685,21 +687,18 @@ def main():
 
     run_all = args.all or not any([
         args.sky, args.sample, args.size_mag, args.redshifts,
-        args.desi_completeness, args.sga2025_vs_sga2020, args.wxsc100,
+        args.redshift_completeness, args.sga2025_vs_sga2020, args.wxsc100,
     ])
 
     cat = read_catalogs()
     print(f'Loaded {len(cat):,} group primaries total')
 
     if args.sky or run_all:
-        south = cat[cat['REGION_LABEL'] == 'dr11-south']
-        north = cat[cat['REGION_LABEL'] == 'dr11-north']
-        # deduplicate combined by SGAID (any object appearing in both regions is counted once)
-        _, idx = np.unique(np.asarray(cat['SGAID']), return_index=True)
-        combined = cat[np.sort(idx)]
-        fig_sky(south,    title='SGA-2025 DR11 South', png='sga2025-sky-south.png')
-        fig_sky(north,    title='SGA-2025 DR11 North', png='sga2025-sky-north.png')
-        fig_sky(combined, title='SGA-2025',            png='sga2025-sky.png')
+        south = cat[(cat['REGION'] & REGIONBITS['dr11-south']) != 0]
+        north = cat[(cat['REGION'] & REGIONBITS['dr11-north']) != 0]
+        fig_sky(south, title='SGA-2025 DR11 South', png='sga2025-sky-south.png')
+        fig_sky(north, title='SGA-2025 DR11 North', png='sga2025-sky-north.png')
+        fig_sky(cat,   title='SGA-2025',            png='sga2025-sky.png')
 
     if args.sample or run_all:
         fig_sample(cat)
@@ -710,8 +709,10 @@ def main():
     if args.redshifts or run_all:
         fig_redshifts(cat)
 
-    if args.desi_completeness or run_all:
-        fig_desi_completeness(cat)
+    if args.redshift_completeness or run_all:
+        fullcat = read_catalogs(primary_only=False)
+        print(f'Loaded {len(fullcat):,} total objects (all group members)')
+        fig_redshift_completeness(fullcat)
 
     if args.sga2025_vs_sga2020 or run_all:
         fig_sga2025_vs_sga2020(cat)
