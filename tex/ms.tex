@@ -378,15 +378,88 @@ describe next in Section~\ref{sec:pipeline:cog}.
 \subsection{Curve-of-Growth Photometry}
 \label{sec:pipeline:cog}
 
-We measure total fluxes via a curve-of-growth (COG) technique applied
-within elliptical apertures defined by the fitted geometry.  We grow the
-aperture radius until the integrated flux converges to better than $X$\%
-over $X$ consecutive aperture steps.  We report total magnitudes
-(\texttt{COG\_MTOT\_$\langle$band$\rangle$}) in the AB system for all ten
-bands: $G$, $R$, $I$, $Z$ (optical), $W1$--$W4$ (WISE), and FUV, NUV
-(GALEX).  The half-light semi-major axis
-(\texttt{SMA50\_$\langle$band$\rangle$}) is the aperture enclosing half the
-total COG flux.
+In addition to the discrete isophotal radii we derive in
+Section~\ref{sec:pipeline:ellipse:fit}, we characterize each object's
+full surface-brightness profile with two complementary flux
+measurements, computed simultaneously with the isophotal fit and from
+the identical per-annulus aperture photometry: a set of fixed reference
+apertures, and a parametric fit to the curve of growth that yields an
+asymptotic total magnitude and a half-light radius.  We measure both for
+every object, band, and imaging dataset (optical, unWISE, and GALEX), so
+that \texttt{COG\_MTOT\_$\langle$band$\rangle$} and
+\texttt{SMA50\_$\langle$band$\rangle$} are defined consistently across
+all ten photometric bands.
+
+For each band, we first measure elliptical-aperture photometry at a
+small set of fixed reference apertures, scaled to the object's
+moment-refined semi-major axis by factors of 0.5, 1, 1.25, 1.5, 2, and
+3; we record the resulting flux, flux uncertainty, and masked-pixel
+fraction at each aperture as \texttt{FLUX\_AP$\langle$NN$\rangle$\_$\langle$band$\rangle$},
+\texttt{FLUX\_ERR\_AP$\langle$NN$\rangle$\_$\langle$band$\rangle$}, and
+\texttt{FMASKED\_AP$\langle$NN$\rangle$\_$\langle$band$\rangle$}, providing a
+model-independent photometric anchor at a common physical scale across
+the sample, independent of the parametric fit we describe next.
+
+We complement these fixed apertures with a parametric fit to the full
+curve of growth.  Using the same per-annulus aperture-flux measurements
+underlying the isophotal fit (Section~\ref{sec:pipeline:ellipse:fit}),
+we model the enclosed-flux profile, expressed as an AB magnitude $m(r)$
+as a function of semi-major axis $r$, as
+\begin{equation}
+  m(r) = m_{\rm tot} + \Delta m \left[1 - \exp\!\big(-\alpha_1
+    (r/r_0)^{-\alpha_2}\big)\right],
+  \label{eq:cog}
+\end{equation}
+where $m_{\rm tot}$ is the asymptotic total magnitude as $r \to \infty$,
+$\Delta m$ is the (positive) amplitude by which the innermost-aperture
+magnitude exceeds $m_{\rm tot}$, $\alpha_1$ and $\alpha_2$ jointly set
+the curve's normalization and steepness, and we fix the scale radius
+$r_0$ to the object's moment-refined semi-major axis.  We fit
+Equation~\ref{eq:cog} in terms of $(m_{\rm tot}, \Delta m, \ln\alpha_1,
+\ln\alpha_2)$ rather than $(m_{\rm tot}, \Delta m, \alpha_1, \alpha_2)$
+directly -- since $\alpha_1$ and $\alpha_2$ are defined only for
+positive values, optimizing their logarithms instead lets the
+nonlinear solver explore the full real line without encountering a
+positivity boundary, which we find stabilizes convergence considerably
+across the wide range of profile shapes spanned by the sample.  We
+solve for these four parameters via a robust (soft-$L_1$-loss)
+nonlinear least-squares minimization with an analytic Jacobian,
+weighting each aperture by its flux-derived magnitude uncertainty --
+with a 0.02~mag floor added in quadrature so that the innermost,
+highest signal-to-noise apertures cannot dominate the fit -- and we
+estimate parameter uncertainties from the fit's covariance matrix,
+scaled by the reduced chi-square.  We report the asymptotic total
+magnitude, $m_{\rm tot}$, as \texttt{COG\_MTOT\_$\langle$band$\rangle$}
+in the AB system for all ten photometric bands: $G$, $R$, $I$, $Z$
+(optical), $W1$--$W4$ (unWISE), and FUV, NUV (GALEX), together with its
+formal uncertainty.
+
+From the same fitted parameters we analytically invert
+Equation~\ref{eq:cog} for the semi-major axis $r_f$ enclosing an
+arbitrary fraction $f$ of the total flux -- i.e., where $m(r_f) -
+m_{\rm tot} = -2.5\log_{10} f \equiv \delta_f$ -- to obtain
+\begin{equation}
+  r_f = r_0 \left[\frac{\alpha_1}{-\ln\!\left(1 - \delta_f/\Delta
+      m\right)}\right]^{1/\alpha_2},
+  \label{eq:rfrac}
+\end{equation}
+and we propagate the fit's covariance matrix through
+Equation~\ref{eq:rfrac} via its analytic partial derivatives with
+respect to $(\Delta m, \ln\alpha_1, \ln\alpha_2)$ to obtain the
+corresponding $1\sigma$ uncertainty on $r_f$.  We evaluate
+Equation~\ref{eq:rfrac} at $f = 0.5$ ($\delta_{0.5} \approx
+0.753$~mag) to obtain the half-light radius, which we report as
+\texttt{SMA50\_$\langle$band$\rangle$} together with its propagated
+uncertainty; because $r_{0.5}$ follows directly from $(\Delta
+m,\alpha_1,\alpha_2)$ rather than from an independent measurement, its
+uncertainty reflects the full parameter covariance of the
+curve-of-growth fit.
+
+\todo{Figure: illustrate the curve-of-growth approach for one
+  representative galaxy -- the aperture-flux (or surface-brightness)
+  profile with the fitted model (Equation~\ref{eq:cog}) overlaid, the
+  fixed reference apertures, the asymptotic $m_{\rm tot}$, and the
+  resulting half-light radius.}
 
 %%----------------------------------------------------------------------
 \section{Spectroscopic Redshifts}
