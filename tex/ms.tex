@@ -430,6 +430,72 @@ dropped.  \todo{Report the net vicuts-to-archive object count for the
 
 \input{tables/table-parent-archive.tex}
 
+\subsection{Assembling the Final Parent Sample}
+\label{sec:parent:final}
+
+We assemble the final parent sample not in a single pass, but across a
+sequence of thirteen numbered releases (v0.30 through v1.6,
+Table~\ref{tab:parent-overlays}), each of which refines the previous
+release's \emph{fitted ellipse geometry} rather than rebuilding from the
+archive-stage catalog described above.  Earlier releases, through
+v0.22, were instead built directly from the archive catalog in a single
+pass -- merging the per-region archive tables, appending hand-added
+sources, applying visual-inspection corrections in place, and running
+group-finding in one shot.  Beginning with v0.30 we adopted an
+``overlay'' model in which every subsequent release is defined entirely
+by a small, versioned set of hand-curated CSV files -- \texttt{adds.csv},
+\texttt{drops.csv}, \texttt{updates.csv}, and \texttt{flags.csv} -- so
+that the precise set of objects added, removed, corrected, or re-flagged
+at each stage of visual inspection is preserved as a permanent,
+inspectable record rather than folded irreversibly into the catalog.
+
+For each release we first read and, where necessary, correct that
+release's base ellipse catalogs across both imaging regions,
+consolidating any object measured in both into a single row.  Several
+early releases required release-specific restorations of this base
+geometry -- for example, in the release immediately following the
+transition to the overlay model, we restore the original (pre-fit)
+position and geometry for every object that is an LVD dwarf, a member
+of a multi-galaxy group, already flagged for a large Tractor-driven
+centroid shift, or whose newly fitted diameter, axis ratio, or position
+angle differs from its input value by more than 20\% -- a conservative
+guard against a small fraction of erroneous fits before the pipeline
+had matured.  We then apply that release's overlay files in order:
+dropping listed objects (globally, or from a single imaging region);
+appending hand-added objects, restoring their original identity
+(\texttt{PGC}, \texttt{SGAID}) from the no-cuts catalog where a match
+exists; and overwriting specific field values for individually
+corrected objects.  We check the result for coincident (candidate
+duplicate) detections and for unique object identifiers, repair each
+object's region bits against the archive-stage catalogs, and
+re-populate \texttt{SAMPLE} bits (\texttt{LVD}, \texttt{NEARSTAR}/
+\texttt{INSTAR} from Gaia proximity, \texttt{MCLOUDS}, \texttt{GCLPNE})
+and \texttt{ELLIPSEMODE} bits (from that release's consolidated
+\texttt{flags.csv}) before deriving each object's ellipse-fitting
+\texttt{FITMODE}.  We then re-run group-finding from scratch on the
+full, corrected catalog, excluding \texttt{RESOLVED} and
+\texttt{FORCEPSF} objects (which we instead assign to singleton
+groups), harmonize region bits within each resulting group, and set the
+\texttt{OVERLAP} sample bit for groups that straddle both imaging
+regions.  For the final several releases, we additionally exempt any
+galaxy group whose diameter did not change appreciably from
+re-processing (via a per-release, opt-in list of previously converged
+groups), so that the substantial computational cost of re-fitting a
+group's mosaic (Section~\ref{sec:pipeline:ellipse}) is paid only for
+groups that plausibly need it.
+
+Because the overlay model records every visual-inspection decision as
+an explicit, auditable file, we can quantify directly how much of this
+work was done by hand.  Table~\ref{tab:parent-overlays} lists the
+number of objects added, dropped, and individually corrected at each
+release: in total, we made more than 45,000 individual VI-driven
+additions, removals, or corrections across the v0.30--v1.6 releases,
+dominated by two releases -- v0.40 and v1.2 -- that each followed a
+particularly intensive round of visual inspection.  \texttt{v1.6} is
+the final parent-sample version adopted for the SGA-2025 release.
+
+\input{tables/table-parent-overlays.tex}
+
 %%----------------------------------------------------------------------
 \section{Input Catalog and Sample Selection}
 \label{sec:input}

@@ -1,0 +1,24 @@
+\begin{deluxetable}{lcrrrr}
+\tablecaption{Visual-Inspection Activity Recorded in the Per-Release Overlay Files
+  \label{tab:parent-overlays}}
+\tablehead{\colhead{Version} & \colhead{Base Version} & \colhead{Adds} & \colhead{Drops} & \colhead{Updates} & \colhead{Flags\tablenotemark{a}}}
+\startdata
+v0.30 & v0.22 &    27 &  4,024 &    417 & 291 \\
+v0.40 & v0.30 &     7 & 12,679 &  1,177 & 324 \\
+v0.50 & v0.40 &     0 &  3,468 &    194 & 328 \\
+v0.60 & v0.50 &     0 &  2,275 &     78 & 334 \\
+v0.70 & v0.60 &     0 &    153 &     32 & 340 \\
+v0.80 & v0.70 &     0 &    114 &     43 & 338 \\
+v1.0  & v0.80 &     1 &  1,227 &    528 & 345 \\
+v1.1  & v1.0  &   257 &  1,603 &  7,198 & 348 \\
+v1.2  & v1.1  & 5,082 &  2,602 &    265 & 350 \\
+v1.3  & v1.2  &     5 &  1,318 &    292 & 417 \\
+v1.4  & v1.3  &     2 &    273 &    450 & 458 \\
+v1.5  & v1.4  &     0 &     29 &     48 & 467 \\
+v1.6  & v1.4  &     0 &     31 &     54 & 468 \\
+\hline
+Total & \nodata & 5,381 & 29,796 & 10,776 & \nodata \\
+\enddata
+\tablenotetext{a}{The number of \texttt{ELLIPSEMODE} object-level bit assignments (\texttt{FIXGEO}, \texttt{RESOLVED}, etc.) recorded in that release's consolidated \texttt{flags.csv}; unlike Adds/Drops/Updates, this count is cumulative across releases, not a per-release increment, so it is not included in the total.}
+\tablecomments{Each row corresponds to one call to \texttt{SGA.parent.build\_parent}, refining the ``Base Version'' release's ellipse-fitting output using the hand-curated \texttt{adds.csv}/\texttt{drops.csv}/\texttt{updates.csv}/\texttt{flags.csv} overlay files for ``Version'' (Section~\ref{sec:parent:final}); v0.22 is the final release built by the earlier, pre-overlay driver.  Versions v1.5 and v1.6 both use v1.4 as their base, since v1.6 -- the final SGA-2025 parent catalog -- was designed to reproduce v1.5 nearly exactly.}
+\end{deluxetable}
