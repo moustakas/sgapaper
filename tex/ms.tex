@@ -224,348 +224,166 @@ footprint; approximately $X$\% of SGA-2025 galaxies have at least one
 GALEX band available.
 
 %%----------------------------------------------------------------------
-\section{Building the Parent Sample}
+\section{Building the Parent Sample and Group Catalog}
 \label{sec:parent}
 %%----------------------------------------------------------------------
 
+\subsection{Parent Sample}
+\label{sec:parent:summary}
+
 We assemble the SGA-2025 parent sample through a sequence of discrete
 processing stages, each building on the output of the one before:
-merging every external catalog into a single, uncut candidate list;
-applying an angular-size threshold and visual-inspection-driven cleanup;
-matching candidates against the DR11 CCD footprint; and, finally,
-identifying galaxy groups and assigning each group a primary member.  In
-this section we describe the first of these stages, in which we
-construct the ``no-cuts'' candidate catalog from six external source
-lists (Table~\ref{tab:parent-external}); we describe the angular-size
-threshold and grouping stages that follow it in
-Sections~\ref{sec:input:size} and~\ref{sec:input:groups}.
+merging six external source lists into a single, uncut candidate
+catalog; removing contaminants and correcting errors through iterative
+visual inspection; vetoing spurious detections with a
+self-supervised-learning classifier and applying a battery of
+additional photometric and positional cuts; masking the footprint
+around bright Gaia and Tycho stars; and, finally, assembling the
+released parent sample, release by release, from a versioned sequence
+of hand-curated corrections.  Because the mechanics of these
+intermediate stages are logistically detailed but not, in themselves,
+central to interpreting the resulting catalog, we summarize each briefly
+below and relegate the full accounting -- every hand-curated resource we
+draw on, every numerical threshold we apply, and every internal
+consistency check we impose -- to Appendix~\ref{sec:appendix:parent}.
 
-\subsection{External Catalogs}
-\label{sec:input:parent:external}
+We build the no-cuts candidate catalog (Table~\ref{tab:parent-external})
+by merging six external source lists, each contributing a distinct
+piece of the final galaxy inventory.  HyperLeda \citep{makarov14a} is
+our primary input, supplying $D_{25}$ diameters and positions for the
+great majority of candidates; we reconcile it against NED-LVS
+\citep[NED Local Volume Sample;][]{cook23a}, an independently assembled
+NED cross-identification and redshift compilation, to establish a
+high-confidence overlap sample and to recover HyperLeda objects that
+NED resolves under a different name or position.  We supplement these
+two all-sky compilations with the Local Volume Database \citep[LVD;][]
+{leaman24a}, a hand-vetted census of confirmed dwarf and Local Group
+galaxies within $\sim\!20$~Mpc that supplies the most reliable
+positions, distances, and structural parameters for this population;
+every SGA-2020 galaxy \citep{moustakas23a} within the DR11 footprint,
+carried forward directly; a hand-curated ``custom'' catalog of one-off
+additions dominated by the SMUDGes ultra-diffuse and
+low-surface-brightness galaxy sample \citep{zaritsky23a}; and a
+supplemental list of large galaxies identified during earlier
+(DR9/DR10) SGA processing.  We describe the cross-matching,
+source-priority ordering, and geometry standardization we apply to
+merge these six catalogs into a single, consistent system of
+positions, diameters, axis ratios, and magnitudes in
+Appendix~\ref{sec:input:parent:external}.
 
-Table~\ref{tab:parent-external} summarizes the six external catalogs we
-merge to build the no-cuts parent sample, together with each catalog's
-size prior to any cross-matching or cuts.  HyperLeda \citep{makarov14a}
-is our primary input, since it is the most complete all-sky compilation
-of galaxy positions and $D_{25}$ diameters available; we assembled it
-from three successive database queries, executed on separate dates,
-that together select confirmed galaxies, known multiple systems, and a
-small number of remaining ambiguous-type entries -- the third query
-was itself motivated by our discovery that nine SGA-2020 galaxies were
-absent from the first two exports, all sharing an object-type code that
-the initial query had inadvertently excluded.  We reconcile HyperLeda
-against NED-LVS \citep[NED Local Volume Sample;][]{cook23a}, an
-independently assembled NED cross-identification and redshift
-compilation, to identify a high-confidence overlap sample and to recover
-HyperLeda objects that NED resolves under a different name or position.
-We supplement these two all-sky compilations with the Local Volume
-Database \citep[LVD;][]{leaman24a}, a hand-vetted census of confirmed
-dwarf and Local Group galaxies within $\sim\!20$~Mpc that supplies the
-most reliable positions, distances, and structural parameters for this
-population; every SGA-2020 galaxy \citep{moustakas23a} within the DR11
-footprint, carried forward directly; a hand-curated ``custom'' catalog
-of one-off additions not resolved by any of the above, dominated by the
-SMUDGes ultra-diffuse and low-surface-brightness galaxy sample
-\citep{zaritsky23a}; and a supplemental list of large galaxies
-identified during earlier (DR9/DR10) SGA processing but never folded
-into a formal external catalog.
+Beginning from this no-cuts catalog, we apply three further rounds of
+cleanup before assembling the final parent sample: an iterative,
+visual-inspection-driven pass that removes non-galaxy contaminants and
+corrects erroneous positions, geometries, and cross-identifications
+(Appendix~\ref{sec:parent:vicuts}); a self-supervised-learning
+classifier that vetoes spurious detections, together with additional
+close-pair resolution, Local Group/Galactic-contaminant flagging, and a
+photometric cut on the smallest candidates (Appendix~\ref{sec:parent:archive});
+and the construction of a Gaia+Tycho bright-star mask, which we use to
+flag objects near or embedded within a bright star's masking radius for
+special handling during ellipse-fitting (Appendix~\ref{sec:parent:gaiamask}).
+Together these stages reduce the no-cuts catalog from $\sim\!5.10$~million
+candidates to the $\sim\!1.19$~million-object archive-stage catalog we
+carry forward into the final assembly below.  \todo{Update these object
+  counts once the final (v1.0) processing version is available.}
 
-\input{tables/table-parent-external.tex}
+We assemble the final parent sample from this archive-stage catalog not
+in a single pass, but across a sequence of thirteen numbered releases
+(v0.30 through v1.6, Table~\ref{tab:parent-overlays}), each of which
+refines the previous release's fitted ellipse geometry via an
+``overlay'' model: every release is defined entirely by a small,
+versioned set of hand-curated CSV files recording the objects added,
+dropped, individually corrected, or re-flagged at that stage of visual
+inspection, so that the full history of the catalog's evolution
+survives as a permanent, inspectable record rather than being folded
+irreversibly into the catalog itself.  After applying each release's
+overlay files, we re-run group-finding on the full, corrected catalog to
+identify galaxy groups and assign each a primary member
+(Section~\ref{sec:parent:groups}), and re-populate the \texttt{SAMPLE}
+and \texttt{ELLIPSEMODE} bits (Tables~\ref{tab:sample-bitmask}
+and~\ref{tab:ellipsemode-bitmask}) that downstream ellipse-fitting and
+cataloging depend on.  In total, we made more than 45,000 individual
+visual-inspection-driven additions, removals, or corrections across the
+v0.30--v1.6 releases; \texttt{v1.6} is the final parent-sample version
+adopted for the SGA-2025 release.  We describe this overlay bookkeeping,
+and the release-specific corrections it required, in full in
+Appendix~\ref{sec:parent:final}.
 
-\subsubsection{Cross-Matching and Merging}
-\label{sec:input:parent:merge}
+\subsection{Angular Group Catalog}
+\label{sec:parent:groups}
 
-We merge these six catalogs through a sequence of cross-matching stages,
-each of which adds one catalog's remaining, not-yet-represented objects
-to a running parent table.  We first deduplicate and clean the NED
-cross-identification products for HyperLeda and NED-LVS individually --
-dropping exact and near-position duplicates and known non-galaxy NED
-object types (QSOs, stars, and \ion{H}{2} regions, among others) -- and
-then join them against one another wherever NED independently resolves
-both to the same object, which yields our highest-confidence
-cross-identifications.  We next add whichever HyperLeda and NED-LVS
-objects remain unmatched by this join, in turn, followed by any
-remaining HyperLeda objects that NED does not resolve at all but that
-have both a measured diameter and a plausible object classification.
-Onto this NED/HyperLeda backbone we then merge LVD (first by NED name,
-then by PGC number, then as new objects entirely), SGA-2020 (by PGC
-number), the custom catalog (matching SMUDGes and other one-off entries
-to existing rows within $5\arcsec$ before adding the remainder as new
-objects; SMUDGes half-light radii are converted to Holmberg diameters
-via a $1.2\times$ correction upstream of this step), and finally the
-DR9/DR10 supplement.  Because no two literature catalogs agree
-perfectly on object names, positions, or classifications, we hard-code
-dozens of individual corrections throughout this process -- resolving
-duplicate or conflicting NED cross-identifications, correcting
-mis-assigned PGC numbers, and excluding known erroneous matches -- and
-we guard every stage with internal consistency checks that raise an
-error if an object's identifier is unexpectedly duplicated.
+We identify galaxy groups -- physically associated or angularly
+overlapping systems whose members we model jointly in a single mosaic
+(Section~\ref{sec:pipeline:ellipse}) -- by re-running a dedicated
+group-finding algorithm at every parent-sample release
+(Section~\ref{sec:parent:summary}), assigning each object a
+\texttt{GROUP\_NAME}, a multiplicity (\texttt{GROUP\_MULT}), a
+diameter-weighted center (\texttt{GROUP\_RA}/\texttt{GROUP\_DEC}/
+\texttt{GROUP\_DIAMETER}), and a Boolean \texttt{GROUP\_PRIMARY} flag
+marking the dominant (largest-diameter) member that most SGA-2025
+analyses key on.  We treat two populations differently: objects flagged
+\texttt{RESOLVED} (Milky Way satellites effectively resolved into
+individual stars) or \texttt{FORCEPSF} (forced to a point-source
+Tractor model) are excluded from automated linking entirely and instead
+assigned trivially to their own singleton, one-member group
+(\texttt{SGA.groups.make\_singleton\_group}), since neither
+population's angular extent is physically meaningful for grouping
+purposes; every other object is passed to the full linking algorithm
+(\texttt{SGA.groups.build\_group\_catalog}).
 
-Once every catalog has been merged, we resolve each object's final
-adopted position, name, and redshift by source priority: LVD takes
-precedence for position and name, followed in order by NED, NED-LVS,
-SGA-2020, HyperLeda, and the DR9/DR10 supplement, while for redshift we
-instead prefer NED-LVS, then NED, then HyperLeda.  We apply an
-analogous priority ordering -- LVD and the custom catalog ahead of
-HyperLeda, NED-LVS, and the DR9/DR10 supplement -- to select each
-object's adopted diameter, axis ratio, position angle, and magnitude,
-while retaining separate, catalog-specific geometry columns (e.g.,
-diameters from HyperLeda and from SGA-2020 individually) for later
-comparison.
+\texttt{build\_group\_catalog} links objects using a threshold set to
+the diameter-dependent scale of the pair being tested, rather than a
+single fixed angle.  We first bucket the input catalog into coarse
+spherical preclusters via \texttt{pydl}'s \texttt{spheregroup}
+algorithm, using a generous $5\arcmin$ link length that cheaply groups
+together any objects that could plausibly belong to the same physical
+system while keeping the subsequent, more expensive pairwise test
+confined to small preclusters.  Within each multi-member precluster we
+then test every candidate pair against a size-dependent linking
+threshold: for two ``small'' objects (diameter $<3\arcmin$) we compare
+their center-to-center separation against $\sim\!1.6\times$ the mean of
+their \emph{directional} radii -- the radius each ellipse presents
+toward its neighbor, so that two elongated galaxies aligned end-to-end
+link at a larger separation than two aligned side-by-side; for two
+``big'' objects we instead use their circular (position-angle-independent)
+radii scaled by $1.3\times$, avoiding spuriously large directional radii
+for the most elongated systems; and for a big-small pair we use
+directional radii scaled by $1.5\times$, floored at $40\%$ of the small
+object's circular radius so that a small companion close to a large
+host's isophotal edge is not missed.  Independent of this
+threshold, we also link any pair whose ellipses geometrically overlap
+once expanded by a $75\%$ margin, which catches close pairs the
+distance-based test alone would miss; we floor every threshold at
+$36\arcsec$ and reject linking altogether beyond $5\arcmin$ separation.
 
-\subsubsection{Geometry Standardization}
-\label{sec:input:parent:geometry}
+Because the coarse preclustering and pairwise linking above can still
+leave near-duplicate or narrowly-missed groups unmerged, we apply two
+further passes before finalizing the catalog.  First, we merge any pair
+of provisional groups whose members' \emph{unscaled} ellipses overlap
+but whose separation exceeded the $5\arcmin$ linking cutoff -- the case,
+for example, of a small companion projected deep within a much larger
+host's disk, too close in projection for the coarse preclustering step
+to have placed them together but unambiguous once ellipse overlap is
+checked directly.  Second, we compute each provisional group's
+diameter-weighted center and merge any two group centers that land
+within $52\arcsec$ of one another, catching residual duplicate groups
+the ellipse-overlap check does not resolve; we also support a small,
+hand-curated list of named object pairs to force-merge regardless of
+geometry, for the rare cases visual inspection identifies as physically
+associated but geometrically disjoint.  Finally, for each resulting
+group we compute its adopted center as the diameter-weighted Cartesian
+mean of its members' positions, its diameter as the maximum member
+extent (separation from the group center plus half that member's own
+diameter), measured from that center and floored at $30\arcsec$, and
+its primary flag as the single largest-diameter member.
 
-Each external catalog reports size, shape, and magnitude information in
-its own native system, so before the priority ordering described above
-can be applied we first reduce every catalog to a common set of columns
--- diameter, axis ratio, position angle, and magnitude -- using
-whichever conversion its native columns require.  For HyperLeda, we
-adopt the $D_{25}$ diameter and axis ratio directly from its tabulated
-$\log D_{25}$ and $\log R_{25}$ and pair them with its $B$-band total
-magnitude.  For SGA-2020, we carry the diameter, axis ratio, position
-angle, and magnitude forward unchanged.  For LVD, we convert the
-tabulated half-light radius to a diameter via a $2.4\times$ correction
-and take the axis ratio as one minus the reported ellipticity, pairing
-both with the $V$-band apparent magnitude.  For the DR9/DR10
-supplement, we derive the diameter, axis ratio, and position angle from
-the Tractor S\'ersic shape parameters and adopt the $r$-band model flux
-as the magnitude.  Where a catalog supplies no direct size or shape
-measurement at all -- true of the raw NED cross-identification products
-underlying the HyperLeda/NED-LVS join in
-Section~\ref{sec:input:parent:merge} -- we instead merge together
-whichever of the RC3, Two Micron All Sky Survey (2MASS), Sloan Digital
-Sky Survey (SDSS), or ESO literature measurements NED provides, in that
-decreasing order of priority.
-
-\subsection{Visual-Inspection-Driven Cleanup}
-\label{sec:parent:vicuts}
-
-The no-cuts merge described above is deliberately inclusive: because
-HyperLeda and NED resolve object names and positions independently and
-imperfectly, the resulting candidate list also contains a substantial
-population of non-galaxy contaminants -- literature galaxy-cluster and
--group catalogs, X-ray and radio source lists, deep-field photometric
-catalogs, and other NED entries that are not resolved galaxies at all --
-together with a smaller number of genuine cross-identification errors
-and close, duplicate detections of the same object.  We remove this
-contamination, and correct what visual inspection (VI) reveals to be
-wrong, in a fixed sequence of cleanup steps applied to the no-cuts
-catalog.  We first overwrite each affected object's coordinates and
-geometry with hand-vetted values from a dedicated VI-properties file
-(Table~\ref{tab:parent-vicuts}), which also corrects a further $\sim\!60$
-SGA-2020 diameters we found, by inspection, to be grossly over- or
-underestimated.  We then drop non-galaxy contaminants across the full
-catalog using large, hand-curated lists of object-name prefixes and
-embedded reference tags -- built up over many rounds of VI and
-distinguishing contaminants that must always be dropped from those
-protected whenever they carry a measured diameter -- and separately
-correct NED cross-identification errors in which HyperLeda properties
-(coordinates, diameter, PGC number) were erroneously associated with a
-multi-galaxy \texttt{GPair}/\texttt{GTrpl} system entry rather than the
-correct individual galaxy.  We next resolve close ($<1\arcsec$) pairs of
-candidate entries that duplicate the same physical object, before
-applying a final, narrower prefix-based cleanup that visually removes
-remaining \texttt{GPair}/\texttt{GTrpl} merger systems: those lacking any
-measured diameter are dropped outright, while those with a measured
-diameter are dropped only if named explicitly in our VI-actions record.
-Table~\ref{tab:parent-vicuts} summarizes the size of each hand-curated
-resource this cleanup draws on; in total, the VI-actions record alone
-encodes more than 32,000 individual object-level decisions.  Because
-this cleanup is aggressive enough to risk discarding genuine
-low-surface-brightness dwarfs, we verify after every step that every
-LVD galaxy (Section~\ref{sec:input:parent:external}) remains present in
-the catalog, and we abort the build if one has been inadvertently
-dropped.  \todo{Report the net nocuts-to-vicuts object count for the
-  final (v1.0) processing version once available; in the current
-  development version this stage reduces the candidate list from
-  $\sim\!5.10$ million to $\sim\!4.79$ million objects.}
-
-\input{tables/table-parent-vicuts.tex}
-
-\subsection{SSL Classification and Photometric Curation}
-\label{sec:parent:archive}
-
-We apply a third round of automated and semi-automated curation to the
-VI-cuts catalog, combining a machine-learning classification veto with
-additional close-pair resolution, Local Group and Galactic-contaminant
-flagging, and a photometry-based cut on the smallest candidates.  We
-first remove every object flagged by a self-supervised-learning (SSL)
-classifier trained to distinguish genuine galaxies from spurious or
-non-galaxy sources, with three categories of exception: objects present
-in a hand-curated veto list (Table~\ref{tab:parent-archive}), objects
-already corrected by hand in the VI-properties file
-(Section~\ref{sec:parent:vicuts}), and objects whose NED coordinates we
-have already replaced with HyperLeda coordinates via the VI-actions
-file; we treat any exception-list object absent from the classifier's
-output as a consistency error, since these lists are meant to override
-the classifier rather than introduce new objects.  \todo{The SSL
-  classification step itself was run by a collaborator using an earlier,
-  since-modified version of the ssl-legacysurvey pipeline (see
-  \texttt{SGA/CLAUDE.md}); pin down the exact commit/methodology used
-  and summarize it here, including how the training set was constructed
-  and what performance we quote for it.}  We then resolve a second round
-of close ($<5\arcsec$) pairs, breaking ties in favor of the lower-PGC
-(and hence typically better-known) name; flag objects falling within the
-Large or Small Magellanic Cloud's footprint or within a Galactic
-globular cluster or planetary nebula's footprint, both of which we treat
-separately from ordinary extragalactic sources; and remove small
-candidates ($D_{\rm init} < 20\arcsec$) that fail an automated
-photometry check, except those already protected by the custom,
-properties, or VI-actions overrides, or those within a low-redshift
-($z < 0.1$) projected radius of the Coma or Virgo cluster, whose
-satellite populations we retain for dedicated visual inspection.
-Finally, we add several boolean columns from additional hand-curated
-action files (Table~\ref{tab:parent-archive}) -- flagging objects with
-fixed ellipse-fitting geometry, relaxed or strengthened neighbor
-masking, and Tractor sources forced to a point-source model -- and, for
-every object, the projected distance to and masking radius of the
-nearest bright Gaia star.  As in the previous stage, we verify after
-every major removal step that no LVD dwarf has been inadvertently
-dropped.  \todo{Report the net vicuts-to-archive object count for the
-  final (v1.0) processing version once available; in the current
-  development version this stage reduces the candidate list from
-  $\sim\!4.79$ million to $\sim\!1.19$ million objects, the large drop
-  being dominated by the $D_{\rm init} < 20\arcsec$ photometric cut.}
-
-\input{tables/table-parent-archive.tex}
-
-\subsection{Bright-Star Masking}
-\label{sec:parent:gaiamask}
-
-We build the Gaia+Tycho bright-star mask that underlies both the
-\texttt{NEARSTAR}/\texttt{INSTAR} sample flags and the pixel-level
-\texttt{brightstar}/\texttt{gaiastar} imaging-mask bits (Table~\ref{tab:maskbits-common})
-in two stages: a one-time construction of an all-sky catalog of bright
-and medium-bright stars and their adopted masking radii
-(\texttt{SGA/archive/bin-SGA2025/build-gaia-mask}), and a per-catalog
-association step that measures every parent-sample object's proximity
-to its nearest such star (\texttt{SGA.parent.add\_gaia\_masking}).
-
-To build the star-mask catalog, we loop over the full grid of DR9
-imaging bricks in batches of 10,000, and for each brick query
-\textsl{legacypipe}'s reference-source machinery
-(\texttt{legacypipe.reference.get\_reference\_sources}) for every Gaia
-DR3 and Tycho-2 star it flags as ``bright'' or ``medium,'' restricting
-each per-brick query to a zero-margin footprint so that a star near a
-brick boundary is picked up by exactly one neighboring brick rather
-than double-counted.  We merge the resulting per-brick tables into a
-single all-sky catalog and additionally write a Galactic-latitude-trimmed
-($|b|>9\arcdeg$) ``extragalactic'' version, which is the one the
-SGA-2025 pipeline actually consumes.
-
-The adopted magnitude-radius relation --
-\begin{equation}
-  r_{\rm mask} = 1630\farcs0 \times 1.396^{-m_{\rm mask}},
-  \label{eq:gaiamaskradius}
-\end{equation}
-where $m_{\rm mask}$ is the star's masking magnitude -- is the same
-relation used by the DR11 \textsl{legacypipe} pipeline itself
-(Section~\ref{sec:imaging:optical}) to mask reference sources during
-Tractor photometry, so that the footprint we exclude from automated
-galaxy detection is, by construction, consistent with the footprint
-DR11 excludes from its own source modeling.  We define $m_{\rm mask}$
-as the brighter of a star's optical magnitude (Gaia $G$, or, for
-Tycho-2 stars, a Gaia-$G$-equivalent magnitude estimated from
-$V_T$) and its $z$-band magnitude guess plus 1~mag, which expands the
-mask appropriately around very red stars whose optical light
-underrepresents their true angular extent.  We classify Gaia stars
-with $m_{\rm mask}<13$ as ``bright'' and those with
-$13\le m_{\rm mask}<16$ as ``medium,'' retaining both categories in the
-mask catalog; Tycho-2 stars, which duplicate the brightest Gaia
-sources, are instead restricted to $m_{\rm mask}<13$ only, dropping
-roughly 13,000 of 2.5 million candidates (Table~\ref{tab:gaia-mask-params}).
-
-Given this master catalog, \texttt{add\_gaia\_masking} measures, for
-every object in a working parent-sample catalog, the angular
-separation to its nearest bright or medium star, normalized by that
-star's masking radius (\texttt{STARFDIST}); we process stars in
-1-magnitude bins from faintest to brightest to keep each
-nearest-neighbor search computationally tractable, and retain, for
-each object, the smallest \texttt{STARFDIST} found across all bins
-(capping consideration at twice a star's masking radius) so that the
-final value reflects genuine proximity rather than an artifact of bin
-ordering.  We call \texttt{add\_gaia\_masking} at two points in the
-pipeline: once when the archive-stage catalog is finalized
-(Section~\ref{sec:parent:archive}), and again for every subsequent
-\texttt{build\_parent} release (Section~\ref{sec:parent:final}), since
-each release's additions and geometry corrections can change which
-star is nearest to a given object.  The resulting \texttt{STARFDIST}
-values set the \texttt{NEARSTAR} and \texttt{INSTAR} \texttt{SAMPLE}
-bits (Table~\ref{tab:sample-bitmask}) and, together with
-\texttt{MCLOUDS} and \texttt{GCLPNE}, force the \texttt{NORADWEIGHT}
-\texttt{ELLIPSEMODE} bit (Table~\ref{tab:ellipsemode-bitmask}) during
-ellipse-fitting (Section~\ref{sec:pipeline:ellipse}), since
-radially-weighted light centroids are unreliable for objects
-contaminated by a nearby star's flux.
-
-\input{tables/table-gaia-mask-params.tex}
-
-\subsection{Assembling the Final Parent Sample}
-\label{sec:parent:final}
-
-We assemble the final parent sample not in a single pass, but across a
-sequence of thirteen numbered releases (v0.30 through v1.6,
-Table~\ref{tab:parent-overlays}), each of which refines the previous
-release's \emph{fitted ellipse geometry} rather than rebuilding from the
-archive-stage catalog described above.  Earlier releases, through
-v0.22, were instead built directly from the archive catalog in a single
-pass -- merging the per-region archive tables, appending hand-added
-sources, applying visual-inspection corrections in place, and running
-group-finding in one shot.  Beginning with v0.30 we adopted an
-``overlay'' model in which every subsequent release is defined entirely
-by a small, versioned set of hand-curated CSV files -- \texttt{adds.csv},
-\texttt{drops.csv}, \texttt{updates.csv}, and \texttt{flags.csv} -- so
-that the precise set of objects added, removed, corrected, or re-flagged
-at each stage of visual inspection is preserved as a permanent,
-inspectable record rather than folded irreversibly into the catalog.
-
-For each release we first read and, where necessary, correct that
-release's base ellipse catalogs across both imaging regions,
-consolidating any object measured in both into a single row.  Several
-early releases required release-specific restorations of this base
-geometry -- for example, in the release immediately following the
-transition to the overlay model, we restore the original (pre-fit)
-position and geometry for every object that is an LVD dwarf, a member
-of a multi-galaxy group, already flagged for a large Tractor-driven
-centroid shift, or whose newly fitted diameter, axis ratio, or position
-angle differs from its input value by more than 20\% -- a conservative
-guard against a small fraction of erroneous fits before the pipeline
-had matured.  We then apply that release's overlay files in order:
-dropping listed objects (globally, or from a single imaging region);
-appending hand-added objects, restoring their original identity
-(\texttt{PGC}, \texttt{SGAID}) from the no-cuts catalog where a match
-exists; and overwriting specific field values for individually
-corrected objects.  We check the result for coincident (candidate
-duplicate) detections and for unique object identifiers, repair each
-object's region bits against the archive-stage catalogs, and
-re-populate \texttt{SAMPLE} bits (\texttt{LVD}, \texttt{NEARSTAR}/
-\texttt{INSTAR} from Gaia proximity, \texttt{MCLOUDS}, \texttt{GCLPNE})
-and \texttt{ELLIPSEMODE} bits (from that release's consolidated
-\texttt{flags.csv}) before deriving each object's ellipse-fitting
-\texttt{FITMODE}.  We then re-run group-finding from scratch on the
-full, corrected catalog, excluding \texttt{RESOLVED} and
-\texttt{FORCEPSF} objects (which we instead assign to singleton
-groups), harmonize region bits within each resulting group, and set the
-\texttt{OVERLAP} sample bit for groups that straddle both imaging
-regions.  For the final several releases, we additionally exempt any
-galaxy group whose diameter did not change appreciably from
-re-processing (via a per-release, opt-in list of previously converged
-groups), so that the substantial computational cost of re-fitting a
-group's mosaic (Section~\ref{sec:pipeline:ellipse}) is paid only for
-groups that plausibly need it.
-
-Because the overlay model records every visual-inspection decision as
-an explicit, auditable file, we can quantify directly how much of this
-work was done by hand.  Table~\ref{tab:parent-overlays} lists the
-number of objects added, dropped, and individually corrected at each
-release: in total, we made more than 45,000 individual VI-driven
-additions, removals, or corrections across the v0.30--v1.6 releases,
-dominated by two releases -- v0.40 and v1.2 -- that each followed a
-particularly intensive round of visual inspection.  \texttt{v1.6} is
-the final parent-sample version adopted for the SGA-2025 release.
-
-\input{tables/table-parent-overlays.tex}
+We invoke group-finding after every parent-sample release's overlay
+corrections are applied (Section~\ref{sec:parent:summary}), so that the
+additions, drops, and geometry updates at each release can, in
+principle, reshape the group catalog; we then harmonize each group's
+imaging-region bits and set the \texttt{OVERLAP} \texttt{SAMPLE} bit for
+every member whose ellipse overlaps that of another member of its own
+group (Appendix~\ref{sec:parent:final}).
 
 %%----------------------------------------------------------------------
 \section{Input Catalog and Sample Selection}
@@ -590,15 +408,6 @@ galaxies likely to be resolved by the $\sim\!1\arcsec$ PSF of the Legacy
 Surveys imaging.  This threshold is designed to be inclusive: the SGA-2025
 pipeline is capable of modelling any galaxy whose isophotal extent exceeds
 a single PSF FWHM, and we prefer to err on the side of inclusion.
-
-\subsection{Grouping}
-\label{sec:input:groups}
-
-We merge spatially overlapping galaxies into groups; the
-\texttt{GROUP\_PRIMARY} flag identifies the dominant group member used for
-most analyses.  We preserve groups containing satellite systems or
-companion galaxies of a brighter host as multi-member entries with
-\texttt{GROUP\_MULT} $> 1$.
 
 %%----------------------------------------------------------------------
 \section{Photometric Pipeline}
@@ -1014,6 +823,356 @@ operated by the California Institute of Technology.
   \texttt{seaborn} \citep{Waskom2021},
   Tractor \citep{Lang2016}
 }
+
+%%----------------------------------------------------------------------
+\appendix
+
+\section{Details of Parent-Sample and Group-Catalog Construction}
+\label{sec:appendix:parent}
+
+This appendix provides the full technical detail underlying the
+parent-sample summary of Section~\ref{sec:parent:summary}: the six
+external catalogs we merge into a single, uncut candidate list and the
+cross-matching and geometry-standardization steps we apply to combine
+them (Section~\ref{sec:input:parent:external}); the
+visual-inspection-driven cleanup we apply to that no-cuts catalog
+(Section~\ref{sec:parent:vicuts}); the self-supervised-learning
+classification and photometric curation that produce the archive-stage
+catalog (Section~\ref{sec:parent:archive}); the construction of the
+Gaia+Tycho bright-star mask (Section~\ref{sec:parent:gaiamask}); and the
+release-by-release, overlay-model assembly of the final parent sample
+(Section~\ref{sec:parent:final}).
+
+\subsection{External Catalogs}
+\label{sec:input:parent:external}
+
+Table~\ref{tab:parent-external} summarizes the six external catalogs we
+merge to build the no-cuts parent sample, together with each catalog's
+size prior to any cross-matching or cuts.  HyperLeda \citep{makarov14a}
+is our primary input, since it is the most complete all-sky compilation
+of galaxy positions and $D_{25}$ diameters available; we assembled it
+from three successive database queries, executed on separate dates,
+that together select confirmed galaxies, known multiple systems, and a
+small number of remaining ambiguous-type entries -- the third query
+was itself motivated by our discovery that nine SGA-2020 galaxies were
+absent from the first two exports, all sharing an object-type code that
+the initial query had inadvertently excluded.  We reconcile HyperLeda
+against NED-LVS \citep[NED Local Volume Sample;][]{cook23a}, an
+independently assembled NED cross-identification and redshift
+compilation, to identify a high-confidence overlap sample and to recover
+HyperLeda objects that NED resolves under a different name or position.
+We supplement these two all-sky compilations with the Local Volume
+Database \citep[LVD;][]{leaman24a}, a hand-vetted census of confirmed
+dwarf and Local Group galaxies within $\sim\!20$~Mpc that supplies the
+most reliable positions, distances, and structural parameters for this
+population; every SGA-2020 galaxy \citep{moustakas23a} within the DR11
+footprint, carried forward directly; a hand-curated ``custom'' catalog
+of one-off additions not resolved by any of the above, dominated by the
+SMUDGes ultra-diffuse and low-surface-brightness galaxy sample
+\citep{zaritsky23a}; and a supplemental list of large galaxies
+identified during earlier (DR9/DR10) SGA processing but never folded
+into a formal external catalog.
+
+\input{tables/table-parent-external.tex}
+
+\subsubsection{Cross-Matching and Merging}
+\label{sec:input:parent:merge}
+
+We merge these six catalogs through a sequence of cross-matching stages,
+each of which adds one catalog's remaining, not-yet-represented objects
+to a running parent table.  We first deduplicate and clean the NED
+cross-identification products for HyperLeda and NED-LVS individually --
+dropping exact and near-position duplicates and known non-galaxy NED
+object types (QSOs, stars, and \ion{H}{2} regions, among others) -- and
+then join them against one another wherever NED independently resolves
+both to the same object, which yields our highest-confidence
+cross-identifications.  We next add whichever HyperLeda and NED-LVS
+objects remain unmatched by this join, in turn, followed by any
+remaining HyperLeda objects that NED does not resolve at all but that
+have both a measured diameter and a plausible object classification.
+Onto this NED/HyperLeda backbone we then merge LVD (first by NED name,
+then by PGC number, then as new objects entirely), SGA-2020 (by PGC
+number), the custom catalog (matching SMUDGes and other one-off entries
+to existing rows within $5\arcsec$ before adding the remainder as new
+objects; SMUDGes half-light radii are converted to Holmberg diameters
+via a $1.2\times$ correction upstream of this step), and finally the
+DR9/DR10 supplement.  Because no two literature catalogs agree
+perfectly on object names, positions, or classifications, we hard-code
+dozens of individual corrections throughout this process -- resolving
+duplicate or conflicting NED cross-identifications, correcting
+mis-assigned PGC numbers, and excluding known erroneous matches -- and
+we guard every stage with internal consistency checks that raise an
+error if an object's identifier is unexpectedly duplicated.
+
+Once every catalog has been merged, we resolve each object's final
+adopted position, name, and redshift by source priority: LVD takes
+precedence for position and name, followed in order by NED, NED-LVS,
+SGA-2020, HyperLeda, and the DR9/DR10 supplement, while for redshift we
+instead prefer NED-LVS, then NED, then HyperLeda.  We apply an
+analogous priority ordering -- LVD and the custom catalog ahead of
+HyperLeda, NED-LVS, and the DR9/DR10 supplement -- to select each
+object's adopted diameter, axis ratio, position angle, and magnitude,
+while retaining separate, catalog-specific geometry columns (e.g.,
+diameters from HyperLeda and from SGA-2020 individually) for later
+comparison.
+
+\subsubsection{Geometry Standardization}
+\label{sec:input:parent:geometry}
+
+Each external catalog reports size, shape, and magnitude information in
+its own native system, so before the priority ordering described above
+can be applied we first reduce every catalog to a common set of columns
+-- diameter, axis ratio, position angle, and magnitude -- using
+whichever conversion its native columns require.  For HyperLeda, we
+adopt the $D_{25}$ diameter and axis ratio directly from its tabulated
+$\log D_{25}$ and $\log R_{25}$ and pair them with its $B$-band total
+magnitude.  For SGA-2020, we carry the diameter, axis ratio, position
+angle, and magnitude forward unchanged.  For LVD, we convert the
+tabulated half-light radius to a diameter via a $2.4\times$ correction
+and take the axis ratio as one minus the reported ellipticity, pairing
+both with the $V$-band apparent magnitude.  For the DR9/DR10
+supplement, we derive the diameter, axis ratio, and position angle from
+the Tractor S\'ersic shape parameters and adopt the $r$-band model flux
+as the magnitude.  Where a catalog supplies no direct size or shape
+measurement at all -- true of the raw NED cross-identification products
+underlying the HyperLeda/NED-LVS join in
+Section~\ref{sec:input:parent:merge} -- we instead merge together
+whichever of the RC3, Two Micron All Sky Survey (2MASS), Sloan Digital
+Sky Survey (SDSS), or ESO literature measurements NED provides, in that
+decreasing order of priority.
+
+\subsection{Visual-Inspection-Driven Cleanup}
+\label{sec:parent:vicuts}
+
+The no-cuts merge described above is deliberately inclusive: because
+HyperLeda and NED resolve object names and positions independently and
+imperfectly, the resulting candidate list also contains a substantial
+population of non-galaxy contaminants -- literature galaxy-cluster and
+-group catalogs, X-ray and radio source lists, deep-field photometric
+catalogs, and other NED entries that are not resolved galaxies at all --
+together with a smaller number of genuine cross-identification errors
+and close, duplicate detections of the same object.  We remove this
+contamination, and correct what visual inspection (VI) reveals to be
+wrong, in a fixed sequence of cleanup steps applied to the no-cuts
+catalog.  We first overwrite each affected object's coordinates and
+geometry with hand-vetted values from a dedicated VI-properties file
+(Table~\ref{tab:parent-vicuts}), which also corrects a further $\sim\!60$
+SGA-2020 diameters we found, by inspection, to be grossly over- or
+underestimated.  We then drop non-galaxy contaminants across the full
+catalog using large, hand-curated lists of object-name prefixes and
+embedded reference tags -- built up over many rounds of VI and
+distinguishing contaminants that must always be dropped from those
+protected whenever they carry a measured diameter -- and separately
+correct NED cross-identification errors in which HyperLeda properties
+(coordinates, diameter, PGC number) were erroneously associated with a
+multi-galaxy \texttt{GPair}/\texttt{GTrpl} system entry rather than the
+correct individual galaxy.  We next resolve close ($<1\arcsec$) pairs of
+candidate entries that duplicate the same physical object, before
+applying a final, narrower prefix-based cleanup that visually removes
+remaining \texttt{GPair}/\texttt{GTrpl} merger systems: those lacking any
+measured diameter are dropped outright, while those with a measured
+diameter are dropped only if named explicitly in our VI-actions record.
+Table~\ref{tab:parent-vicuts} summarizes the size of each hand-curated
+resource this cleanup draws on; in total, the VI-actions record alone
+encodes more than 32,000 individual object-level decisions.  Because
+this cleanup is aggressive enough to risk discarding genuine
+low-surface-brightness dwarfs, we verify after every step that every
+LVD galaxy (Section~\ref{sec:input:parent:external}) remains present in
+the catalog, and we abort the build if one has been inadvertently
+dropped.  \todo{Report the net nocuts-to-vicuts object count for the
+  final (v1.0) processing version once available; in the current
+  development version this stage reduces the candidate list from
+  $\sim\!5.10$ million to $\sim\!4.79$ million objects.}
+
+\input{tables/table-parent-vicuts.tex}
+
+\subsection{SSL Classification and Photometric Curation}
+\label{sec:parent:archive}
+
+We apply a third round of automated and semi-automated curation to the
+VI-cuts catalog, combining a machine-learning classification veto with
+additional close-pair resolution, Local Group and Galactic-contaminant
+flagging, and a photometry-based cut on the smallest candidates.  We
+first remove every object flagged by a self-supervised-learning (SSL)
+classifier trained to distinguish genuine galaxies from spurious or
+non-galaxy sources, with three categories of exception: objects present
+in a hand-curated veto list (Table~\ref{tab:parent-archive}), objects
+already corrected by hand in the VI-properties file
+(Section~\ref{sec:parent:vicuts}), and objects whose NED coordinates we
+have already replaced with HyperLeda coordinates via the VI-actions
+file; we treat any exception-list object absent from the classifier's
+output as a consistency error, since these lists are meant to override
+the classifier rather than introduce new objects.  \todo{The SSL
+  classification step itself was run by a collaborator using an earlier,
+  since-modified version of the ssl-legacysurvey pipeline (see
+  \texttt{SGA/CLAUDE.md}); pin down the exact commit/methodology used
+  and summarize it here, including how the training set was constructed
+  and what performance we quote for it.}  We then resolve a second round
+of close ($<5\arcsec$) pairs, breaking ties in favor of the lower-PGC
+(and hence typically better-known) name; flag objects falling within the
+Large or Small Magellanic Cloud's footprint or within a Galactic
+globular cluster or planetary nebula's footprint, both of which we treat
+separately from ordinary extragalactic sources; and remove small
+candidates ($D_{\rm init} < 20\arcsec$) that fail an automated
+photometry check, except those already protected by the custom,
+properties, or VI-actions overrides, or those within a low-redshift
+($z < 0.1$) projected radius of the Coma or Virgo cluster, whose
+satellite populations we retain for dedicated visual inspection.
+Finally, we add several boolean columns from additional hand-curated
+action files (Table~\ref{tab:parent-archive}) -- flagging objects with
+fixed ellipse-fitting geometry, relaxed or strengthened neighbor
+masking, and Tractor sources forced to a point-source model -- and, for
+every object, the projected distance to and masking radius of the
+nearest bright Gaia star.  As in the previous stage, we verify after
+every major removal step that no LVD dwarf has been inadvertently
+dropped.  \todo{Report the net vicuts-to-archive object count for the
+  final (v1.0) processing version once available; in the current
+  development version this stage reduces the candidate list from
+  $\sim\!4.79$ million to $\sim\!1.19$ million objects, the large drop
+  being dominated by the $D_{\rm init} < 20\arcsec$ photometric cut.}
+
+\input{tables/table-parent-archive.tex}
+
+\subsection{Bright-Star Masking}
+\label{sec:parent:gaiamask}
+
+We build the Gaia+Tycho bright-star mask that underlies both the
+\texttt{NEARSTAR}/\texttt{INSTAR} sample flags and the pixel-level
+\texttt{brightstar}/\texttt{gaiastar} imaging-mask bits (Table~\ref{tab:maskbits-common})
+in two stages: a one-time construction of an all-sky catalog of bright
+and medium-bright stars and their adopted masking radii
+(\texttt{SGA/archive/bin-SGA2025/build-gaia-mask}), and a per-catalog
+association step that measures every parent-sample object's proximity
+to its nearest such star (\texttt{SGA.parent.add\_gaia\_masking}).
+
+To build the star-mask catalog, we loop over the full grid of DR9
+imaging bricks in batches of 10,000, and for each brick query
+\textsl{legacypipe}'s reference-source machinery
+(\texttt{legacypipe.reference.get\_reference\_sources}) for every Gaia
+DR3 and Tycho-2 star it flags as ``bright'' or ``medium,'' restricting
+each per-brick query to a zero-margin footprint so that a star near a
+brick boundary is picked up by exactly one neighboring brick rather
+than double-counted.  We merge the resulting per-brick tables into a
+single all-sky catalog and additionally write a Galactic-latitude-trimmed
+($|b|>9\arcdeg$) ``extragalactic'' version, which is the one the
+SGA-2025 pipeline actually consumes.
+
+The adopted magnitude-radius relation --
+\begin{equation}
+  r_{\rm mask} = 1630\farcs0 \times 1.396^{-m_{\rm mask}},
+  \label{eq:gaiamaskradius}
+\end{equation}
+where $m_{\rm mask}$ is the star's masking magnitude -- is the same
+relation used by the DR11 \textsl{legacypipe} pipeline itself
+(Section~\ref{sec:imaging:optical}) to mask reference sources during
+Tractor photometry, so that the footprint we exclude from automated
+galaxy detection is, by construction, consistent with the footprint
+DR11 excludes from its own source modeling.  We define $m_{\rm mask}$
+as the brighter of a star's optical magnitude (Gaia $G$, or, for
+Tycho-2 stars, a Gaia-$G$-equivalent magnitude estimated from
+$V_T$) and its $z$-band magnitude guess plus 1~mag, which expands the
+mask appropriately around very red stars whose optical light
+underrepresents their true angular extent.  We classify Gaia stars
+with $m_{\rm mask}<13$ as ``bright'' and those with
+$13\le m_{\rm mask}<16$ as ``medium,'' retaining both categories in the
+mask catalog; Tycho-2 stars, which duplicate the brightest Gaia
+sources, are instead restricted to $m_{\rm mask}<13$ only, dropping
+roughly 13,000 of 2.5 million candidates (Table~\ref{tab:gaia-mask-params}).
+
+Given this master catalog, \texttt{add\_gaia\_masking} measures, for
+every object in a working parent-sample catalog, the angular
+separation to its nearest bright or medium star, normalized by that
+star's masking radius (\texttt{STARFDIST}); we process stars in
+1-magnitude bins from faintest to brightest to keep each
+nearest-neighbor search computationally tractable, and retain, for
+each object, the smallest \texttt{STARFDIST} found across all bins
+(capping consideration at twice a star's masking radius) so that the
+final value reflects genuine proximity rather than an artifact of bin
+ordering.  We call \texttt{add\_gaia\_masking} at two points in the
+pipeline: once when the archive-stage catalog is finalized
+(Section~\ref{sec:parent:archive}), and again for every subsequent
+\texttt{build\_parent} release (Section~\ref{sec:parent:final}), since
+each release's additions and geometry corrections can change which
+star is nearest to a given object.  The resulting \texttt{STARFDIST}
+values set the \texttt{NEARSTAR} and \texttt{INSTAR} \texttt{SAMPLE}
+bits (Table~\ref{tab:sample-bitmask}) and, together with
+\texttt{MCLOUDS} and \texttt{GCLPNE}, force the \texttt{NORADWEIGHT}
+\texttt{ELLIPSEMODE} bit (Table~\ref{tab:ellipsemode-bitmask}) during
+ellipse-fitting (Section~\ref{sec:pipeline:ellipse}), since
+radially-weighted light centroids are unreliable for objects
+contaminated by a nearby star's flux.
+
+\input{tables/table-gaia-mask-params.tex}
+
+\subsection{Assembling the Final Parent Sample}
+\label{sec:parent:final}
+
+We assemble the final parent sample not in a single pass, but across a
+sequence of thirteen numbered releases (v0.30 through v1.6,
+Table~\ref{tab:parent-overlays}), each of which refines the previous
+release's \emph{fitted ellipse geometry} rather than rebuilding from the
+archive-stage catalog described above.  Earlier releases, through
+v0.22, were instead built directly from the archive catalog in a single
+pass -- merging the per-region archive tables, appending hand-added
+sources, applying visual-inspection corrections in place, and running
+group-finding in one shot.  Beginning with v0.30 we adopted an
+``overlay'' model in which every subsequent release is defined entirely
+by a small, versioned set of hand-curated CSV files -- \texttt{adds.csv},
+\texttt{drops.csv}, \texttt{updates.csv}, and \texttt{flags.csv} -- so
+that the precise set of objects added, removed, corrected, or re-flagged
+at each stage of visual inspection is preserved as a permanent,
+inspectable record rather than folded irreversibly into the catalog.
+
+For each release we first read and, where necessary, correct that
+release's base ellipse catalogs across both imaging regions,
+consolidating any object measured in both into a single row.  Several
+early releases required release-specific restorations of this base
+geometry -- for example, in the release immediately following the
+transition to the overlay model, we restore the original (pre-fit)
+position and geometry for every object that is an LVD dwarf, a member
+of a multi-galaxy group, already flagged for a large Tractor-driven
+centroid shift, or whose newly fitted diameter, axis ratio, or position
+angle differs from its input value by more than 20\% -- a conservative
+guard against a small fraction of erroneous fits before the pipeline
+had matured.  We then apply that release's overlay files in order:
+dropping listed objects (globally, or from a single imaging region);
+appending hand-added objects, restoring their original identity
+(\texttt{PGC}, \texttt{SGAID}) from the no-cuts catalog where a match
+exists; and overwriting specific field values for individually
+corrected objects.  We check the result for coincident (candidate
+duplicate) detections and for unique object identifiers, repair each
+object's region bits against the archive-stage catalogs, and
+re-populate \texttt{SAMPLE} bits (\texttt{LVD}, \texttt{NEARSTAR}/
+\texttt{INSTAR} from Gaia proximity, \texttt{MCLOUDS}, \texttt{GCLPNE})
+and \texttt{ELLIPSEMODE} bits (from that release's consolidated
+\texttt{flags.csv}) before deriving each object's ellipse-fitting
+\texttt{FITMODE}.  We then re-run group-finding from scratch on the
+full, corrected catalog (Section~\ref{sec:parent:groups}), excluding
+\texttt{RESOLVED} and \texttt{FORCEPSF} objects (which we instead
+assign to singleton groups), harmonize region bits within each
+resulting group, and set the \texttt{OVERLAP} sample bit for every
+group member whose (unscaled) ellipse overlaps that of another member
+of the same group.  For the final several releases, we additionally
+exempt any
+galaxy group whose diameter did not change appreciably from
+re-processing (via a per-release, opt-in list of previously converged
+groups), so that the substantial computational cost of re-fitting a
+group's mosaic (Section~\ref{sec:pipeline:ellipse}) is paid only for
+groups that plausibly need it.
+
+Because the overlay model records every visual-inspection decision as
+an explicit, auditable file, we can quantify directly how much of this
+work was done by hand.  Table~\ref{tab:parent-overlays} lists the
+number of objects added, dropped, and individually corrected at each
+release: in total, we made more than 45,000 individual VI-driven
+additions, removals, or corrections across the v0.30--v1.6 releases,
+dominated by two releases -- v0.40 and v1.2 -- that each followed a
+particularly intensive round of visual inspection.  \texttt{v1.6} is
+the final parent-sample version adopted for the SGA-2025 release.
+
+\input{tables/table-parent-overlays.tex}
+
+%%----------------------------------------------------------------------
 
 \bibliographystyle{aasjournalv7}
 \bibliography{refs}
