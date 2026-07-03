@@ -113,122 +113,11 @@ $H_0 = 70~\mathrm{km~s^{-1}~Mpc^{-1}}$ and $\Omega_m = 0.3$.
 All magnitudes are in the AB system.
 
 %%----------------------------------------------------------------------
-\section{Imaging Data}
-\label{sec:imaging}
-%%----------------------------------------------------------------------
-
-We define the SGA-2025 sky coverage using two contiguous imaging regions
-from the DR11 footprint (Figure~\ref{fig:sky}).  We image the southern
-region (\texttt{dr11-south}; $\sim\!XX{,}000$~deg$^2$) with the Dark
-Energy Camera (DECam) on the Cerro Tololo 4-m Blanco telescope in the
-$g$, $r$, $i$, and $z$ bands; it contains $\sim\!363{,}000$ galaxies.
-We image the northern region (\texttt{dr11-north};
-$\sim\!XX{,}000$~deg$^2$; decl.\ $\gtrsim +32\arcdeg$) with the
-Beijing--Arizona Sky Survey (BASS) and the Mayall $z$-band Legacy Survey
-(MzLS) in $g$, $r$, and $z$; it contains $\sim\!82{,}000$ galaxies.
-Together the two regions span $\sim\!30{,}000$~deg$^2$ and encompass
-$\sim\!486{,}000$ resolved galaxies.  We describe the optical, mid-infrared,
-and ultraviolet imaging that make up this dataset, in turn, in the three
-subsections below.
-
-\begin{figure*}
-  \centering
-  \includegraphics[width=\textwidth]{figures/sga2025-sky.png}
-  \caption{Mollweide equal-area projection of the SGA-2025 galaxy surface
-    density (galaxies deg$^{-2}$) in equatorial coordinates (J2000),
-    centered at RA $= 120\arcdeg$.  The sample shown is restricted to
-    group-primary objects ($N = 445{,}726$; one representative per galaxy
-    group).  The solid black line traces the Galactic plane ($b = 0\arcdeg$)
-    and the dashed lines mark $|b| = 10\arcdeg$, the approximate
-    exclusion boundary applied during source selection.  The DR11 footprint
-    defines two contiguous regions: the DECam south (low-latitude southern
-    sky) and the BASS+MzLS north (decl.\ $\gtrsim +32\arcdeg$).}
-  \label{fig:sky}
-\end{figure*}
-
-\begin{figure*}
-  \centering
-  \includegraphics[width=\textwidth]{figures/sga2025-sky-south.png}
-  \includegraphics[width=\textwidth]{figures/sga2025-sky-north.png}
-  \caption{Galaxy surface density for the two imaging regions separately,
-    in the same projection as Figure~\ref{fig:sky}.
-    \textit{Top:} DR11 South imaged with DECam ($N = 363{,}633$).
-    \textit{Bottom:} DR11 North imaged with BASS+MzLS ($N = 82{,}093$).}
-  \label{fig:sky-regions}
-\end{figure*}
-
-\subsection{Optical Imaging: DESI Legacy Surveys DR11}
-\label{sec:imaging:optical}
-
-The DESI Legacy Imaging Surveys \citep{dey19a} combine three public
-imaging programs -- the DECam Legacy Survey (DECaLS), the
-Beijing--Arizona Sky Survey (BASS), and the Mayall $z$-band Legacy
-Survey (MzLS) -- to cover the extragalactic sky in $g$, $r$, $i$, and
-$z$ over \texttt{dr11-south} and in $g$, $r$, and $z$ over
-\texttt{dr11-north}.  The Dark Energy Camera \citep[DECam;][]{flaugher15a},
-a 3~deg$^2$ mosaic imager with a pixel scale of $0\farcs262$ on the
-Blanco 4-m telescope at CTIO, provides the DECaLS imaging; by DR11, the
-\texttt{dr11-south} footprint aggregates not only DECaLS's own exposures
-but also public archival DECam data from the Dark Energy Survey, the
-DECam Local Volume Exploration Survey, and the DECam eROSITA Survey, all
-reprocessed with a common pipeline to achieve uniform depth and
-photometric calibration over the combined footprint.  We image
-\texttt{dr11-north} by combining $g$- and $r$-band imaging from BASS
-(the 90Prime imager on the Steward Observatory 2.3-m Bok telescope;
-\citealt{zou17a}) with $z$-band imaging from MzLS (the Mosaic-3 imager
-on the KPNO 4-m Mayall telescope; \citealt{silva16a}).
-
-We detect and model sources across all three imaging programs jointly
-with the Tractor forward-modeling pipeline (Section~\ref{sec:pipeline:tractor}),
-which poses source characterization as a $\chi^2$ minimization applied
-directly to the pixel data from every overlapping exposure -- extracting
-the full depth and resolution of the combined dataset without resorting
-to heuristic deblending -- using spatially varying point-spread-function
-models built with PSFEx and astrometric and photometric zero-points tied,
-CCD by CCD, to Gaia and Pan-STARRS1.  DR11 is the most complete and
-uniform Legacy Surveys release to date, covering $\sim\!31{,}000$~deg$^2$
-across both hemispheres to typical $5\sigma$ point-source depths of
-$g\approx24.7$, $r\approx24.2$, $i\approx23.8$, and $z\approx23.3$~mag.
-\todo{Confirm final DR11 depths and area against the published DR11
-  paper once available; the draft we consulted still marks these
-  values TBC.}  Notably, DR11 is also the first Legacy Surveys release
-to incorporate the SGA-2025 itself: our galaxy geometries are pre-loaded
-as fitting priors (\texttt{REF\_CAT} $=$ \texttt{`L4'}) so that Tractor
-treats each large galaxy as a single system rather than fragmenting its
-disk into spurious compact sources or absorbing its outer envelope into
-the sky background, a reciprocal dependence we revisit in
-Section~\ref{sec:pipeline}.
-
-\subsection{Mid-Infrared: unWISE}
-\label{sec:imaging:wise}
-
-We incorporate mid-infrared imaging from unWISE \citep{lang14a,meisner23a},
-full-depth coadds of the Wide-field Infrared Survey Explorer
-\citep[WISE;][]{wright10a} in bands $W1$ (3.4~$\mu$m), $W2$ (4.6~$\mu$m),
-$W3$ (12~$\mu$m), and $W4$ (22~$\mu$m).  The unWISE coadds we use
-incorporate every NEOWISE epoch through the end of the mission,
-providing the deepest possible $W1$/$W2$ coverage, while $W3$ and $W4$
-retain the original full-mission depth from the cryogenic phase of the
-WISE mission.  The unWISE coadds provide nearly uniform coverage across
-the sky at angular resolutions of $6\arcsec$--$12\arcsec$, set by the
-WISE point-spread function.
-
-\subsection{Ultraviolet: GALEX}
-\label{sec:imaging:galex}
-
-We obtain ultraviolet photometry from the Galaxy Evolution Explorer
-\citep[GALEX;][]{martin05a} GR6/GR7 data release in the FUV (1528~\AA{})
-and NUV (2271~\AA{}) bands.  Unlike the optical and mid-infrared imaging,
-GALEX coverage is non-uniform and does not extend over the full DR11
-footprint; approximately $X$\% of SGA-2025 galaxies have at least one
-GALEX band available.
-
-%%----------------------------------------------------------------------
-\section{Building the Parent Sample and Group Catalog}
+\section{Parent Sample and Group Catalog}
 \label{sec:parent}
 %%----------------------------------------------------------------------
 
-\subsection{Parent Sample}
+\subsection{Building the Parent Sample}
 \label{sec:parent:summary}
 
 We assemble the SGA-2025 parent sample through a sequence of discrete
@@ -395,9 +284,97 @@ every member whose ellipse overlaps that of another member of its own
 group (Appendix~\ref{sec:parent:final}).
 
 %%----------------------------------------------------------------------
-\section{Input Catalog and Sample Selection}
-\label{sec:input}
+\section{Photometric Pipeline}
+\label{sec:pipeline}
 %%----------------------------------------------------------------------
+
+\subsection{Imaging Data}
+\label{sec:imaging}
+
+The DESI Legacy Imaging Surveys \citep{dey19a} combine three public
+imaging programs -- the DECam Legacy Survey (DECaLS), the
+Beijing--Arizona Sky Survey (BASS), and the Mayall $z$-band Legacy
+Survey (MzLS) -- to cover the extragalactic sky in $g$, $r$, $i$, and
+$z$ over \texttt{dr11-south} and in $g$, $r$, and $z$ over
+\texttt{dr11-north}.  The Dark Energy Camera \citep[DECam;][]{flaugher15a},
+a 3~deg$^2$ mosaic imager with a pixel scale of $0\farcs262$ on the
+Blanco 4-m telescope at CTIO, provides the DECaLS imaging; by DR11, the
+\texttt{dr11-south} footprint aggregates not only DECaLS's own exposures
+but also public archival DECam data from the Dark Energy Survey, the
+DECam Local Volume Exploration Survey, and the DECam eROSITA Survey, all
+reprocessed with a common pipeline to achieve uniform depth and
+photometric calibration over the combined footprint.  We image
+\texttt{dr11-north} by combining $g$- and $r$-band imaging from BASS
+(the 90Prime imager on the Steward Observatory 2.3-m Bok telescope;
+\citealt{zou17a}) with $z$-band imaging from MzLS (the Mosaic-3 imager
+on the KPNO 4-m Mayall telescope; \citealt{silva16a}).
+
+We detect and model sources across all three imaging programs jointly
+with the Tractor forward-modeling pipeline (Section~\ref{sec:pipeline:tractor}),
+which poses source characterization as a $\chi^2$ minimization applied
+directly to the pixel data from every overlapping exposure -- extracting
+the full depth and resolution of the combined dataset without resorting
+to heuristic deblending -- using spatially varying point-spread-function
+models built with PSFEx and astrometric and photometric zero-points tied,
+CCD by CCD, to Gaia and Pan-STARRS1.  DR11 is the most complete and
+uniform Legacy Surveys release to date, covering $\sim\!31{,}000$~deg$^2$
+across both hemispheres to typical $5\sigma$ point-source depths of
+$g\approx24.7$, $r\approx24.2$, $i\approx23.8$, and $z\approx23.3$~mag.
+\todo{Confirm final DR11 depths and area against the published DR11
+  paper once available; the draft we consulted still marks these
+  values TBC.}  Notably, DR11 is also the first Legacy Surveys release
+to incorporate the SGA-2025 itself: our galaxy geometries are pre-loaded
+as fitting priors (\texttt{REF\_CAT} $=$ \texttt{`L4'}) so that Tractor
+treats each large galaxy as a single system rather than fragmenting its
+disk into spurious compact sources or absorbing its outer envelope into
+the sky background, a reciprocal dependence we revisit in
+Section~\ref{sec:pipeline}.
+
+%\subsection{Mid-Infrared: unWISE}
+%\label{sec:imaging:wise}
+
+We incorporate mid-infrared imaging from unWISE \citep{lang14a,meisner23a},
+full-depth coadds of the Wide-field Infrared Survey Explorer
+\citep[WISE;][]{wright10a} in bands $W1$ (3.4~$\mu$m), $W2$ (4.6~$\mu$m),
+$W3$ (12~$\mu$m), and $W4$ (22~$\mu$m).  The unWISE coadds we use
+incorporate every NEOWISE epoch through the end of the mission,
+providing the deepest possible $W1$/$W2$ coverage, while $W3$ and $W4$
+retain the original full-mission depth from the cryogenic phase of the
+WISE mission.  The unWISE coadds provide nearly uniform coverage across
+the sky at angular resolutions of $6\arcsec$--$12\arcsec$, set by the
+WISE point-spread function.
+
+%\subsection{Ultraviolet: GALEX}
+%\label{sec:imaging:galex}
+
+We obtain ultraviolet photometry from the Galaxy Evolution Explorer
+\citep[GALEX;][]{martin05a} GR6/GR7 data release in the FUV (1528~\AA{})
+and NUV (2271~\AA{}) bands.  Unlike the optical and mid-infrared imaging,
+GALEX coverage is non-uniform and does not extend over the full DR11
+footprint; approximately $X$\% of SGA-2025 galaxies have at least one
+GALEX band available.
+
+\todo{Is it worth building an optical, GALEX, and unWISE depth map figure?}
+
+\subsection{Image Coadds and Tractor Photometry}
+\label{sec:pipeline:tractor}
+
+For each galaxy in the parent sample, we construct custom image coadds
+centered on the galaxy position.  We set the mosaic size to encompass at
+least $2\times D_{\rm init}$ on a side, where $D_{\rm init}$ is the
+initial diameter estimate from the parent catalog.  We construct coadds
+using the Legacy Pipeline coaddition machinery [CITE], which performs
+astrometric registration, PSF homogenization, and inverse-variance
+weighting of individual CCD images.
+
+We detect and model point and extended sources in each mosaic using the
+Tractor image-modeling framework \citep{Lang2016}.  Tractor fits
+parameterized light profiles (PSF, round exponential, de~Vaucouleurs, or
+composite S\'ersic) to each detected source simultaneously, using the
+position- and band-dependent PSF model of the co-added image.
+
+\subsection{Ellipse Fitting}
+\label{sec:pipeline:ellipse}
 
 \JM{Stub refs, placement TBD: Table~\ref{tab:sample-bitmask} (\texttt{SAMPLE}),
 Table~\ref{tab:ellipsemode-bitmask} (\texttt{ELLIPSEMODE}),
@@ -408,43 +385,6 @@ Table~\ref{tab:maskbits-common} and Table~\ref{tab:maskbits-bands}
 \input{tables/table-ellipsemode-bitmask.tex}
 \input{tables/table-ellipsebit-bitmask.tex}
 \input{tables/table-maskbits.tex}
-
-\subsection{Angular Size Selection}
-\label{sec:input:size}
-
-We apply an angular diameter threshold of $D > X\arcmin$ to select
-galaxies likely to be resolved by the $\sim\!1\arcsec$ PSF of the Legacy
-Surveys imaging.  This threshold is designed to be inclusive: the SGA-2025
-pipeline is capable of modelling any galaxy whose isophotal extent exceeds
-a single PSF FWHM, and we prefer to err on the side of inclusion.
-
-%%----------------------------------------------------------------------
-\section{Photometric Pipeline}
-\label{sec:pipeline}
-%%----------------------------------------------------------------------
-
-\subsection{Image Coadds}
-\label{sec:pipeline:coadds}
-
-For each galaxy in the parent sample, we construct custom image coadds
-centered on the galaxy position.  We set the mosaic size to encompass at
-least $2\times D_{\rm init}$ on a side, where $D_{\rm init}$ is the
-initial diameter estimate from the parent catalog.  We construct coadds
-using the Legacy Pipeline coaddition machinery [CITE], which performs
-astrometric registration, PSF homogenization, and inverse-variance
-weighting of individual CCD images.
-
-\subsection{Source Detection and Tractor Photometry}
-\label{sec:pipeline:tractor}
-
-We detect and model point and extended sources in each mosaic using the
-Tractor image-modeling framework \citep{Lang2016}.  Tractor fits
-parameterized light profiles (PSF, round exponential, de~Vaucouleurs, or
-composite S\'ersic) to each detected source simultaneously, using the
-position- and band-dependent PSF model of the co-added image.
-
-\subsection{Ellipse Fitting}
-\label{sec:pipeline:ellipse}
 
 We perform ellipse photometry on entire galaxy groups at once, rather
 than on each galaxy in isolation, using a three-stage iterative
@@ -649,6 +589,114 @@ curve-of-growth fit.
   resulting half-light radius.}
 
 %%----------------------------------------------------------------------
+\section{The SGA-2025 Catalog}
+\label{sec:catalog}
+%%----------------------------------------------------------------------
+
+\subsection{Catalog Structure}
+\label{sec:catalog:structure}
+
+We distribute the SGA-2025 as two FITS files, one per imaging region:
+
+\begin{itemize}
+  \item \texttt{SGA2025-dr11-south-v1.0.fits} ($\sim\!395{,}000$ entries)
+  \item \texttt{SGA2025-dr11-north-v1.0.fits} ($\sim\!90{,}000$ entries)
+\end{itemize}
+
+Each file contains two binary table extensions.  The primary extension
+(\texttt{SGA2025}) holds the science catalog described here.  The
+row-matched \texttt{TRACTOR} extension contains band-specific forced
+Tractor photometry quantities.
+
+\subsection{Key Columns}
+\label{sec:catalog:columns}
+
+Table~\ref{tab:columns} summarizes the most frequently used catalog
+columns.  We provide a complete data model in the online documentation
+at \url{https://sga.readthedocs.io}.
+
+% \input{tables/catalog_columns.tex}
+
+\subsection{Data Access}
+\label{sec:catalog:access}
+
+We define the SGA-2025 sky coverage using two contiguous imaging regions
+from the DR11 footprint (Figure~\ref{fig:sky}).  We image the southern
+region (\texttt{dr11-south}; $\sim\!XX{,}000$~deg$^2$) with the Dark
+Energy Camera (DECam) on the Cerro Tololo 4-m Blanco telescope in the
+$g$, $r$, $i$, and $z$ bands; it contains $\sim\!363{,}000$ galaxies.
+We image the northern region (\texttt{dr11-north};
+$\sim\!XX{,}000$~deg$^2$; decl.\ $\gtrsim +32\arcdeg$) with the
+Beijing--Arizona Sky Survey (BASS) and the Mayall $z$-band Legacy Survey
+(MzLS) in $g$, $r$, and $z$; it contains $\sim\!82{,}000$ galaxies.
+Together the two regions span $\sim\!30{,}000$~deg$^2$ and encompass
+$\sim\!486{,}000$ resolved galaxies.  We describe the optical, mid-infrared,
+and ultraviolet imaging that make up this dataset, in turn, in the three
+subsections below.
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=\textwidth]{figures/sga2025-sky.png}
+  \caption{Mollweide equal-area projection of the SGA-2025 galaxy surface
+    density (galaxies deg$^{-2}$) in equatorial coordinates (J2000),
+    centered at RA $= 120\arcdeg$.  The sample shown is restricted to
+    group-primary objects ($N = 445{,}726$; one representative per galaxy
+    group).  The solid black line traces the Galactic plane ($b = 0\arcdeg$)
+    and the dashed lines mark $|b| = 10\arcdeg$, the approximate
+    exclusion boundary applied during source selection.  The DR11 footprint
+    defines two contiguous regions: the DECam south (low-latitude southern
+    sky) and the BASS+MzLS north (decl.\ $\gtrsim +32\arcdeg$).}
+  \label{fig:sky}
+\end{figure*}
+
+%\begin{figure*}
+%  \centering
+%  \includegraphics[width=\textwidth]{figures/sga2025-sky-south.png}
+%  \includegraphics[width=\textwidth]{figures/sga2025-sky-north.png}
+%  \caption{Galaxy surface density for the two imaging regions separately,
+%    in the same projection as Figure~\ref{fig:sky}.
+%    \textit{Top:} DR11 South imaged with DECam ($N = 363{,}633$).
+%    \textit{Bottom:} DR11 North imaged with BASS+MzLS ($N = 82{,}093$).}
+%  \label{fig:sky-regions}
+%\end{figure*}
+
+We make the catalog files, postage-stamp mosaics, and ellipse-photometry
+outputs publicly available through the Legacy Survey data portal at
+\url{https://sga.legacysurvey.org}.  We archive the companion analysis
+code --- which we use to generate the figures in this paper --- at Zenodo
+\citep{Moustakas2025code} and mirror it on GitHub at
+\url{https://github.com/moustakas/sgapaper}.
+
+\subsection{Validation}
+\label{sec:catalog:validation}
+
+We validate our ellipse-fit geometry against the WISE Extended Source
+Catalog hundred sample \citep[WXSC-100;][]{Jarrett2019}, an independent,
+near-infrared reference sample of the 100 largest, brightest galaxies on
+the sky.  We cross-match SGA-2025 against WXSC-100 by position and
+compare, in Figure~\ref{fig:wxsc100}, our astrometry, isophotal diameters,
+position angles, and ellipticities against the corresponding WXSC-100
+measurements, color-coded by Hubble type.  We find good overall agreement
+across all four quantities, with the residual scatter consistent with the
+combination of measurement uncertainty and the intrinsically different
+isophotal definitions ($\mu_{26}$ optical versus $W1$-band) underlying the
+two catalogs.
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=\textwidth]{figures/sga2025-vs-wxsc100.png}
+  \caption{Comparison of SGA-2025 geometry against the WXSC-100 sample
+    \citep{Jarrett2019}, color-coded by Hubble type.
+    \textit{(a)} Astrometric offsets, $\Delta$R.A.\ and $\Delta$decl.
+    \textit{(b)} Isophotal diameter $D(26)$ versus twice the WXSC-100
+    $W1$-band radius, $2\,R_{W1}$.
+    \textit{(c)} Position angle $\phi$.
+    \textit{(d)} Ellipticity $\epsilon = 1-b/a$.
+    In each panel the solid black line marks one-to-one agreement.}
+  \label{fig:wxsc100}
+\end{figure*}
+
+%%----------------------------------------------------------------------
 \section{Spectroscopic Redshifts}
 \label{sec:redshifts}
 %%----------------------------------------------------------------------
@@ -701,74 +749,6 @@ confined to the Local Volume.
     are most complete.}
   \label{fig:redshift-completeness}
 \end{figure}
-
-%%----------------------------------------------------------------------
-\section{The SGA-2025 Catalog}
-\label{sec:catalog}
-%%----------------------------------------------------------------------
-
-\subsection{Catalog Structure}
-\label{sec:catalog:structure}
-
-We distribute the SGA-2025 as two FITS files, one per imaging region:
-
-\begin{itemize}
-  \item \texttt{SGA2025-dr11-south-v1.0.fits} ($\sim\!395{,}000$ entries)
-  \item \texttt{SGA2025-dr11-north-v1.0.fits} ($\sim\!90{,}000$ entries)
-\end{itemize}
-
-Each file contains two binary table extensions.  The primary extension
-(\texttt{SGA2025}) holds the science catalog described here.  The
-row-matched \texttt{TRACTOR} extension contains band-specific forced
-Tractor photometry quantities.
-
-\subsection{Key Columns}
-\label{sec:catalog:columns}
-
-Table~\ref{tab:columns} summarizes the most frequently used catalog
-columns.  We provide a complete data model in the online documentation
-at \url{https://sga.readthedocs.io}.
-
-% \input{tables/catalog_columns.tex}
-
-\subsection{Data Access}
-\label{sec:catalog:access}
-
-We make the catalog files, postage-stamp mosaics, and ellipse-photometry
-outputs publicly available through the Legacy Survey data portal at
-\url{https://sga.legacysurvey.org}.  We archive the companion analysis
-code --- which we use to generate the figures in this paper --- at Zenodo
-\citep{Moustakas2025code} and mirror it on GitHub at
-\url{https://github.com/moustakas/sgapaper}.
-
-\subsection{Validation}
-\label{sec:catalog:validation}
-
-We validate our ellipse-fit geometry against the WISE Extended Source
-Catalog hundred sample \citep[WXSC-100;][]{Jarrett2019}, an independent,
-near-infrared reference sample of the 100 largest, brightest galaxies on
-the sky.  We cross-match SGA-2025 against WXSC-100 by position and
-compare, in Figure~\ref{fig:wxsc100}, our astrometry, isophotal diameters,
-position angles, and ellipticities against the corresponding WXSC-100
-measurements, color-coded by Hubble type.  We find good overall agreement
-across all four quantities, with the residual scatter consistent with the
-combination of measurement uncertainty and the intrinsically different
-isophotal definitions ($\mu_{26}$ optical versus $W1$-band) underlying the
-two catalogs.
-
-\begin{figure*}
-  \centering
-  \includegraphics[width=\textwidth]{figures/sga2025-vs-wxsc100.png}
-  \caption{Comparison of SGA-2025 geometry against the WXSC-100 sample
-    \citep{Jarrett2019}, color-coded by Hubble type.
-    \textit{(a)} Astrometric offsets, $\Delta$R.A.\ and $\Delta$decl.
-    \textit{(b)} Isophotal diameter $D(26)$ versus twice the WXSC-100
-    $W1$-band radius, $2\,R_{W1}$.
-    \textit{(c)} Position angle $\phi$.
-    \textit{(d)} Ellipticity $\epsilon = 1-b/a$.
-    In each panel the solid black line marks one-to-one agreement.}
-  \label{fig:wxsc100}
-\end{figure*}
 
 %%----------------------------------------------------------------------
 \section{Summary}
