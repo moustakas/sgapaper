@@ -359,19 +359,57 @@ GALEX band available.
 \subsection{Image Coadds and Tractor Photometry}
 \label{sec:pipeline:tractor}
 
-For each galaxy in the parent sample, we construct custom image coadds
-centered on the galaxy position.  We set the mosaic size to encompass at
-least $2\times D_{\rm init}$ on a side, where $D_{\rm init}$ is the
-initial diameter estimate from the parent catalog.  We construct coadds
-using the Legacy Pipeline coaddition machinery [CITE], which performs
-astrometric registration, PSF homogenization, and inverse-variance
-weighting of individual CCD images.
+For each galaxy group we build a custom set of image coadds and source
+catalogs by invoking \textsl{legacypipe}'s \texttt{runbrick} pipeline
+(\texttt{SGA.coadds.custom\_coadds}) on a synthetic ``brick'' centered on
+the group position, rather than processing the group piecemeal across
+whichever standard DR11 bricks happen to overlap it.  We size each
+mosaic adaptively from the group's diameter, multiplicity, and axis
+ratio -- inflating the width for small, elongated, or high-multiplicity
+systems so that the full light profile and an adequate sky annulus are
+always captured -- at the survey's native optical pixel scale
+($0\farcs262$~pixel$^{-1}$), together with matched unWISE
+($2\farcs75$~pixel$^{-1}$) and, where available, GALEX
+($1\farcs5$~pixel$^{-1}$) coadds built in the same run.  \textsl{legacypipe}
+and Tractor \citep{Lang2016} are described in detail elsewhere
+\citep{dey19a,moustakas23a}; we summarize here only the processing
+options we adopt that depart from a standard DR11 brick run.
 
-We detect and model point and extended sources in each mosaic using the
-Tractor image-modeling framework \citep{Lang2016}.  Tractor fits
-parameterized light profiles (PSF, round exponential, de~Vaucouleurs, or
-composite S\'ersic) to each detected source simultaneously, using the
-position- and band-dependent PSF model of the co-added image.
+We fit the great majority of groups on their coadded images rather than
+on the individual per-exposure frames (\texttt{--fit-on-coadds
+--no-ivar-reweighting}), with iterative source-detection refinement
+disabled (\texttt{--no-iterative}) in favor of a single detection pass at
+fixed significance and saddle-point thresholds ($n\sigma=6$, saddle
+fraction $=0.2$, saddle minimum $=4$).  We also depart from
+\textsl{legacypipe}'s default handling of previously cataloged large
+galaxies: ordinarily, sources falling within the aperture of a known
+large galaxy (\texttt{REF\_CAT}~$=$~\texttt{`L4'}, i.e., the SGA itself;
+Section~\ref{sec:imaging}) are forced to a point-source model to avoid
+spurious multi-component fits, but since our custom mosaics exist
+specifically to fit those same large galaxies in detail, we disable this
+suppression by default (\texttt{--no-galaxy-forcepsf}); we leave it
+enabled only for the small number of objects flagged \texttt{FORCEPSF}
+in \texttt{ELLIPSEMODE} (Table~\ref{tab:ellipsemode-bitmask}), which
+forces every source in that mosaic to a point-source model.  Finally, we
+mask bright sources that fall outside the blob being fit
+(\texttt{--bright-masking}) and apply custom segmentation around large
+galaxies (\texttt{--galaxy-masking}), to keep neighboring bright stars
+and galaxies from contaminating detection and model-fitting.
+
+Two categories of object bypass this pipeline entirely.  Objects flagged
+\texttt{RESOLVED} in \texttt{ELLIPSEMODE} -- Milky Way satellites so
+nearby that they resolve into individual stars rather than a smooth
+light profile -- skip Tractor altogether; we instead cut out existing
+coadd imagery directly, at 100$\times$ the standard pixel scale for the
+very largest such systems (the LMC, SMC, and Antlia~II) and 50$\times$
+for the next largest (Crater~II and Bootes~III), since these objects
+span degrees on the sky and a native-resolution mosaic would be both
+unnecessary and computationally prohibitive.  Objects for which we
+request \texttt{--skip-tractor} are likewise reduced to simple image
+cutouts, retaining an inverse-variance map so that photometry can still,
+in principle, be attempted later; we flag these objects
+\texttt{SKIPTRACTOR} in \texttt{ELLIPSEBIT}
+(Table~\ref{tab:ellipsebit-bitmask}).
 
 \subsection{Ellipse Fitting}
 \label{sec:pipeline:ellipse}
