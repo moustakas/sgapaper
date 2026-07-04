@@ -1,6 +1,8 @@
 # LaTeX build artifacts
 tex/figures/*.png
 tex/figures/*.pdf
+code/phot-figures/*.png
+code/phot-figures/*.pdf
 tex/*.aux
 tex/*.bbl
 tex/*.blg
