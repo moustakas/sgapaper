@@ -41,23 +41,25 @@
 
 \begin{abstract}
 
-We present the Siena Galaxy Atlas 2025 (SGA-2025), a photometric catalog of
-$\sim\!486{,}000$ large, angularly resolved galaxies selected from the DESI
-Legacy Imaging Surveys Data Release 11 (DR11).  The SGA-2025 covers
-$\sim\!30{,}000$~deg$^{2}$ of the extragalactic sky and delivers
-multiwavelength imaging mosaics and ellipse photometry in up to ten bands:
-optical $grz$ or $griz$ imaging from DECam (south) and BASS+MzLS (north),
-mid-infrared $W1$--$W4$ from unWISE, and ultraviolet FUV and NUV from
-GALEX.  For each galaxy we provide curve-of-growth total magnitudes, the
-isophotal diameter at a surface-brightness threshold of
-$\mu = 26~\mathrm{mag~arcsec^{-2}}$ ($D_{26}$), the half-light semi-major
-axis, isophotal sizes at several other thresholds, and fitted ellipse
-geometry.  We cross-match spectroscopic redshifts from DESI DR1, the NASA/IPAC
-Extragalactic Database (NED), and the Local Volume Database (LVD) and include
-them in the catalog.  The SGA-2025 supersedes the SGA-2020
-\citep{moustakas23a}, more than doubling the number of catalogued galaxies
-while extending coverage into the ultraviolet and mid-infrared.  We make the
-full catalog, mosaics, and companion analysis code publicly available at
+We present the Siena Galaxy Atlas 2025 (SGA-2025), a photometric
+catalog of $470,625$ large, angularly resolved galaxies selected from
+the DESI Legacy Imaging Surveys Data Release 11 (DR11).  The SGA-2025
+covers $\sim\!30{,}000$~deg$^{2}$ of the extragalactic sky and
+delivers multiwavelength imaging mosaics and ellipse photometry in up
+to ten bands: optical $grz$ or $griz$ imaging from DECam (south) and
+BASS+MzLS (north), mid-infrared $W1$--$W4$ from unWISE, and
+ultraviolet FUV and NUV from GALEX.  For each galaxy we provide
+curve-of-growth total magnitudes, the isophotal diameter at a
+surface-brightness threshold of $\mu = 26~\mathrm{mag~arcsec^{-2}}$
+($D_{26}$), the half-light semi-major axis, isophotal sizes at several
+other thresholds, and fitted ellipse geometry.  We cross-match
+spectroscopic redshifts from DESI DR1, the NASA/IPAC Extragalactic
+Database (NED), and the Local Volume Database (LVD) and include them
+in the catalog.  The SGA-2025 supersedes the SGA-2020
+\citep{moustakas23a}, more than doubling the number of catalogued
+galaxies while extending coverage into the ultraviolet and
+mid-infrared.  We make the full catalog, mosaics, and companion
+analysis code publicly available at
 \url{https://sga.legacysurvey.org}.
 
 \end{abstract}
@@ -70,36 +72,78 @@ parameters --- surveys}
 \label{sec:intro}
 %%----------------------------------------------------------------------
 
-Resolved photometry of nearby galaxies --- sizes, shapes, and integrated
-fluxes measured consistently across the sky --- underpins a wide range of
-science: the galaxy luminosity and stellar-mass functions, the
-size--luminosity and Tully--Fisher relations, environmental studies, targets
-for spectroscopic surveys, and training sets for machine-learning
-morphology classifiers.  Despite this importance, no comprehensive
-all-sky photometric catalog of resolved galaxies in modern wide-field
-imaging data existed until the SGA-2020 \citep{moustakas23a}.
+Spatially resolved photometry of nearby, angularly large
+galaxies---precise sizes, shapes, and fluxes measured homogeneously
+across the sky---underpins a wide range of extragalactic astrophysics:
+the galaxy luminosity and stellar-mass functions, the size--luminosity
+and Tully--Fisher relations, group and environmental studies, and the
+selection of targets and training sets for spectroscopic surveys and
+machine-learning morphology classifiers.  Only galaxies near or large
+enough to be spatially well resolved reveal the internal structure,
+bars, rings, disks, and low-surface-brightness features invisible in
+unresolved photometry, that connects present-day galaxy morphology to
+the star formation, merger, and feedback histories that build it over
+cosmic time (see \citealt{moustakas23a} for a full discussion of the
+motivating science questions).
 
-The DESI Legacy Imaging Surveys \citep{dey19a} have since concluded
-observations with Data Release 11, providing deeper, wider, and better-
-calibrated optical imaging than any previous data release, together with
-forced-photometry measurements from the Tractor source model
-\citep{lang16a}.  We combine the DR11 optical imaging with full-depth
-unWISE mid-infrared coadds \citep{lang14a,meisner23a} and the GALEX
-ultraviolet sky \citep{martin05a} to assemble a new generation of
-large-galaxy photometry spanning four decades in wavelength.
+This structural information has a long observational heritage, from
+Charles Messier's eighteenth-century catalog of nebulae through the New
+General and Index Catalogues and, eventually, the Third Reference Catalogue
+of Bright Galaxies \citep[RC3;][]{de-vaucouleurs91a}, and, more recently, a
+generation of wide-area, multiwavelength atlases in the near-infrared,
+ultraviolet, and optical (see \citealt{moustakas23a} and references therein
+for the full lineage).  With the exception of the NASA-Sloan Atlas, however,
+these atlases' optical sizes, shapes, and total magnitudes still trace back
+to the RC3's photographic-plate measurements.  No comprehensive, all-sky
+photometric catalog of resolved galaxies built entirely from modern,
+wide-field digital imaging existed until the Siena Galaxy Atlas 2020
+(SGA-2020; \citealt{moustakas23a}), a $grz$+$W1$--$W4$ atlas of
+$383{,}620$ galaxies over the $\approx\!20{,}000$~deg$^2$ DESI Legacy
+Imaging Surveys Data Release 9 footprint.
 
-Here we describe the SGA-2025, which exploits DR11 to deliver mosaics and
-ellipse photometry for $\sim\!486{,}000$ galaxies over the extragalactic
-footprint of the Legacy Surveys.  The SGA-2025 includes all sources from
-the SGA-2020 that fall within the DR11 footprint, supplemented by newly
-identified large galaxies from HyperLeda \citep{makarov14a}, the Local
-Volume Database \citep{leaman24a}, and other auxiliary catalogs.
+The DESI Legacy Imaging Surveys have since concluded observations with
+Data Release 11 (DR11; \citealt{dey19a}), delivering deeper, wider, and
+better-calibrated $grz$/$griz$ imaging than any previous data release,
+together with forced photometry from the Tractor source-fitting code
+\citep{lang16a}.  This imaging underlies the DESI spectroscopic survey
+itself, whose Bright Galaxy Survey needs a high-quality photometric
+catalog of large-diameter galaxies to guard against the shredding and
+spectroscopic incompleteness that such objects otherwise cause.  We
+combine the DR11 optical imaging with full-depth unWISE mid-infrared
+coadds \citep{lang14a,meisner23a} and the GALEX ultraviolet sky
+\citep{martin05a} to assemble large-galaxy photometry spanning four
+decades in wavelength, from the far-ultraviolet to $22~\mu$m.
+
+Here we present the SGA-2025, which exploits this improved imaging to
+deliver mosaics and ellipse photometry for $\sim\!486{,}000$ galaxies
+across the DR11 extragalactic footprint.  Concluding the SGA-2020, we
+identified its principal limitation as the heterogeneity and
+incompleteness it inherited from relying on HyperLeda \citep{makarov14a}
+as its near-exclusive parent-catalog input, and we proposed remedying it
+by detecting large galaxies directly rather than depending solely on
+external compilations.  The SGA-2025 delivers on that plan: rather than
+starting from the SGA-2020 itself, we rebuild the parent sample from
+scratch, merging HyperLeda with five additional source lists---including
+the SGA-2020, restricted to the DR11 footprint, as one input among several
+(Section~\ref{sec:parent})---so that the SGA-2025 recovers the great
+majority of SGA-2020 galaxies while adding many newly identified ones and,
+following fresh visual inspection, occasionally dropping a previous entry
+that does not survive the SGA-2025's own selection cuts.
+
+Beyond photometry, we substantially expand the SGA's ancillary
+information relative to the 2020 release.  We cross-match spectroscopic
+redshifts from the Local Volume Database \citep[LVD;][]{leaman24a}, DESI
+DR1, SDSS DR17, and NED; adopt distances from a priority-ranked
+compilation of high-precision literature measurements, LVD, and NED,
+falling back to the Hubble flow when no direct measurement exists; and
+train a photometric-redshift model on the resulting spectroscopic
+subsample (Section~\ref{sec:catalog}).
 
 We organize the remainder of the paper as follows.
 In Section~\ref{sec:imaging} we describe the sky footprint and the
 optical, mid-infrared, and ultraviolet imaging data.
-In Section~\ref{sec:input} we describe the input catalog and sample
-selection.
+In Section~\ref{sec:parent} we describe the input catalog, sample
+selection, and group catalog.
 In Section~\ref{sec:pipeline} we describe the photometric pipeline,
 including image coaddition, Tractor source detection, and ellipse fitting.
 In Section~\ref{sec:catalog} we describe the construction, structure, and
@@ -643,7 +687,7 @@ curve-of-growth measurements (Sections~\ref{sec:pipeline:ellipse} and
 photometry into a single per-region ``beta'' catalog; at this stage every
 object carries only the internal \texttt{SGAID} and the coordinates,
 diameter, and name inherited from its parent-catalog entry
-(Section~\ref{sec:parent}) --- no NED cross-identification, spectroscopic
+(Section~\ref{sec:parent})---no NED cross-identification, spectroscopic
 redshift, or distance has yet been attached.  In the second stage we merge
 the beta catalog with three external compilations: (1) NED positional and
 by-name cross-matching, which supplies the adopted galaxy name
@@ -736,7 +780,7 @@ subsections below.
 We make the catalog files, postage-stamp mosaics, and ellipse-photometry
 outputs publicly available through the Legacy Survey data portal at
 \url{https://sga.legacysurvey.org}.  We archive the companion analysis
-code --- which we use to generate the figures in this paper --- at Zenodo
+code---which we use to generate the figures in this paper---at Zenodo
 \citep{moustakas25a} and mirror it on GitHub at
 \url{https://github.com/moustakas/sgapaper}.
 
@@ -787,14 +831,14 @@ $\Delta\chi^2$ when several fall within the ellipse; we obtain redshifts
 for $\sim\!X{,}000$ galaxies this way, predominantly through the DESI
 Bright Galaxy Survey, and record the number of DESI spectra examined per
 galaxy in \texttt{NSPEC\_DESI}.  We next cross-match against SDSS DR17
-under comparable positional and quality cuts, independently of --- and in
-preference to --- NED's own aggregated copy of SDSS spectroscopy, whose
+under comparable positional and quality cuts, independently of---and in
+preference to---NED's own aggregated copy of SDSS spectroscopy, whose
 quality flags NED does not propagate.  For the remainder we adopt NED's
 redshift, replacing its aggregated ``fiducial'' value with one drawn from
 its full redshift-measurement list whenever that value is suspiciously
-high, missing, or drawn from a source we consider unreliable --- most often
+high, missing, or drawn from a source we consider unreliable---most often
 because a background source's redshift has been misattributed to a
-foreground dwarf via fiber contamination --- adopting the measurement from
+foreground dwarf via fiber contamination---adopting the measurement from
 whichever cluster of mutually consistent values dominates and flagging the
 residual, ambiguous cases for visual inspection.
 
@@ -807,7 +851,7 @@ priority whenever measured, we additionally override its adopted value in
 two circumstances that would otherwise let an isolated discrepant spectrum
 stand: when SDSS and NED are both measured and agree with each other but
 not with DESI, and when an adopted DESI or SDSS redshift exceeds $z = 0.3$
---- implausibly high for this overwhelmingly low-redshift sample --- while
+---implausibly high for this overwhelmingly low-redshift sample---while
 an independent NED measurement is on file.  We resolve the small residual
 of flagged redshifts by hand and feed the results back into the catalog; we
 provide the full override and quality-flag bookkeeping in the online
@@ -871,12 +915,12 @@ LVD, NED's own blended mean distance, and, for every remaining galaxy with
 a measured redshift, the Hubble-flow luminosity distance implied by
 \texttt{Z\_COSMO} (Section~\ref{sec:catalog:redshifts}) under our fiducial
 cosmology (Section~\ref{sec:intro}).  We adopt a gold-tier distance when
-the highest-priority technique available for a galaxy --- Cepheids, the
+the highest-priority technique available for a galaxy---Cepheids, the
 tip of the red-giant branch, the planetary-nebula luminosity function,
 surface-brightness fluctuations, Type Ia or II supernovae, the
 globular-cluster luminosity function, or SDSS-II Type Ia supernovae, in
 that order, with typical distance-modulus uncertainties ranging from
-0.08~mag for Cepheids to 0.26~mag for SDSS-II SNe~Ia --- is confirmed by at
+0.08~mag for Cepheids to 0.26~mag for SDSS-II SNe~Ia---is confirmed by at
 least three independent literature references; when it is not, but a
 lower-priority technique is both well replicated (three or more references
 agreeing to 15\%) and substantially discrepant from the top technique (by
