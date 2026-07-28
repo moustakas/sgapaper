@@ -72,19 +72,36 @@ parameters --- surveys}
 \label{sec:intro}
 %%----------------------------------------------------------------------
 
-Spatially resolved photometry of nearby, angularly large
-galaxies---precise sizes, shapes, and fluxes measured homogeneously
-across the sky---underpins a wide range of extragalactic astrophysics:
-the galaxy luminosity and stellar-mass functions, the size--luminosity
-and Tully--Fisher relations, group and environmental studies, and the
-selection of targets and training sets for spectroscopic surveys and
+The Siena Galaxy Atlas (SGA) pursues a goal distinct from that of most
+galaxy catalogs: rather than selecting objects by apparent magnitude or
+spectroscopic redshift, we assemble the most complete
+angular-diameter-limited sample of large, resolved galaxies ever built,
+spanning the full extragalactic sky accessible to modern digital
+imaging.  This selection function matters because spatially resolved
+photometry of nearby, angularly large galaxies---precise sizes, shapes,
+and fluxes measured homogeneously across the sky---underpins a wide
+range of extragalactic astrophysics: the galaxy luminosity and
+stellar-mass functions, the size--luminosity and Tully--Fisher
+relations, group and environmental studies, and the selection of
+targets and training sets for spectroscopic surveys and
 machine-learning morphology classifiers.  Only galaxies near or large
 enough to be spatially well resolved reveal the internal structure,
 bars, rings, disks, and low-surface-brightness features invisible in
 unresolved photometry, that connects present-day galaxy morphology to
 the star formation, merger, and feedback histories that build it over
 cosmic time (see \citealt{moustakas23a} for a full discussion of the
-motivating science questions).
+motivating science questions).  Yet these same large, angularly
+extended galaxies are the ones most poorly served by standard
+photometric pipelines, which are tuned to the point-like and marginally
+resolved sources that dominate magnitude-limited catalogs: their
+extended light profiles are prone to shredding into multiple spurious
+detections, and the sky background beneath them is easily
+over-subtracted, so that even deep, wide-area digital surveys with
+excellent point-source photometry can remain surprisingly incomplete
+for precisely the galaxies that carry the most spatial information per
+object.  We designed the SGA from the outset to correct for these
+failure modes directly, rather than to inherit them from a
+general-purpose source-detection pipeline.
 
 This structural information has a long observational heritage, from
 Charles Messier's eighteenth-century catalog of nebulae through the New
@@ -92,14 +109,23 @@ General and Index Catalogues and, eventually, the Third Reference Catalogue
 of Bright Galaxies \citep[RC3;][]{de-vaucouleurs91a}, and, more recently, a
 generation of wide-area, multiwavelength atlases in the near-infrared,
 ultraviolet, and optical (see \citealt{moustakas23a} and references therein
-for the full lineage).  With the exception of the NASA-Sloan Atlas, however,
-these atlases' optical sizes, shapes, and total magnitudes still trace back
-to the RC3's photographic-plate measurements.  No comprehensive, all-sky
-photometric catalog of resolved galaxies built entirely from modern,
-wide-field digital imaging existed until the Siena Galaxy Atlas 2020
-(SGA-2020; \citealt{moustakas23a}), a $grz$+$W1$--$W4$ atlas of
-$383{,}620$ galaxies over the $\approx\!20{,}000$~deg$^2$ DESI Legacy
-Imaging Surveys Data Release 9 footprint.
+for the full lineage, and \citealt{christie24a} for a recent review of the
+broader landscape of nearby-galaxy surveys).  With the exception of the
+NASA-Sloan Atlas, however, these atlases' optical sizes, shapes, and total
+magnitudes still trace back to the RC3's photographic-plate measurements.
+No comprehensive, all-sky photometric catalog of resolved galaxies built
+entirely from modern, wide-field digital imaging existed until the Siena
+Galaxy Atlas 2020 (SGA-2020; \citealt{moustakas23a}), a $grz$+$W1$--$W4$
+atlas of $383{,}620$ galaxies over the $\approx\!20{,}000$~deg$^2$ DESI
+Legacy Imaging Surveys Data Release 9 footprint.  Since the SGA-2020's
+publication, several new value-added galaxy compilations have extended
+this landscape further---among them REGALADE \citep{tranin26a} and
+HECATEv2 \citep{kyritsis26a}, both aimed principally at time-domain and
+multi-messenger applications (below)---but these are volume- or
+magnitude-limited to a few hundred megaparsecs rather than
+angular-diameter-selected, and to our knowledge none has yet matched the
+SGA's combination of all-sky coverage, multiwavelength depth, and
+angular-diameter completeness for large, resolved galaxies.
 
 The DESI Legacy Imaging Surveys have since concluded observations with
 Data Release 11 (DR11; \citealt{dey19a}), delivering deeper, wider, and
@@ -110,9 +136,63 @@ itself, whose Bright Galaxy Survey needs a high-quality photometric
 catalog of large-diameter galaxies to guard against the shredding and
 spectroscopic incompleteness that such objects otherwise cause.  We
 combine the DR11 optical imaging with full-depth unWISE mid-infrared
-coadds \citep{lang14a,meisner23a} and the GALEX ultraviolet sky
+coadds \citep{lang14a, meisner21a} and the GALEX ultraviolet sky
 \citep{martin05a} to assemble large-galaxy photometry spanning four
 decades in wavelength, from the far-ultraviolet to $22~\mu$m.
+
+In the years since its release, the SGA-2020 has already served as the
+foundation for a broad range of extragalactic science, underscoring the
+value of a systematic, angular-diameter-limited galaxy sample as a
+community resource rather than a single-purpose product.  The DESI
+Peculiar Velocity Survey selects its Tully--Fisher and Fundamental-Plane
+targets directly from SGA-2020 morphologies and sizes
+\citep{saulder23a}, placing spectroscopic fibers on the centers and
+major axes of spiral galaxies identified in the SGA-2020 to build its
+Tully--Fisher distance catalog \citep{douglass26a}.  Visual and
+machine-assisted searches of SGA-2020
+cutouts have produced systematic censuses of low-surface-brightness
+tidal features around tens of thousands of galaxies \citep{sola25a},
+while its all-sky coverage has enabled studies of the alignment between
+galaxy spin and the cosmic web using, in the words of one such study,
+``the largest catalogue of galaxies publicly available''
+\citep{muralichandran25a}.  Cosmological simulations, in turn, use the
+SGA-2020's homogeneous sizes and colors as an observational benchmark
+against which to validate predicted galaxy structural properties
+\citep{baes24a, baes24b}.  We expect the SGA-2025's larger sample size, extended
+ultraviolet and mid-infrared coverage, and improved completeness to
+support an even wider range of such applications.
+
+A large, angular-diameter-selected sample is also, somewhat
+serendipitously, well matched to the demands of time-domain and
+multi-messenger astrophysics: because apparent angular size favors
+intrinsically large, massive, and relatively nearby galaxies, the SGA
+preferentially captures the galaxy population most likely to host
+gravitational-wave mergers, supernovae, and other transients.  This
+match is becoming more consequential as the scale of transient
+discovery grows; the Vera C.\ Rubin Observatory's Legacy Survey of
+Space and Time is expected to generate on the order of $10^7$ alerts
+per night, and real-time association of each transient with its host
+galaxy is central to triaging that stream, prioritizing follow-up, and
+flagging the rare events---kilonovae, tidal disruption events, fast
+radio burst counterparts---that justify limited spectroscopic and
+photometric resources \citep{andreoni24a}.  The reference catalogs that
+presently support this work, such as GLADE+ \citep{dalya22a} and the
+NED Local Volume Sample \citep{cook23a}, remain complete only to a few
+hundred megaparsecs in luminosity-weighted galaxy light, and forecasts
+for the fourth LIGO--Virgo--KAGRA observing run project that Rubin
+alone will increase the annual rate of electromagnetic-counterpart
+detections by roughly a factor of five relative to the Zwicky Transient
+Facility \citep{kiendrebeogo23a}---a gain that depends directly on
+having a sufficiently deep and complete galaxy catalog against which to
+search.  The same logic extends to localizing the hosts of fast radio
+bursts \citep{law24a} and to galaxy-catalog-based dark-siren cosmology
+\citep{abbott23a}, both of which trade directly on catalog
+completeness and depth.  We designed the SGA-2025 with these
+applications explicitly in mind: the parent-sample improvements we
+describe below (Section~\ref{sec:parent}) close exactly the
+completeness gaps that limit a galaxy catalog's value for real-time
+transient follow-up, while its uniform, multiwavelength photometry
+supports the host-galaxy characterization that such follow-up requires.
 
 Here we present the SGA-2025, which exploits this improved imaging to
 deliver mosaics and ellipse photometry for $\sim\!486{,}000$ galaxies
@@ -132,7 +212,7 @@ that does not survive the SGA-2025's own selection cuts.
 
 Beyond photometry, we substantially expand the SGA's ancillary
 information relative to the 2020 release.  We cross-match spectroscopic
-redshifts from the Local Volume Database \citep[LVD;][]{leaman24a}, DESI
+redshifts from the Local Volume Database \citep[LVD;][]{pace25a}, DESI
 DR1, SDSS DR17, and NED; adopt distances from a priority-ranked
 compilation of high-precision literature measurements, LVD, and NED,
 falling back to the Hubble flow when no direct measurement exists; and
@@ -198,7 +278,7 @@ NED cross-identification and redshift compilation, to establish a
 high-confidence overlap sample and to recover HyperLeda objects that
 NED resolves under a different name or position.  We supplement these
 two all-sky compilations with the Local Volume Database \citep[LVD;][]
-{leaman24a}, a hand-vetted census of confirmed dwarf and Local Group
+{pace25a}, a hand-vetted census of confirmed dwarf and Local Group
 galaxies within $\sim\!20$~Mpc that supplies the most reliable
 positions, distances, and structural parameters for this population;
 every SGA-2020 galaxy \citep{moustakas23a} within the DR11 footprint,
@@ -350,7 +430,7 @@ photometric calibration over the combined footprint.  We image
 \texttt{dr11-north} by combining $g$- and $r$-band imaging from BASS
 (the 90Prime imager on the Steward Observatory 2.3-m Bok telescope;
 \citealt{zou17a}) with $z$-band imaging from MzLS (the Mosaic-3 imager
-on the KPNO 4-m Mayall telescope; \citealt{silva16a}).
+on the KPNO 4-m Mayall telescope).
 
 We detect and model sources across all three imaging programs jointly
 with the Tractor forward-modeling pipeline (Section~\ref{sec:pipeline:tractor}),
@@ -376,16 +456,16 @@ Section~\ref{sec:pipeline}.
 %\subsection{Mid-Infrared: unWISE}
 %\label{sec:imaging:wise}
 
-We incorporate mid-infrared imaging from unWISE \citep{lang14a,meisner23a},
-full-depth coadds of the Wide-field Infrared Survey Explorer
-\citep[WISE;][]{wright10a} in bands $W1$ (3.4~$\mu$m), $W2$ (4.6~$\mu$m),
-$W3$ (12~$\mu$m), and $W4$ (22~$\mu$m).  The unWISE coadds we use
-incorporate every NEOWISE epoch through the end of the mission,
-providing the deepest possible $W1$/$W2$ coverage, while $W3$ and $W4$
-retain the original full-mission depth from the cryogenic phase of the
-WISE mission.  The unWISE coadds provide nearly uniform coverage across
-the sky at angular resolutions of $6\arcsec$--$12\arcsec$, set by the
-WISE point-spread function.
+We incorporate mid-infrared imaging from unWISE \citep{lang14a,
+  meisner21a}, full-depth coadds of the Wide-field Infrared Survey
+Explorer \citep[WISE;][]{wright10a} in bands $W1$ (3.4~$\mu$m), $W2$
+(4.6~$\mu$m), $W3$ (12~$\mu$m), and $W4$ (22~$\mu$m).  The unWISE
+coadds we use incorporate every NEOWISE epoch through the end of the
+mission, providing the deepest possible $W1$/$W2$ coverage, while $W3$
+and $W4$ retain the original full-mission depth from the cryogenic
+phase of the WISE mission.  The unWISE coadds provide nearly uniform
+coverage across the sky at angular resolutions of
+$6\arcsec$--$12\arcsec$, set by the WISE point-spread function.
 
 %\subsection{Ultraviolet: GALEX}
 %\label{sec:imaging:galex}
@@ -777,11 +857,11 @@ subsections below.
 %  \label{fig:sky-regions}
 %\end{figure*}
 
-We make the catalog files, postage-stamp mosaics, and ellipse-photometry
-outputs publicly available through the Legacy Survey data portal at
-\url{https://sga.legacysurvey.org}.  We archive the companion analysis
-code---which we use to generate the figures in this paper---at Zenodo
-\citep{moustakas25a} and mirror it on GitHub at
+We make the catalog files, postage-stamp mosaics, and
+ellipse-photometry outputs publicly available through the Legacy
+Survey data portal at \url{https://sga.legacysurvey.org}.  We archive
+the companion analysis code---which we use to generate the figures in
+this paper---at Zenodo \todo{bib} and mirror it on GitHub at
 \url{https://github.com/moustakas/sgapaper}.
 
 \subsection{Validation}
@@ -818,12 +898,12 @@ two catalogs.
 
 We compile the adopted spectroscopic redshift (\texttt{Z}) from four
 independent sources, in order of decreasing priority: LVD, DESI DR1, SDSS
-DR17, and NED.  We adopt LVD \citep{leaman24a} redshifts first, since the
+DR17, and NED.  We adopt LVD \citep{pace25a} redshifts first, since the
 LVD is a hand-curated compilation of velocities and distances for galaxies
 within $\sim\!20$~Mpc and is the most reliable source available for the
 nearby population it covers.  Failing an LVD measurement, we cross-match
 against the DESI DR1 spectroscopic catalog \citep[DESI Collaboration et
-al.~2025;][]{desi-collaboration25a}, restricting to spectra within
+al.~2025;][]{desi-collaboration26a}, restricting to spectra within
 3.5\arcsec\ of the fitted center, discarding stellar and implausibly
 high-redshift ($z > 1$) classifications as always spurious for this sample,
 and preferring the highest-confidence galaxy spectrum with the largest
@@ -1003,10 +1083,11 @@ operated by the California Institute of Technology.
 
 \software{
   \texttt{astropy} \citep{astropy-collaboration22a},
-  \texttt{fitsio} \citep{sheldon23a},
+  %\texttt{fitsio} \citep{sheldon23a},
   \texttt{healpy} \citep{zonca19a},
   \texttt{matplotlib} \citep{hunter07a},
   \texttt{numpy} \citep{harris20a},
+  \texttt{scikit-learn} \citep{pedregosa11a},
   \texttt{scipy} \citep{virtanen20a},
   \texttt{seaborn} \citep{waskom21a},
   Tractor \citep{lang16a}
@@ -1050,7 +1131,7 @@ independently assembled NED cross-identification and redshift
 compilation, to identify a high-confidence overlap sample and to recover
 HyperLeda objects that NED resolves under a different name or position.
 We supplement these two all-sky compilations with the Local Volume
-Database \citep[LVD;][]{leaman24a}, a hand-vetted census of confirmed
+Database \citep[LVD;][]{pace25a}, a hand-vetted census of confirmed
 dwarf and Local Group galaxies within $\sim\!20$~Mpc that supplies the
 most reliable positions, distances, and structural parameters for this
 population; every SGA-2020 galaxy \citep{moustakas23a} within the DR11
