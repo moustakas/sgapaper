@@ -43,22 +43,22 @@
 
 We present the Siena Galaxy Atlas 2025 (SGA-2025), a photometric
 catalog of $470,625$ large, angularly resolved galaxies selected from
-the DESI Legacy Imaging Surveys Data Release 11 (DR11).  The SGA-2025
+the DESI Legacy Imaging Surveys Data Release 11 (DR11). The SGA-2025
 covers $\sim\!30{,}000$~deg$^{2}$ of the extragalactic sky and
 delivers multiwavelength imaging mosaics and ellipse photometry in up
 to ten bands: optical $grz$ or $griz$ imaging from DECam (south) and
 BASS+MzLS (north), mid-infrared $W1$--$W4$ from unWISE, and
-ultraviolet FUV and NUV from GALEX.  For each galaxy we provide
+ultraviolet FUV and NUV from GALEX. For each galaxy we provide
 curve-of-growth total magnitudes, the isophotal diameter at a
 surface-brightness threshold of $\mu = 26~\mathrm{mag~arcsec^{-2}}$
 ($D_{26}$), the half-light semi-major axis, isophotal sizes at several
-other thresholds, and fitted ellipse geometry.  We cross-match
+other thresholds, and fitted ellipse geometry. We cross-match
 spectroscopic redshifts from DESI DR1, the NASA/IPAC Extragalactic
 Database (NED), and the Local Volume Database (LVD) and include them
-in the catalog.  The SGA-2025 supersedes the SGA-2020
+in the catalog. The SGA-2025 supersedes the SGA-2020
 \citep{moustakas23a}, more than doubling the number of catalogued
 galaxies while extending coverage into the ultraviolet and
-mid-infrared.  We make the full catalog, mosaics, and companion
+mid-infrared. We make the full catalog, mosaics, and companion
 analysis code publicly available at
 \url{https://sga.legacysurvey.org}.
 
@@ -73,35 +73,33 @@ parameters --- surveys}
 %%----------------------------------------------------------------------
 
 The Siena Galaxy Atlas (SGA) pursues a goal distinct from that of most
-galaxy catalogs: rather than selecting objects by apparent magnitude or
-spectroscopic redshift, we assemble the most complete
-angular-diameter-limited sample of large, resolved galaxies ever built,
-spanning the full extragalactic sky accessible to modern digital
-imaging.  This selection function matters because spatially resolved
-photometry of nearby, angularly large galaxies---precise sizes, shapes,
-and fluxes measured homogeneously across the sky---underpins a wide
-range of extragalactic astrophysics: the galaxy luminosity and
-stellar-mass functions, the size--luminosity and Tully--Fisher
-relations, group and environmental studies, and the selection of
-targets and training sets for spectroscopic surveys and
-machine-learning morphology classifiers.  Only galaxies near or large
+galaxy catalogs: rather than selecting objects by apparent magnitude
+or spectroscopic redshift, we assemble the most complete
+angular-diameter-limited sample of large, resolved galaxies ever
+built, spanning the full extragalactic sky accessible to modern
+digital imaging. This selection function matters because spatially
+resolved photometry of nearby, angularly large galaxies---precise
+sizes, shapes, and fluxes measured homogeneously across the
+sky---underpins a wide range of extragalactic astrophysics: the galaxy
+luminosity and stellar-mass functions, the size--luminosity and
+Tully--Fisher relations, group and environmental studies, and the
+selection of targets and training sets for spectroscopic surveys and
+machine-learning morphology classifiers. Only galaxies near or large
 enough to be spatially well resolved reveal the internal structure,
 bars, rings, disks, and low-surface-brightness features invisible in
 unresolved photometry, that connects present-day galaxy morphology to
 the star formation, merger, and feedback histories that build it over
-cosmic time (see \citealt{moustakas23a} for a full discussion of the
-motivating science questions).  Yet these same large, angularly
-extended galaxies are the ones most poorly served by standard
-photometric pipelines, which are tuned to the point-like and marginally
-resolved sources that dominate magnitude-limited catalogs: their
-extended light profiles are prone to shredding into multiple spurious
-detections, and the sky background beneath them is easily
-over-subtracted, so that even deep, wide-area digital surveys with
-excellent point-source photometry can remain surprisingly incomplete
-for precisely the galaxies that carry the most spatial information per
-object.  We designed the SGA from the outset to correct for these
-failure modes directly, rather than to inherit them from a
-general-purpose source-detection pipeline.
+cosmic time. Yet these same large, angularly extended galaxies are
+the ones most poorly served by standard photometric pipelines, which
+are tuned to the point-like and marginally resolved sources that
+dominate magnitude-limited catalogs: their extended light profiles are
+prone to shredding into multiple spurious detections, and the sky
+background beneath them is easily over-subtracted, so that even deep,
+wide-area digital surveys with excellent point-source photometry can
+remain surprisingly incomplete for precisely the galaxies that carry
+the most spatial information per object. We designed the SGA from the
+outset to correct for these failure modes directly, rather than to
+inherit them from a general-purpose source-detection pipeline.
 
 This structural information has a long observational heritage, from
 Charles Messier's eighteenth-century catalog of nebulae through the New
@@ -110,14 +108,14 @@ of Bright Galaxies \citep[RC3;][]{de-vaucouleurs91a}, and, more recently, a
 generation of wide-area, multiwavelength atlases in the near-infrared,
 ultraviolet, and optical (see \citealt{moustakas23a} and references therein
 for the full lineage, and \citealt{christie24a} for a recent review of the
-broader landscape of nearby-galaxy surveys).  With the exception of the
+broader landscape of nearby-galaxy surveys). With the exception of the
 NASA-Sloan Atlas, however, these atlases' optical sizes, shapes, and total
 magnitudes still trace back to the RC3's photographic-plate measurements.
 No comprehensive, all-sky photometric catalog of resolved galaxies built
 entirely from modern, wide-field digital imaging existed until the Siena
 Galaxy Atlas 2020 (SGA-2020; \citealt{moustakas23a}), a $grz$+$W1$--$W4$
 atlas of $383{,}620$ galaxies over the $\approx\!20{,}000$~deg$^2$ DESI
-Legacy Imaging Surveys Data Release 9 footprint.  Since the SGA-2020's
+Legacy Imaging Surveys Data Release 9 footprint. Since the SGA-2020's
 publication, several new value-added galaxy compilations have extended
 this landscape further---among them REGALADE \citep{tranin26a} and
 HECATEv2 \citep{kyritsis26a}, both aimed principally at time-domain and
@@ -131,10 +129,10 @@ The DESI Legacy Imaging Surveys have since concluded observations with
 Data Release 11 (DR11; \citealt{dey19a}), delivering deeper, wider, and
 better-calibrated $grz$/$griz$ imaging than any previous data release,
 together with forced photometry from the Tractor source-fitting code
-\citep{lang16a}.  This imaging underlies the DESI spectroscopic survey
+\citep{lang16a}. This imaging underlies the DESI spectroscopic survey
 itself, whose Bright Galaxy Survey needs a high-quality photometric
 catalog of large-diameter galaxies to guard against the shredding and
-spectroscopic incompleteness that such objects otherwise cause.  We
+spectroscopic incompleteness that such objects otherwise cause. We
 combine the DR11 optical imaging with full-depth unWISE mid-infrared
 coadds \citep{lang14a, meisner21a} and the GALEX ultraviolet sky
 \citep{martin05a} to assemble large-galaxy photometry spanning four
@@ -143,65 +141,66 @@ decades in wavelength, from the far-ultraviolet to $22~\mu$m.
 In the years since its release, the SGA-2020 has already served as the
 foundation for a broad range of extragalactic science, underscoring the
 value of a systematic, angular-diameter-limited galaxy sample as a
-community resource rather than a single-purpose product.  The DESI
+community resource rather than a single-purpose product. The DESI
 Peculiar Velocity Survey selects its Tully--Fisher and Fundamental-Plane
 targets directly from SGA-2020 morphologies and sizes
 \citep{saulder23a}, placing spectroscopic fibers on the centers and
 major axes of spiral galaxies identified in the SGA-2020 to build its
-Tully--Fisher distance catalog \citep{douglass26a}.  Visual and
+Tully--Fisher distance catalog \citep{douglass26a}. Visual and
 machine-assisted searches of SGA-2020
 cutouts have produced systematic censuses of low-surface-brightness
 tidal features around tens of thousands of galaxies \citep{sola25a},
 while its all-sky coverage has enabled studies of the alignment between
 galaxy spin and the cosmic web using, in the words of one such study,
 ``the largest catalogue of galaxies publicly available''
-\citep{muralichandran25a}.  Cosmological simulations, in turn, use the
+\citep{muralichandran25a}. Cosmological simulations, in turn, use the
 SGA-2020's homogeneous sizes and colors as an observational benchmark
 against which to validate predicted galaxy structural properties
-\citep{baes24a, baes24b}.  We expect the SGA-2025's larger sample size, extended
+\citep{baes24a, baes24b}. We expect the SGA-2025's larger sample size, extended
 ultraviolet and mid-infrared coverage, and improved completeness to
 support an even wider range of such applications.
 
-A large, angular-diameter-selected sample is also, somewhat
-serendipitously, well matched to the demands of time-domain and
-multi-messenger astrophysics: because apparent angular size favors
-intrinsically large, massive, and relatively nearby galaxies, the SGA
-preferentially captures the galaxy population most likely to host
-gravitational-wave mergers, supernovae, and other transients.  This
-match is becoming more consequential as the scale of transient
-discovery grows; the Vera C.\ Rubin Observatory's Legacy Survey of
-Space and Time is expected to generate on the order of $10^7$ alerts
-per night, and real-time association of each transient with its host
-galaxy is central to triaging that stream, prioritizing follow-up, and
-flagging the rare events---kilonovae, tidal disruption events, fast
-radio burst counterparts---that justify limited spectroscopic and
-photometric resources \citep{andreoni24a}.  The reference catalogs that
-presently support this work, such as GLADE+ \citep{dalya22a} and the
-NED Local Volume Sample \citep{cook23a}, remain complete only to a few
-hundred megaparsecs in luminosity-weighted galaxy light, and forecasts
-for the fourth LIGO--Virgo--KAGRA observing run project that Rubin
-alone will increase the annual rate of electromagnetic-counterpart
-detections by roughly a factor of five relative to the Zwicky Transient
-Facility \citep{kiendrebeogo23a}---a gain that depends directly on
-having a sufficiently deep and complete galaxy catalog against which to
-search.  The same logic extends to localizing the hosts of fast radio
+A large, angular-diameter-selected sample is also well matched to the
+demands of time-domain and multi-messenger astrophysics: because
+apparent angular size favors intrinsically large, massive, and
+relatively nearby galaxies, the SGA preferentially captures the galaxy
+population most likely to host gravitational-wave mergers, supernovae,
+and other transients. This match is becoming more consequential as the
+scale of transient discovery grows; the Vera C.\ Rubin Observatory's
+Legacy Survey of Space and Time is expected to generate on the order
+of $10^7$ alerts per night, and real-time association of each
+transient with its host galaxy is central to triaging that stream,
+prioritizing follow-up, and flagging the rare events---kilonovae,
+tidal disruption events, fast radio burst counterparts---that justify
+limited spectroscopic and photometric resources
+\citep{andreoni24a}. The reference catalogs that presently support
+this work, such as GLADE+ \citep{dalya22a} and the NED Local Volume
+Sample \citep{cook23a}, remain complete only to a few hundred
+megaparsecs in luminosity-weighted galaxy light, and forecasts for the
+fourth LIGO--Virgo--KAGRA observing run project that Rubin alone will
+increase the annual rate of electromagnetic-counterpart detections by
+roughly a factor of five relative to the Zwicky Transient Facility
+\citep{kiendrebeogo23a}---a gain that depends directly on having a
+sufficiently deep and complete galaxy catalog against which to
+search. The same logic extends to localizing the hosts of fast radio
 bursts \citep{law24a} and to galaxy-catalog-based dark-siren cosmology
 \citep{abbott23a}, both of which trade directly on catalog
-completeness and depth.  We designed the SGA-2025 with these
+completeness and depth. We designed the SGA-2025 with these
 applications explicitly in mind: the parent-sample improvements we
 describe below (Section~\ref{sec:parent}) close exactly the
 completeness gaps that limit a galaxy catalog's value for real-time
 transient follow-up, while its uniform, multiwavelength photometry
-supports the host-galaxy characterization that such follow-up requires.
+supports the host-galaxy characterization that such follow-up
+requires.
 
 Here we present the SGA-2025, which exploits this improved imaging to
 deliver mosaics and ellipse photometry for $\sim\!486{,}000$ galaxies
-across the DR11 extragalactic footprint.  Concluding the SGA-2020, we
+across the DR11 extragalactic footprint. Concluding the SGA-2020, we
 identified its principal limitation as the heterogeneity and
 incompleteness it inherited from relying on HyperLeda \citep{makarov14a}
 as its near-exclusive parent-catalog input, and we proposed remedying it
 by detecting large galaxies directly rather than depending solely on
-external compilations.  The SGA-2025 delivers on that plan: rather than
+external compilations. The SGA-2025 delivers on that plan: rather than
 starting from the SGA-2020 itself, we rebuild the parent sample from
 scratch, merging HyperLeda with five additional source lists---including
 the SGA-2020, restricted to the DR11 footprint, as one input among several
@@ -211,7 +210,7 @@ following fresh visual inspection, occasionally dropping a previous entry
 that does not survive the SGA-2025's own selection cuts.
 
 Beyond photometry, we substantially expand the SGA's ancillary
-information relative to the 2020 release.  We cross-match spectroscopic
+information relative to the 2020 release. We cross-match spectroscopic
 redshifts from the Local Volume Database \citep[LVD;][]{pace25a}, DESI
 DR1, SDSS DR17, and NED; adopt distances from a priority-ranked
 compilation of high-precision literature measurements, LVD, and NED,
@@ -252,15 +251,15 @@ self-supervised-learning classifier and applying a battery of
 additional photometric and positional cuts; masking the footprint
 around bright Gaia and Tycho stars; and, finally, assembling the
 released parent sample, release by release, from a versioned sequence
-of hand-curated corrections.  This multi-catalog strategy responds
+of hand-curated corrections. This multi-catalog strategy responds
 directly to a lesson learned building the SGA-2020, whose parent sample
-HyperLeda \citep{makarov14a} supplied almost in its entirety.  A
+HyperLeda \citep{makarov14a} supplied almost in its entirety. A
 completeness check against the independent HECATE catalog
 \citep{kovlakas21a} found the SGA-2020 highly complete in practice
 ($\gtrsim\!95\%$ for galaxies larger than $\sim\!25\arcsec$), but traced
 its residual, genuine misses and the pronounced surface-density
 variations across its footprint to heterogeneity and query artifacts
-inherited from relying on HyperLeda alone \citep{moustakas23a}.  Because
+inherited from relying on HyperLeda alone \citep{moustakas23a}. Because
 the mechanics of these
 intermediate stages are logistically detailed but not, in themselves,
 central to interpreting the resulting catalog, we summarize each briefly
@@ -270,13 +269,13 @@ consistency check we impose -- to Appendix~\ref{sec:appendix:parent}.
 
 We build the no-cuts candidate catalog (Table~\ref{tab:parent-external})
 by merging six external source lists, each contributing a distinct
-piece of the final galaxy inventory.  HyperLeda \citep{makarov14a} is
+piece of the final galaxy inventory. HyperLeda \citep{makarov14a} is
 our primary input, supplying $D_{25}$ diameters and positions for the
 great majority of candidates; we reconcile it against NED-LVS
 \citep[NED Local Volume Sample;][]{cook23a}, an independently assembled
 NED cross-identification and redshift compilation, to establish a
 high-confidence overlap sample and to recover HyperLeda objects that
-NED resolves under a different name or position.  We supplement these
+NED resolves under a different name or position. We supplement these
 two all-sky compilations with the Local Volume Database \citep[LVD;][]
 {pace25a}, a hand-vetted census of confirmed dwarf and Local Group
 galaxies within $\sim\!20$~Mpc that supplies the most reliable
@@ -286,7 +285,7 @@ carried forward directly; a hand-curated ``custom'' catalog of one-off
 additions dominated by the SMUDGes ultra-diffuse and
 low-surface-brightness galaxy sample \citep{zaritsky23a}; and a
 supplemental list of large galaxies identified during earlier
-(DR9/DR10) SGA processing.  We describe the cross-matching,
+(DR9/DR10) SGA processing. We describe the cross-matching,
 source-priority ordering, and geometry standardization we apply to
 merge these six catalogs into a single, consistent system of
 positions, diameters, axis ratios, and magnitudes in
@@ -305,7 +304,7 @@ flag objects near or embedded within a bright star's masking radius for
 special handling during ellipse-fitting (Appendix~\ref{sec:parent:gaiamask}).
 Together these stages reduce the no-cuts catalog from $\sim\!5.10$~million
 candidates to the $\sim\!1.19$~million-object archive-stage catalog we
-carry forward into the final assembly below.  \todo{Update these object
+carry forward into the final assembly below. \todo{Update these object
   counts once the final (v1.0) processing version is available.}
 
 We assemble the final parent sample from this archive-stage catalog not
@@ -317,16 +316,16 @@ versioned set of hand-curated CSV files recording the objects added,
 dropped, individually corrected, or re-flagged at that stage of visual
 inspection, so that the full history of the catalog's evolution
 survives as a permanent, inspectable record rather than being folded
-irreversibly into the catalog itself.  After applying each release's
+irreversibly into the catalog itself. After applying each release's
 overlay files, we re-run group-finding on the full, corrected catalog to
 identify galaxy groups and assign each a primary member
 (Section~\ref{sec:parent:groups}), and re-populate the \texttt{SAMPLE}
 and \texttt{ELLIPSEMODE} bits (Tables~\ref{tab:sample-bitmask}
 and~\ref{tab:ellipsemode-bitmask}) that downstream ellipse-fitting and
-cataloging depend on.  In total, we made more than 45,000 individual
+cataloging depend on. In total, we made more than 45,000 individual
 visual-inspection-driven additions, removals, or corrections across the
 v0.30--v1.6 releases; \texttt{v1.6} is the final parent-sample version
-adopted for the SGA-2025 release.  We describe this overlay bookkeeping,
+adopted for the SGA-2025 release. We describe this overlay bookkeeping,
 and the release-specific corrections it required, in full in
 Appendix~\ref{sec:parent:final}.
 
@@ -342,7 +341,7 @@ group-finding algorithm at every parent-sample release
 diameter-weighted center (\texttt{GROUP\_RA}/\texttt{GROUP\_DEC}/
 \texttt{GROUP\_DIAMETER}), and a Boolean \texttt{GROUP\_PRIMARY} flag
 marking the dominant (largest-diameter) member that most SGA-2025
-analyses key on.  We treat two populations differently: objects flagged
+analyses key on. We treat two populations differently: objects flagged
 \texttt{RESOLVED} (Milky Way satellites effectively resolved into
 individual stars) or \texttt{FORCEPSF} (forced to a point-source
 Tractor model) are excluded from automated linking entirely and instead
@@ -354,12 +353,12 @@ purposes; every other object is passed to the full linking algorithm
 
 \texttt{build\_group\_catalog} links objects using a threshold set to
 the diameter-dependent scale of the pair being tested, rather than a
-single fixed angle.  We first bucket the input catalog into coarse
+single fixed angle. We first bucket the input catalog into coarse
 spherical preclusters via \texttt{pydl}'s \texttt{spheregroup}
 algorithm, using a generous $5\arcmin$ link length that cheaply groups
 together any objects that could plausibly belong to the same physical
 system while keeping the subsequent, more expensive pairwise test
-confined to small preclusters.  Within each multi-member precluster we
+confined to small preclusters. Within each multi-member precluster we
 then test every candidate pair against a size-dependent linking
 threshold: for two ``small'' objects (diameter $<3\arcmin$) we compare
 their center-to-center separation against $\sim\!1.6\times$ the mean of
@@ -371,7 +370,7 @@ radii scaled by $1.3\times$, avoiding spuriously large directional radii
 for the most elongated systems; and for a big-small pair we use
 directional radii scaled by $1.5\times$, floored at $40\%$ of the small
 object's circular radius so that a small companion close to a large
-host's isophotal edge is not missed.  Independent of this
+host's isophotal edge is not missed. Independent of this
 threshold, we also link any pair whose ellipses geometrically overlap
 once expanded by a $75\%$ margin, which catches close pairs the
 distance-based test alone would miss; we floor every threshold at
@@ -379,19 +378,19 @@ $36\arcsec$ and reject linking altogether beyond $5\arcmin$ separation.
 
 Because the coarse preclustering and pairwise linking above can still
 leave near-duplicate or narrowly-missed groups unmerged, we apply two
-further passes before finalizing the catalog.  First, we merge any pair
+further passes before finalizing the catalog. First, we merge any pair
 of provisional groups whose members' \emph{unscaled} ellipses overlap
 but whose separation exceeded the $5\arcmin$ linking cutoff -- the case,
 for example, of a small companion projected deep within a much larger
 host's disk, too close in projection for the coarse preclustering step
 to have placed them together but unambiguous once ellipse overlap is
-checked directly.  Second, we compute each provisional group's
+checked directly. Second, we compute each provisional group's
 diameter-weighted center and merge any two group centers that land
 within $52\arcsec$ of one another, catching residual duplicate groups
 the ellipse-overlap check does not resolve; we also support a small,
 hand-curated list of named object pairs to force-merge regardless of
 geometry, for the rare cases visual inspection identifies as physically
-associated but geometrically disjoint.  Finally, for each resulting
+associated but geometrically disjoint. Finally, for each resulting
 group we compute its adopted center as the diameter-weighted Cartesian
 mean of its members' positions, its diameter as the maximum member
 extent (separation from the group center plus half that member's own
@@ -419,14 +418,14 @@ imaging programs -- the DECam Legacy Survey (DECaLS), the
 Beijing--Arizona Sky Survey (BASS), and the Mayall $z$-band Legacy
 Survey (MzLS) -- to cover the extragalactic sky in $g$, $r$, $i$, and
 $z$ over \texttt{dr11-south} and in $g$, $r$, and $z$ over
-\texttt{dr11-north}.  The Dark Energy Camera \citep[DECam;][]{flaugher15a},
+\texttt{dr11-north}. The Dark Energy Camera \citep[DECam;][]{flaugher15a},
 a 3~deg$^2$ mosaic imager with a pixel scale of $0\farcs262$ on the
 Blanco 4-m telescope at CTIO, provides the DECaLS imaging; by DR11, the
 \texttt{dr11-south} footprint aggregates not only DECaLS's own exposures
 but also public archival DECam data from the Dark Energy Survey, the
 DECam Local Volume Exploration Survey, and the DECam eROSITA Survey, all
 reprocessed with a common pipeline to achieve uniform depth and
-photometric calibration over the combined footprint.  We image
+photometric calibration over the combined footprint. We image
 \texttt{dr11-north} by combining $g$- and $r$-band imaging from BASS
 (the 90Prime imager on the Steward Observatory 2.3-m Bok telescope;
 \citealt{zou17a}) with $z$-band imaging from MzLS (the Mosaic-3 imager
@@ -439,7 +438,7 @@ directly to the pixel data from every overlapping exposure -- extracting
 the full depth and resolution of the combined dataset without resorting
 to heuristic deblending -- using spatially varying point-spread-function
 models built with PSFEx and astrometric and photometric zero-points tied,
-CCD by CCD, to Gaia and Pan-STARRS1.  DR11 is the most complete and
+CCD by CCD, to Gaia and Pan-STARRS1. DR11 is the most complete and
 uniform Legacy Surveys release to date, covering $\sim\!31{,}000$~deg$^2$
 across both hemispheres to typical $5\sigma$ point-source depths of
 $g\approx24.7$, $r\approx24.2$, $i\approx23.8$, and $z\approx23.3$~mag.
@@ -459,11 +458,11 @@ Section~\ref{sec:pipeline}.
 We incorporate mid-infrared imaging from unWISE \citep{lang14a,
   meisner21a}, full-depth coadds of the Wide-field Infrared Survey
 Explorer \citep[WISE;][]{wright10a} in bands $W1$ (3.4~$\mu$m), $W2$
-(4.6~$\mu$m), $W3$ (12~$\mu$m), and $W4$ (22~$\mu$m).  The unWISE
+(4.6~$\mu$m), $W3$ (12~$\mu$m), and $W4$ (22~$\mu$m). The unWISE
 coadds we use incorporate every NEOWISE epoch through the end of the
 mission, providing the deepest possible $W1$/$W2$ coverage, while $W3$
 and $W4$ retain the original full-mission depth from the cryogenic
-phase of the WISE mission.  The unWISE coadds provide nearly uniform
+phase of the WISE mission. The unWISE coadds provide nearly uniform
 coverage across the sky at angular resolutions of
 $6\arcsec$--$12\arcsec$, set by the WISE point-spread function.
 
@@ -472,7 +471,7 @@ $6\arcsec$--$12\arcsec$, set by the WISE point-spread function.
 
 We obtain ultraviolet photometry from the Galaxy Evolution Explorer
 \citep[GALEX;][]{martin05a} GR6/GR7 data release in the FUV (1528~\AA{})
-and NUV (2271~\AA{}) bands.  Unlike the optical and mid-infrared imaging,
+and NUV (2271~\AA{}) bands. Unlike the optical and mid-infrared imaging,
 GALEX coverage is non-uniform and does not extend over the full DR11
 footprint; approximately $X$\% of SGA-2025 galaxies have at least one
 GALEX band available.
@@ -486,14 +485,14 @@ For each galaxy group we build a custom set of image coadds and source
 catalogs by invoking \textsl{legacypipe}'s \texttt{runbrick} pipeline
 (\texttt{SGA.coadds.custom\_coadds}) on a synthetic ``brick'' centered on
 the group position, rather than processing the group piecemeal across
-whichever standard DR11 bricks happen to overlap it.  We size each
+whichever standard DR11 bricks happen to overlap it. We size each
 mosaic adaptively from the group's diameter, multiplicity, and axis
 ratio -- inflating the width for small, elongated, or high-multiplicity
 systems so that the full light profile and an adequate sky annulus are
 always captured -- at the survey's native optical pixel scale
 ($0\farcs262$~pixel$^{-1}$), together with matched unWISE
 ($2\farcs75$~pixel$^{-1}$) and, where available, GALEX
-($1\farcs5$~pixel$^{-1}$) coadds built in the same run.  \textsl{legacypipe}
+($1\farcs5$~pixel$^{-1}$) coadds built in the same run. \textsl{legacypipe}
 and Tractor \citep{lang16a} are described in detail elsewhere
 \citep{dey19a,moustakas23a}; we summarize here only the processing
 options we adopt that depart from a standard DR11 brick run.
@@ -503,7 +502,7 @@ on the individual per-exposure frames (\texttt{--fit-on-coadds
 --no-ivar-reweighting}), with iterative source-detection refinement
 disabled (\texttt{--no-iterative}) in favor of a single detection pass at
 fixed significance and saddle-point thresholds ($n\sigma=6$, saddle
-fraction $=0.2$, saddle minimum $=4$).  We also depart from
+fraction $=0.2$, saddle minimum $=4$). We also depart from
 \textsl{legacypipe}'s default handling of previously cataloged large
 galaxies: ordinarily, sources falling within the aperture of a known
 large galaxy (\texttt{REF\_CAT}~$=$~\texttt{`L4'}, i.e., the SGA itself;
@@ -513,13 +512,13 @@ specifically to fit those same large galaxies in detail, we disable this
 suppression by default (\texttt{--no-galaxy-forcepsf}); we leave it
 enabled only for the small number of objects flagged \texttt{FORCEPSF}
 in \texttt{ELLIPSEMODE} (Table~\ref{tab:ellipsemode-bitmask}), which
-forces every source in that mosaic to a point-source model.  Finally, we
+forces every source in that mosaic to a point-source model. Finally, we
 mask bright sources that fall outside the blob being fit
 (\texttt{--bright-masking}) and apply custom segmentation around large
 galaxies (\texttt{--galaxy-masking}), to keep neighboring bright stars
 and galaxies from contaminating detection and model-fitting.
 
-Two categories of object bypass this pipeline entirely.  Objects flagged
+Two categories of object bypass this pipeline entirely. Objects flagged
 \texttt{RESOLVED} in \texttt{ELLIPSEMODE} -- Milky Way satellites so
 nearby that they resolve into individual stars rather than a smooth
 light profile -- skip Tractor altogether; we instead cut out existing
@@ -527,7 +526,7 @@ coadd imagery directly, at 100$\times$ the standard pixel scale for the
 very largest such systems (the LMC, SMC, and Antlia~II) and 50$\times$
 for the next largest (Crater~II and Bootes~III), since these objects
 span degrees on the sky and a native-resolution mosaic would be both
-unnecessary and computationally prohibitive.  Objects for which we
+unnecessary and computationally prohibitive. Objects for which we
 request \texttt{--skip-tractor} are likewise reduced to simple image
 cutouts, retaining an inverse-variance map so that photometry can still,
 in principle, be attempted later; we flag these objects
@@ -555,7 +554,7 @@ catalogs (Section~\ref{sec:pipeline:ellipse:read}); we then iteratively
 refine every member's elliptical geometry and construct a hierarchy of
 source masks (Section~\ref{sec:pipeline:ellipse:mask}); and we finally
 fit the resulting surface-brightness profiles in two passes across all
-available imaging datasets (Section~\ref{sec:pipeline:ellipse:fit}).  We
+available imaging datasets (Section~\ref{sec:pipeline:ellipse:fit}). We
 adopt a group-level architecture because SGA galaxies frequently overlap
 physically associated or line-of-sight companions -- fitting each galaxy
 independently, blind to its neighbors' light, would systematically bias
@@ -570,12 +569,12 @@ other cataloged source in the same mosaic.
 For each group, we first read the coadded optical, unWISE, and (where
 available) GALEX mosaics -- images, inverse-variance maps, PSF models,
 and Tractor model images -- together with the full Tractor catalog for
-the mosaic footprint and the group's sample catalog of SGA targets.  We
+the mosaic footprint and the group's sample catalog of SGA targets. We
 construct a bright-star mask from the \texttt{MASKBITS} image (the
 \texttt{BRIGHT}, \texttt{MEDIUM}, and \texttt{CLUSTER} bits) together
 with an independent Gaia/Tycho-based core mask, and we match each SGA
 object in the sample catalog to its corresponding Tractor source by
-reference ID.  Galaxies large or diffuse enough to require visual
+reference ID. Galaxies large or diffuse enough to require visual
 inspection bypass this matching, and every fitting stage that follows,
 entirely; we instead populate their geometry directly from the parent
 catalog.
@@ -588,11 +587,11 @@ the parent catalog or, where preferred, from the Tractor model -- we
 iteratively refine the elliptical geometry from light-weighted second
 moments of the image, alternating between remeasuring the moments and
 rebuilding the elliptical mask used to compute them until the solution
-converges (Table~\ref{tab:ellipsefit-params}).  We weight the moments
+converges (Table~\ref{tab:ellipsefit-params}). We weight the moments
 radially, down-weighting the galaxy's core relative to its outskirts, so
 that the recovered semi-major axis, axis ratio, and position angle trace
 the extended, low-surface-brightness envelope rather than the often
-rounder, bulge-dominated central light.  We flag objects whose
+rounder, bulge-dominated central light. We flag objects whose
 moment-based center shifts by more than $\Delta_{\rm max}$ from its
 starting position as having an unreliable geometry solution, and we flag
 objects whose semi-major axis falls below $f_{\rm sat}$ times that of
@@ -608,7 +607,7 @@ Tractor-detected galaxies, which we classify as major companions --
 masked unconditionally, including within the target's own ellipse -- if
 their flux exceeds $F_{\rm major}^{\rm final}$ times the target's, and
 otherwise, optionally, as minor companions masked only outside the
-target's own ellipse.  We then subtract the Tractor model of every
+target's own ellipse. We then subtract the Tractor model of every
 masked source, so that the images entering the fitting stage
 (Section~\ref{sec:pipeline:ellipse:fit}) contain only the flux of the
 target galaxy and any unmasked, unmodeled structure; we propagate the
@@ -632,13 +631,13 @@ together with their adopted default values.
 \subsubsection{Two-Pass Isophotal Fitting}
 \label{sec:pipeline:ellipse:fit}
 
-We fit the masked, model-subtracted mosaics in two passes.  In the first
+We fit the masked, model-subtracted mosaics in two passes. In the first
 pass, we build an aggressive initial mask -- classifying companions as
 major down to a flux ratio of just $F_{\rm major}^{\rm geo}$ and masking
 minor companions throughout -- and we fit only the optical bands,
 without Monte Carlo resampling, to obtain a first-pass estimate of the
 $\mu = 26$~mag~arcsec$^{-2}$ isophotal radius, $R(26)$, for every object
-in the group.  In the second pass, we rebuild the mask using this
+in the group. In the second pass, we rebuild the mask using this
 refined geometry -- relaxing the major-companion threshold to
 $F_{\rm major}^{\rm final}$ and, by default, leaving minor companions
 unmasked -- and we fit the full complement of requested imaging datasets
@@ -651,14 +650,14 @@ sigma-clipping outlier pixels within each isophote before averaging; we
 anchor the sampling grid to the object's moment-refined semi-major axis
 and rescale it, band to band and dataset to dataset, to hold a roughly
 constant number of pixels -- and hence roughly constant signal-to-noise
--- per annulus.  We derive isophotal radii at surface-brightness levels
+-- per annulus. We derive isophotal radii at surface-brightness levels
 of $\mu = 22$, 23, 24, 25, and 26~mag~arcsec$^{-2}$ in each available
 optical band from a Monte Carlo resampling of the surface-brightness
 profile ($N_{\rm MC}$ realizations by default), which we use to assign
 an asymmetric uncertainty from the interquartile range of the resulting
 radius distribution rather than propagating formal photometric errors
 alone; we adopt the $\mu = 26$~mag~arcsec$^{-2}$ isophote in the $r$
-band as the SGA-2025 diameter, $D_{26}$ (arcmin).  We derive the
+band as the SGA-2025 diameter, $D_{26}$ (arcmin). We derive the
 curve-of-growth photometry and half-light radii that we report in all
 ten photometric bands from these same per-annulus measurements, as we
 describe next in Section~\ref{sec:pipeline:cog}.
@@ -672,7 +671,7 @@ full surface-brightness profile with two complementary flux
 measurements, computed simultaneously with the isophotal fit and from
 the identical per-annulus aperture photometry: a set of fixed reference
 apertures, and a parametric fit to the curve of growth that yields an
-asymptotic total magnitude and a half-light radius.  We measure both for
+asymptotic total magnitude and a half-light radius. We measure both for
 every object, band, and imaging dataset (optical, unWISE, and GALEX), so
 that \texttt{COG\_MTOT\_$\langle$band$\rangle$} and
 \texttt{SMA50\_$\langle$band$\rangle$} are defined consistently across
@@ -689,7 +688,7 @@ model-independent photometric anchor at a common physical scale across
 the sample, independent of the parametric fit we describe next.
 
 We complement these fixed apertures with a parametric fit to the full
-curve of growth.  Using the same per-annulus aperture-flux measurements
+curve of growth. Using the same per-annulus aperture-flux measurements
 underlying the isophotal fit (Section~\ref{sec:pipeline:ellipse:fit}),
 we model the enclosed-flux profile, expressed as an AB magnitude $m(r)$
 as a function of semi-major axis $r$, as
@@ -702,21 +701,21 @@ where $m_{\rm tot}$ is the asymptotic total magnitude as $r \to \infty$,
 $\Delta m$ is the (positive) amplitude by which the innermost-aperture
 magnitude exceeds $m_{\rm tot}$, $\alpha_1$ and $\alpha_2$ jointly set
 the curve's normalization and steepness, and we fix the scale radius
-$r_0$ to the object's moment-refined semi-major axis.  We fit
+$r_0$ to the object's moment-refined semi-major axis. We fit
 Equation~\ref{eq:cog} in terms of $(m_{\rm tot}, \Delta m, \ln\alpha_1,
 \ln\alpha_2)$ rather than $(m_{\rm tot}, \Delta m, \alpha_1, \alpha_2)$
 directly -- since $\alpha_1$ and $\alpha_2$ are defined only for
 positive values, optimizing their logarithms instead lets the
 nonlinear solver explore the full real line without encountering a
 positivity boundary, which we find stabilizes convergence considerably
-across the wide range of profile shapes spanned by the sample.  We
+across the wide range of profile shapes spanned by the sample. We
 solve for these four parameters via a robust (soft-$L_1$-loss)
 nonlinear least-squares minimization with an analytic Jacobian,
 weighting each aperture by its flux-derived magnitude uncertainty --
 with a 0.02~mag floor added in quadrature so that the innermost,
 highest signal-to-noise apertures cannot dominate the fit -- and we
 estimate parameter uncertainties from the fit's covariance matrix,
-scaled by the reduced chi-square.  We report the asymptotic total
+scaled by the reduced chi-square. We report the asymptotic total
 magnitude, $m_{\rm tot}$, as \texttt{COG\_MTOT\_$\langle$band$\rangle$}
 in the AB system for all ten photometric bands: $G$, $R$, $I$, $Z$
 (optical), $W1$--$W4$ (unWISE), and FUV, NUV (GALEX), together with its
@@ -734,7 +733,7 @@ m_{\rm tot} = -2.5\log_{10} f \equiv \delta_f$ -- to obtain
 and we propagate the fit's covariance matrix through
 Equation~\ref{eq:rfrac} via its analytic partial derivatives with
 respect to $(\Delta m, \ln\alpha_1, \ln\alpha_2)$ to obtain the
-corresponding $1\sigma$ uncertainty on $r_f$.  We evaluate
+corresponding $1\sigma$ uncertainty on $r_f$. We evaluate
 Equation~\ref{eq:rfrac} at $f = 0.5$ ($\delta_{0.5} \approx
 0.753$~mag) to obtain the half-light radius, which we report as
 \texttt{SMA50\_$\langle$band$\rangle$} together with its propagated
@@ -760,7 +759,7 @@ curve-of-growth fit.
 We assemble the released SGA-2025 catalog in two stages, separating the
 purely internal products of our imaging pipeline (Section~\ref{sec:pipeline})
 from the external cross-matching that turns those measurements into a
-science-ready dataset.  In the first stage we merge, in parallel across MPI
+science-ready dataset. In the first stage we merge, in parallel across MPI
 ranks, the per-group ellipse-fit geometry, isophotal photometry, and
 curve-of-growth measurements (Sections~\ref{sec:pipeline:ellipse} and
 \ref{sec:pipeline:cog}) together with the row-matched forced Tractor
@@ -768,18 +767,18 @@ photometry into a single per-region ``beta'' catalog; at this stage every
 object carries only the internal \texttt{SGAID} and the coordinates,
 diameter, and name inherited from its parent-catalog entry
 (Section~\ref{sec:parent})---no NED cross-identification, spectroscopic
-redshift, or distance has yet been attached.  In the second stage we merge
+redshift, or distance has yet been attached. In the second stage we merge
 the beta catalog with three external compilations: (1) NED positional and
 by-name cross-matching, which supplies the adopted galaxy name
 (\texttt{GALAXY}, \texttt{ALTNAMES}), morphological type, and NED's own
 redshift and distance measurements; (2) DESI DR1 and SDSS DR17
 spectroscopy, matched by position to every object within its fitted
 ellipse; and (3) LVD velocities and distances for every Local Volume
-Database object.  From these inputs we resolve a single adopted redshift
+Database object. From these inputs we resolve a single adopted redshift
 and distance per galaxy (Sections~\ref{sec:catalog:redshifts} and
 \ref{sec:catalog:distances}) and train a photometric-redshift model
 (Section~\ref{sec:catalog:redshifts}) on the resulting spectroscopic
-subsample.  The output of this second stage is the public, value-added
+subsample. The output of this second stage is the public, value-added
 \texttt{SGA2025-v1.0} catalog we describe in the remainder of this section.
 
 \subsection{Catalog Structure}
@@ -792,13 +791,13 @@ We distribute the SGA-2025 as two FITS files, one per imaging region:
   \item \texttt{SGA2025-dr11-north-v1.0.fits} ($\sim\!90{,}000$ entries)
 \end{itemize}
 
-Each file contains three binary table extensions.  The primary extension
+Each file contains three binary table extensions. The primary extension
 (\texttt{SGA2025}) holds the science catalog described here: identification,
 geometry, adopted redshifts and distances, and a nominal flux per band for
-every galaxy.  The row-matched \texttt{ELLIPSEPHOT} extension carries the
+every galaxy. The row-matched \texttt{ELLIPSEPHOT} extension carries the
 full aperture-photometry and curve-of-growth grid underlying those nominal
 fluxes (Section~\ref{sec:pipeline:cog}), keyed to \texttt{SGA2025} via
-\texttt{SGAID}.  The row-matched \texttt{TRACTOR} extension contains
+\texttt{SGAID}. The row-matched \texttt{TRACTOR} extension contains
 band-specific forced Tractor photometry quantities, keyed via
 \texttt{REF\_ID} (duplicated as a leading \texttt{SGAID} column for
 convenience).
@@ -809,7 +808,7 @@ convenience).
 Table~\ref{tab:columns} summarizes the most frequently used catalog
 columns; we describe the adopted-redshift and adopted-distance columns
 separately in Sections~\ref{sec:catalog:redshifts} and
-\ref{sec:catalog:distances}.  We provide a complete data model in the
+\ref{sec:catalog:distances}. We provide a complete data model in the
 online documentation at \url{https://sga.readthedocs.io}.
 
 % \input{tables/catalog_columns.tex}
@@ -818,7 +817,7 @@ online documentation at \url{https://sga.readthedocs.io}.
 \label{sec:catalog:access}
 
 We define the SGA-2025 sky coverage using two contiguous imaging regions
-from the DR11 footprint (Figure~\ref{fig:sky}).  We image the southern
+from the DR11 footprint (Figure~\ref{fig:sky}). We image the southern
 region (\texttt{dr11-south}; $\sim\!XX{,}000$~deg$^2$) with the Dark
 Energy Camera (DECam) on the Cerro Tololo 4-m Blanco telescope in the
 $g$, $r$, $i$, and $z$ bands; it contains $\sim\!363{,}000$ galaxies.
@@ -827,7 +826,7 @@ $\sim\!XX{,}000$~deg$^2$; decl.\ $\gtrsim +32\arcdeg$) with the
 Beijing--Arizona Sky Survey (BASS) and the Mayall $z$-band Legacy Survey
 (MzLS) in $g$, $r$, and $z$; it contains $\sim\!82{,}000$ galaxies.
 Together the two regions span $\sim\!30{,}000$~deg$^2$ and encompass
-$\sim\!486{,}000$ resolved galaxies.  We describe the optical, mid-infrared,
+$\sim\!486{,}000$ resolved galaxies. We describe the optical, mid-infrared,
 and ultraviolet imaging that make up this dataset, in turn, in the three
 subsections below.
 
@@ -836,11 +835,11 @@ subsections below.
   \includegraphics[width=\textwidth]{figures/sga2025-sky.png}
   \caption{Mollweide equal-area projection of the SGA-2025 galaxy surface
     density (galaxies deg$^{-2}$) in equatorial coordinates (J2000),
-    centered at RA $= 120\arcdeg$.  The sample shown is restricted to
+    centered at RA $= 120\arcdeg$. The sample shown is restricted to
     group-primary objects ($N = 445{,}726$; one representative per galaxy
-    group).  The solid black line traces the Galactic plane ($b = 0\arcdeg$)
+    group). The solid black line traces the Galactic plane ($b = 0\arcdeg$)
     and the dashed lines mark $|b| = 10\arcdeg$, the approximate
-    exclusion boundary applied during source selection.  The DR11 footprint
+    exclusion boundary applied during source selection. The DR11 footprint
     defines two contiguous regions: the DECam south (low-latitude southern
     sky) and the BASS+MzLS north (decl.\ $\gtrsim +32\arcdeg$).}
   \label{fig:sky}
@@ -859,7 +858,7 @@ subsections below.
 
 We make the catalog files, postage-stamp mosaics, and
 ellipse-photometry outputs publicly available through the Legacy
-Survey data portal at \url{https://sga.legacysurvey.org}.  We archive
+Survey data portal at \url{https://sga.legacysurvey.org}. We archive
 the companion analysis code---which we use to generate the figures in
 this paper---at Zenodo \todo{bib} and mirror it on GitHub at
 \url{https://github.com/moustakas/sgapaper}.
@@ -870,10 +869,10 @@ this paper---at Zenodo \todo{bib} and mirror it on GitHub at
 We validate our ellipse-fit geometry against the WISE Extended Source
 Catalog hundred sample \citep[WXSC-100;][]{jarrett19a}, an independent,
 near-infrared reference sample of the 100 largest, brightest galaxies on
-the sky.  We cross-match SGA-2025 against WXSC-100 by position and
+the sky. We cross-match SGA-2025 against WXSC-100 by position and
 compare, in Figure~\ref{fig:wxsc100}, our astrometry, isophotal diameters,
 position angles, and ellipticities against the corresponding WXSC-100
-measurements, color-coded by Hubble type.  We find good overall agreement
+measurements, color-coded by Hubble type. We find good overall agreement
 across all four quantities, with the residual scatter consistent with the
 combination of measurement uncertainty and the intrinsically different
 isophotal definitions ($\mu_{26}$ optical versus $W1$-band) underlying the
@@ -898,10 +897,10 @@ two catalogs.
 
 We compile the adopted spectroscopic redshift (\texttt{Z}) from four
 independent sources, in order of decreasing priority: LVD, DESI DR1, SDSS
-DR17, and NED.  We adopt LVD \citep{pace25a} redshifts first, since the
+DR17, and NED. We adopt LVD \citep{pace25a} redshifts first, since the
 LVD is a hand-curated compilation of velocities and distances for galaxies
 within $\sim\!20$~Mpc and is the most reliable source available for the
-nearby population it covers.  Failing an LVD measurement, we cross-match
+nearby population it covers. Failing an LVD measurement, we cross-match
 against the DESI DR1 spectroscopic catalog \citep[DESI Collaboration et
 al.~2025;][]{desi-collaboration26a}, restricting to spectra within
 3.5\arcsec\ of the fitted center, discarding stellar and implausibly
@@ -910,10 +909,10 @@ and preferring the highest-confidence galaxy spectrum with the largest
 $\Delta\chi^2$ when several fall within the ellipse; we obtain redshifts
 for $\sim\!X{,}000$ galaxies this way, predominantly through the DESI
 Bright Galaxy Survey, and record the number of DESI spectra examined per
-galaxy in \texttt{NSPEC\_DESI}.  We next cross-match against SDSS DR17
+galaxy in \texttt{NSPEC\_DESI}. We next cross-match against SDSS DR17
 under comparable positional and quality cuts, independently of---and in
 preference to---NED's own aggregated copy of SDSS spectroscopy, whose
-quality flags NED does not propagate.  For the remainder we adopt NED's
+quality flags NED does not propagate. For the remainder we adopt NED's
 redshift, replacing its aggregated ``fiducial'' value with one drawn from
 its full redshift-measurement list whenever that value is suspiciously
 high, missing, or drawn from a source we consider unreliable---most often
@@ -926,26 +925,26 @@ We store the adopted redshift, its inverse variance, and its source
 (\texttt{Z}, \texttt{Z\_IVAR}, \texttt{Z\_REF} $\in \{$\texttt{LVD},
 \texttt{DESI}, \texttt{SDSS}, \texttt{NED}$\}$); \texttt{Z\_IVAR} $= 0$
 identifies a missing measurement, since \texttt{Z} $= 0$ is itself a valid,
-if rare, redshift for the nearest galaxies.  Because DESI otherwise takes
+if rare, redshift for the nearest galaxies. Because DESI otherwise takes
 priority whenever measured, we additionally override its adopted value in
 two circumstances that would otherwise let an isolated discrepant spectrum
 stand: when SDSS and NED are both measured and agree with each other but
 not with DESI, and when an adopted DESI or SDSS redshift exceeds $z = 0.3$
 ---implausibly high for this overwhelmingly low-redshift sample---while
-an independent NED measurement is on file.  We resolve the small residual
+an independent NED measurement is on file. We resolve the small residual
 of flagged redshifts by hand and feed the results back into the catalog; we
 provide the full override and quality-flag bookkeeping in the online
 documentation.
 
 Beyond this adopted redshift we derive two further quantities for every
-galaxy.  We train a random-forest regressor \citep[\texttt{scikit-learn};]
+galaxy. We train a random-forest regressor \citep[\texttt{scikit-learn};]
 []{pedregosa11a} on the spectroscopic subsample, using extinction-corrected
 optical/infrared colors, apparent magnitude, surface brightness, angular
 diameter, axis ratio, and Tractor S\'ersic index as features, validate it
 via 5-fold cross-validation, and predict a photometric redshift
 (\texttt{Z\_PHOT}) for every galaxy, with its uncertainty
 (\texttt{Z\_PHOT\_IVAR}) set from the spread of predictions across the
-forest.  We also convert every measured redshift to the CMB frame and,
+forest. We also convert every measured redshift to the CMB frame and,
 below 20,000~km~s$^{-1}$, remove the mean peculiar velocity predicted by
 \texttt{pvhub} \citep{said20a}, propagating the model-to-model scatter into
 the resulting \texttt{Z\_COSMO\_IVAR}; where no spectroscopic redshift
@@ -959,13 +958,13 @@ We quantify the resulting redshift completeness in
 Figure~\ref{fig:redshift-completeness}, where we show, as a function of
 isophotal diameter $D(26)$, the fraction of all group members (not just
 group primaries) with an adopted spectroscopic redshift, broken down by
-source catalog.  We find that completeness rises steeply with increasing
+source catalog. We find that completeness rises steeply with increasing
 angular size, as expected given the target selection of the legacy
 spectroscopic surveys underlying NED and the DESI Bright Galaxy Survey;
 at the largest diameters the catalog is nearly complete, while toward the
 angular-size limit of the sample the NED and DESI contributions
 increasingly dominate the incremental gain over LVD, whose reach is
-confined to the Local Volume.  SDSS DR17 contributes a comparatively small
+confined to the Local Volume. SDSS DR17 contributes a comparatively small
 number of adopted redshifts, concentrated where DESI has not yet observed;
 we fold it into the total completeness curve without a dedicated
 breakdown.
@@ -976,10 +975,10 @@ breakdown.
   \caption{Fraction of SGA-2025 galaxies (all group members, not just
     group primaries) with an adopted spectroscopic redshift as a function
     of isophotal diameter $D(26)$, broken down by source catalog: LVD
-    (green), DESI DR1 (blue), and NED (orange).  The black curve shows
+    (green), DESI DR1 (blue), and NED (orange). The black curve shows
     the total completeness fraction, \texttt{Z\_IVAR} $> 0$, summed over
     all four sources, including the small SDSS DR17 contribution not
-    broken out separately.  Completeness increases toward larger angular
+    broken out separately. Completeness increases toward larger angular
     size, where legacy spectroscopic surveys and NED cross-identifications
     are most complete.}
   \label{fig:redshift-completeness}
@@ -994,7 +993,7 @@ same decreasing-priority spirit as the redshift: high-precision
 LVD, NED's own blended mean distance, and, for every remaining galaxy with
 a measured redshift, the Hubble-flow luminosity distance implied by
 \texttt{Z\_COSMO} (Section~\ref{sec:catalog:redshifts}) under our fiducial
-cosmology (Section~\ref{sec:intro}).  We adopt a gold-tier distance when
+cosmology (Section~\ref{sec:intro}). We adopt a gold-tier distance when
 the highest-priority technique available for a galaxy---Cepheids, the
 tip of the red-giant branch, the planetary-nebula luminosity function,
 surface-brightness fluctuations, Type Ia or II supernovae, the
@@ -1005,7 +1004,7 @@ least three independent literature references; when it is not, but a
 lower-priority technique is both well replicated (three or more references
 agreeing to 15\%) and substantially discrepant from the top technique (by
 more than 15\%), we adopt the better-replicated measurement instead,
-preferring reproducibility over technique fidelity.  Failing a gold-tier
+preferring reproducibility over technique fidelity. Failing a gold-tier
 measurement we adopt the LVD distance, converted from kpc to Mpc; failing
 that, NED's blended mean distance; and, for every remaining galaxy with a
 measured redshift, the Hubble-flow distance implied by \texttt{Z\_COSMO},
@@ -1052,7 +1051,7 @@ The principal data products we deliver are:
 
 The SGA-2025 supersedes the SGA-2020 \citep{moustakas23a} and increases
 the galaxy count by a factor of $\sim\!X$, extending coverage to bluer and
-redder wavelengths.  Future work will incorporate improved photometric
+redder wavelengths. Future work will incorporate improved photometric
 redshifts, stellar mass estimates, and star-formation rate indicators.
 
 %%----------------------------------------------------------------------
@@ -1069,7 +1068,7 @@ No.\ DE-AC02-05CH11231, and by the National Energy Research Scientific
 Computing Center, a DOE Office of Science User Facility, under the same
 contract.
 
-GALEX is a NASA Small Explorer mission.  The GALEX data used in this work
+GALEX is a NASA Small Explorer mission. The GALEX data used in this work
 were obtained from the Mikulski Archive for Space Telescopes (MAST) at the
 Space Telescope Science Institute.
 
@@ -1117,7 +1116,7 @@ release-by-release, overlay-model assembly of the final parent sample
 
 Table~\ref{tab:parent-external} summarizes the six external catalogs we
 merge to build the no-cuts parent sample, together with each catalog's
-size prior to any cross-matching or cuts.  HyperLeda \citep{makarov14a}
+size prior to any cross-matching or cuts. HyperLeda \citep{makarov14a}
 is our primary input, since it is the most complete all-sky compilation
 of galaxy positions and $D_{25}$ diameters available; we assembled it
 from three successive database queries, executed on separate dates,
@@ -1125,7 +1124,7 @@ that together select confirmed galaxies, known multiple systems, and a
 small number of remaining ambiguous-type entries -- the third query
 was itself motivated by our discovery that nine SGA-2020 galaxies were
 absent from the first two exports, all sharing an object-type code that
-the initial query had inadvertently excluded.  We reconcile HyperLeda
+the initial query had inadvertently excluded. We reconcile HyperLeda
 against NED-LVS \citep[NED Local Volume Sample;][]{cook23a}, an
 independently assembled NED cross-identification and redshift
 compilation, to identify a high-confidence overlap sample and to recover
@@ -1149,13 +1148,13 @@ into a formal external catalog.
 
 We merge these six catalogs through a sequence of cross-matching stages,
 each of which adds one catalog's remaining, not-yet-represented objects
-to a running parent table.  We first deduplicate and clean the NED
+to a running parent table. We first deduplicate and clean the NED
 cross-identification products for HyperLeda and NED-LVS individually --
 dropping exact and near-position duplicates and known non-galaxy NED
 object types (QSOs, stars, and \ion{H}{2} regions, among others) -- and
 then join them against one another wherever NED independently resolves
 both to the same object, which yields our highest-confidence
-cross-identifications.  We next add whichever HyperLeda and NED-LVS
+cross-identifications. We next add whichever HyperLeda and NED-LVS
 objects remain unmatched by this join, in turn, followed by any
 remaining HyperLeda objects that NED does not resolve at all but that
 have both a measured diameter and a plausible object classification.
@@ -1165,7 +1164,7 @@ number), the custom catalog (matching SMUDGes and other one-off entries
 to existing rows within $5\arcsec$ before adding the remainder as new
 objects; SMUDGes half-light radii are converted to Holmberg diameters
 via a $1.2\times$ correction upstream of this step), and finally the
-DR9/DR10 supplement.  Because no two literature catalogs agree
+DR9/DR10 supplement. Because no two literature catalogs agree
 perfectly on object names, positions, or classifications, we hard-code
 dozens of individual corrections throughout this process -- resolving
 duplicate or conflicting NED cross-identifications, correcting
@@ -1177,7 +1176,7 @@ Once every catalog has been merged, we resolve each object's final
 adopted position, name, and redshift by source priority: LVD takes
 precedence for position and name, followed in order by NED, NED-LVS,
 SGA-2020, HyperLeda, and the DR9/DR10 supplement, while for redshift we
-instead prefer NED-LVS, then NED, then HyperLeda.  We apply an
+instead prefer NED-LVS, then NED, then HyperLeda. We apply an
 analogous priority ordering -- LVD and the custom catalog ahead of
 HyperLeda, NED-LVS, and the DR9/DR10 supplement -- to select each
 object's adopted diameter, axis ratio, position angle, and magnitude,
@@ -1192,17 +1191,17 @@ Each external catalog reports size, shape, and magnitude information in
 its own native system, so before the priority ordering described above
 can be applied we first reduce every catalog to a common set of columns
 -- diameter, axis ratio, position angle, and magnitude -- using
-whichever conversion its native columns require.  For HyperLeda, we
+whichever conversion its native columns require. For HyperLeda, we
 adopt the $D_{25}$ diameter and axis ratio directly from its tabulated
 $\log D_{25}$ and $\log R_{25}$ and pair them with its $B$-band total
-magnitude.  For SGA-2020, we carry the diameter, axis ratio, position
-angle, and magnitude forward unchanged.  For LVD, we convert the
+magnitude. For SGA-2020, we carry the diameter, axis ratio, position
+angle, and magnitude forward unchanged. For LVD, we convert the
 tabulated half-light radius to a diameter via a $2.4\times$ correction
 and take the axis ratio as one minus the reported ellipticity, pairing
-both with the $V$-band apparent magnitude.  For the DR9/DR10
+both with the $V$-band apparent magnitude. For the DR9/DR10
 supplement, we derive the diameter, axis ratio, and position angle from
 the Tractor S\'ersic shape parameters and adopt the $r$-band model flux
-as the magnitude.  Where a catalog supplies no direct size or shape
+as the magnitude. Where a catalog supplies no direct size or shape
 measurement at all -- true of the raw NED cross-identification products
 underlying the HyperLeda/NED-LVS join in
 Section~\ref{sec:input:parent:merge} -- we instead merge together
@@ -1220,14 +1219,14 @@ population of non-galaxy contaminants -- literature galaxy-cluster and
 -group catalogs, X-ray and radio source lists, deep-field photometric
 catalogs, and other NED entries that are not resolved galaxies at all --
 together with a smaller number of genuine cross-identification errors
-and close, duplicate detections of the same object.  We remove this
+and close, duplicate detections of the same object. We remove this
 contamination, and correct what visual inspection (VI) reveals to be
 wrong, in a fixed sequence of cleanup steps applied to the no-cuts
-catalog.  We first overwrite each affected object's coordinates and
+catalog. We first overwrite each affected object's coordinates and
 geometry with hand-vetted values from a dedicated VI-properties file
 (Table~\ref{tab:parent-vicuts}), which also corrects a further $\sim\!60$
 SGA-2020 diameters we found, by inspection, to be grossly over- or
-underestimated.  We then drop non-galaxy contaminants across the full
+underestimated. We then drop non-galaxy contaminants across the full
 catalog using large, hand-curated lists of object-name prefixes and
 embedded reference tags -- built up over many rounds of VI and
 distinguishing contaminants that must always be dropped from those
@@ -1235,7 +1234,7 @@ protected whenever they carry a measured diameter -- and separately
 correct NED cross-identification errors in which HyperLeda properties
 (coordinates, diameter, PGC number) were erroneously associated with a
 multi-galaxy \texttt{GPair}/\texttt{GTrpl} system entry rather than the
-correct individual galaxy.  We next resolve close ($<1\arcsec$) pairs of
+correct individual galaxy. We next resolve close ($<1\arcsec$) pairs of
 candidate entries that duplicate the same physical object, before
 applying a final, narrower prefix-based cleanup that visually removes
 remaining \texttt{GPair}/\texttt{GTrpl} merger systems: those lacking any
@@ -1243,12 +1242,12 @@ measured diameter are dropped outright, while those with a measured
 diameter are dropped only if named explicitly in our VI-actions record.
 Table~\ref{tab:parent-vicuts} summarizes the size of each hand-curated
 resource this cleanup draws on; in total, the VI-actions record alone
-encodes more than 32,000 individual object-level decisions.  Because
+encodes more than 32,000 individual object-level decisions. Because
 this cleanup is aggressive enough to risk discarding genuine
 low-surface-brightness dwarfs, we verify after every step that every
 LVD galaxy (Section~\ref{sec:input:parent:external}) remains present in
 the catalog, and we abort the build if one has been inadvertently
-dropped.  \todo{Report the net nocuts-to-vicuts object count for the
+dropped. \todo{Report the net nocuts-to-vicuts object count for the
   final (v1.0) processing version once available; in the current
   development version this stage reduces the candidate list from
   $\sim\!5.10$ million to $\sim\!4.79$ million objects.}
@@ -1261,7 +1260,7 @@ dropped.  \todo{Report the net nocuts-to-vicuts object count for the
 We apply a third round of automated and semi-automated curation to the
 VI-cuts catalog, combining a machine-learning classification veto with
 additional close-pair resolution, Local Group and Galactic-contaminant
-flagging, and a photometry-based cut on the smallest candidates.  We
+flagging, and a photometry-based cut on the smallest candidates. We
 first remove every object flagged by a self-supervised-learning (SSL)
 classifier trained to distinguish genuine galaxies from spurious or
 non-galaxy sources, with three categories of exception: objects present
@@ -1271,7 +1270,7 @@ already corrected by hand in the VI-properties file
 have already replaced with HyperLeda coordinates via the VI-actions
 file; we treat any exception-list object absent from the classifier's
 output as a consistency error, since these lists are meant to override
-the classifier rather than introduce new objects.  \todo{The SSL
+the classifier rather than introduce new objects. \todo{The SSL
   classification step itself was run by a collaborator using an earlier,
   since-modified version of the ssl-legacysurvey pipeline (see
   \texttt{SGA/CLAUDE.md}); pin down the exact commit/methodology used
@@ -1292,9 +1291,9 @@ action files (Table~\ref{tab:parent-archive}) -- flagging objects with
 fixed ellipse-fitting geometry, relaxed or strengthened neighbor
 masking, and Tractor sources forced to a point-source model -- and, for
 every object, the projected distance to and masking radius of the
-nearest bright Gaia star.  As in the previous stage, we verify after
+nearest bright Gaia star. As in the previous stage, we verify after
 every major removal step that no LVD dwarf has been inadvertently
-dropped.  \todo{Report the net vicuts-to-archive object count for the
+dropped. \todo{Report the net vicuts-to-archive object count for the
   final (v1.0) processing version once available; in the current
   development version this stage reduces the candidate list from
   $\sim\!4.79$ million to $\sim\!1.19$ million objects, the large drop
@@ -1321,7 +1320,7 @@ imaging bricks in batches of 10,000, and for each brick query
 DR3 and Tycho-2 star it flags as ``bright'' or ``medium,'' restricting
 each per-brick query to a zero-margin footprint so that a star near a
 brick boundary is picked up by exactly one neighboring brick rather
-than double-counted.  We merge the resulting per-brick tables into a
+than double-counted. We merge the resulting per-brick tables into a
 single all-sky catalog and additionally write a Galactic-latitude-trimmed
 ($|b|>9\arcdeg$) ``extragalactic'' version, which is the one the
 SGA-2025 pipeline actually consumes.
@@ -1336,12 +1335,12 @@ relation used by the DR11 \textsl{legacypipe} pipeline itself
 (Section~\ref{sec:imaging:optical}) to mask reference sources during
 Tractor photometry, so that the footprint we exclude from automated
 galaxy detection is, by construction, consistent with the footprint
-DR11 excludes from its own source modeling.  We define $m_{\rm mask}$
+DR11 excludes from its own source modeling. We define $m_{\rm mask}$
 as the brighter of a star's optical magnitude (Gaia $G$, or, for
 Tycho-2 stars, a Gaia-$G$-equivalent magnitude estimated from
 $V_T$) and its $z$-band magnitude guess plus 1~mag, which expands the
 mask appropriately around very red stars whose optical light
-underrepresents their true angular extent.  We classify Gaia stars
+underrepresents their true angular extent. We classify Gaia stars
 with $m_{\rm mask}<13$ as ``bright'' and those with
 $13\le m_{\rm mask}<16$ as ``medium,'' retaining both categories in the
 mask catalog; Tycho-2 stars, which duplicate the brightest Gaia
@@ -1357,12 +1356,12 @@ nearest-neighbor search computationally tractable, and retain, for
 each object, the smallest \texttt{STARFDIST} found across all bins
 (capping consideration at twice a star's masking radius) so that the
 final value reflects genuine proximity rather than an artifact of bin
-ordering.  We call \texttt{add\_gaia\_masking} at two points in the
+ordering. We call \texttt{add\_gaia\_masking} at two points in the
 pipeline: once when the archive-stage catalog is finalized
 (Section~\ref{sec:parent:archive}), and again for every subsequent
 \texttt{build\_parent} release (Section~\ref{sec:parent:final}), since
 each release's additions and geometry corrections can change which
-star is nearest to a given object.  The resulting \texttt{STARFDIST}
+star is nearest to a given object. The resulting \texttt{STARFDIST}
 values set the \texttt{NEARSTAR} and \texttt{INSTAR} \texttt{SAMPLE}
 bits (Table~\ref{tab:sample-bitmask}) and, together with
 \texttt{MCLOUDS} and \texttt{GCLPNE}, force the \texttt{NORADWEIGHT}
@@ -1380,11 +1379,11 @@ We assemble the final parent sample not in a single pass, but across a
 sequence of thirteen numbered releases (v0.30 through v1.6,
 Table~\ref{tab:parent-overlays}), each of which refines the previous
 release's \emph{fitted ellipse geometry} rather than rebuilding from the
-archive-stage catalog described above.  Earlier releases, through
+archive-stage catalog described above. Earlier releases, through
 v0.22, were instead built directly from the archive catalog in a single
 pass -- merging the per-region archive tables, appending hand-added
 sources, applying visual-inspection corrections in place, and running
-group-finding in one shot.  Beginning with v0.30 we adopted an
+group-finding in one shot. Beginning with v0.30 we adopted an
 ``overlay'' model in which every subsequent release is defined entirely
 by a small, versioned set of hand-curated CSV files -- \texttt{adds.csv},
 \texttt{drops.csv}, \texttt{updates.csv}, and \texttt{flags.csv} -- so
@@ -1394,7 +1393,7 @@ inspectable record rather than folded irreversibly into the catalog.
 
 For each release we first read and, where necessary, correct that
 release's base ellipse catalogs across both imaging regions,
-consolidating any object measured in both into a single row.  Several
+consolidating any object measured in both into a single row. Several
 early releases required release-specific restorations of this base
 geometry -- for example, in the release immediately following the
 transition to the overlay model, we restore the original (pre-fit)
@@ -1403,25 +1402,25 @@ of a multi-galaxy group, already flagged for a large Tractor-driven
 centroid shift, or whose newly fitted diameter, axis ratio, or position
 angle differs from its input value by more than 20\% -- a conservative
 guard against a small fraction of erroneous fits before the pipeline
-had matured.  We then apply that release's overlay files in order:
+had matured. We then apply that release's overlay files in order:
 dropping listed objects (globally, or from a single imaging region);
 appending hand-added objects, restoring their original identity
 (\texttt{PGC}, \texttt{SGAID}) from the no-cuts catalog where a match
 exists; and overwriting specific field values for individually
-corrected objects.  We check the result for coincident (candidate
+corrected objects. We check the result for coincident (candidate
 duplicate) detections and for unique object identifiers, repair each
 object's region bits against the archive-stage catalogs, and
 re-populate \texttt{SAMPLE} bits (\texttt{LVD}, \texttt{NEARSTAR}/
 \texttt{INSTAR} from Gaia proximity, \texttt{MCLOUDS}, \texttt{GCLPNE})
 and \texttt{ELLIPSEMODE} bits (from that release's consolidated
 \texttt{flags.csv}) before deriving each object's ellipse-fitting
-\texttt{FITMODE}.  We then re-run group-finding from scratch on the
+\texttt{FITMODE}. We then re-run group-finding from scratch on the
 full, corrected catalog (Section~\ref{sec:parent:groups}), excluding
 \texttt{RESOLVED} and \texttt{FORCEPSF} objects (which we instead
 assign to singleton groups), harmonize region bits within each
 resulting group, and set the \texttt{OVERLAP} sample bit for every
 group member whose (unscaled) ellipse overlaps that of another member
-of the same group.  For the final several releases, we additionally
+of the same group. For the final several releases, we additionally
 exempt any
 galaxy group whose diameter did not change appreciably from
 re-processing (via a per-release, opt-in list of previously converged
@@ -1431,12 +1430,12 @@ groups that plausibly need it.
 
 Because the overlay model records every visual-inspection decision as
 an explicit, auditable file, we can quantify directly how much of this
-work was done by hand.  Table~\ref{tab:parent-overlays} lists the
+work was done by hand. Table~\ref{tab:parent-overlays} lists the
 number of objects added, dropped, and individually corrected at each
 release: in total, we made more than 45,000 individual VI-driven
 additions, removals, or corrections across the v0.30--v1.6 releases,
 dominated by two releases -- v0.40 and v1.2 -- that each followed a
-particularly intensive round of visual inspection.  \texttt{v1.6} is
+particularly intensive round of visual inspection. \texttt{v1.6} is
 the final parent-sample version adopted for the SGA-2025 release.
 
 \input{tables/table-parent-overlays.tex}
