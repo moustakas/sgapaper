@@ -3,6 +3,35 @@
 """
 import numpy as np
 
+
+def join_ellipsephot(cat, phot):
+    """Append the ELLIPSEPHOT columns to the row-matched SGA2025 catalog.
+
+    Parameters
+    ----------
+    cat : :class:`astropy.table.Table`
+        ``SGA2025`` extension.
+    phot : :class:`astropy.table.Table`
+        ``ELLIPSEPHOT`` extension for the same objects.
+
+    Returns
+    -------
+    :class:`astropy.table.Table`
+        ``cat`` with every ``phot`` column it does not already contain.
+
+    """
+    from astropy.table import hstack
+
+    if not np.array_equal(cat['SGAID'], phot['SGAID']):
+        srt = np.argsort(phot['SGAID'])
+        phot = phot[srt[np.searchsorted(phot['SGAID'][srt], cat['SGAID'])]]
+        if not np.array_equal(cat['SGAID'], phot['SGAID']):
+            raise ValueError('SGA2025 and ELLIPSEPHOT are not row-matched on SGAID')
+
+    newcols = [col for col in phot.colnames if col not in cat.colnames]
+    return hstack([cat, phot[newcols]])
+
+
 def hess_contours(ax, x, y, xrange, yrange, bins=50, smooth=1.0,
                   contour_levels=None, cmap='Blues', contour_lw=1.5,
                   contour_color='k', outlier_ms=2, background=True):

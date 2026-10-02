@@ -6,8 +6,9 @@ Usage examples
 python code/build-figures.py --sky
 python code/build-figures.py --size-mag
 python code/build-figures.py --redshifts
-python code/build-figures.py --desi-completeness
+python code/build-figures.py --redshift-completeness
 python code/build-figures.py --sga2025-vs-sga2020
+python code/build-figures.py --overview
 python code/build-figures.py --all
 
 Figures are written to tex/figures/. Catalogs are read via
@@ -30,6 +31,7 @@ from SGA.coadds import REGIONBITS
 
 REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIG_DIR  = os.path.join(REPO_DIR, 'tex', 'figures')
+CUTOUT_DIR = os.path.join(REPO_DIR, 'data', 'cutouts')
 
 
 def read_catalogs(primary_only=False):
@@ -310,20 +312,21 @@ def fig_sample(cat, png='sga2025-sample.png'):
 
 
 def fig_size_mag(cat, band='R', png='sga2025-size-mag.png'):
-    """Isophotal diameter D26 vs. total magnitude in an optical band."""
+    """Isophotal diameter D26 vs. nominal magnitude in an optical band."""
     _, colors = plot_style()
 
-    magcol = f'COG_MTOT_{band}'
-    if magcol not in cat.colnames:
-        print(f'Column {magcol} not found; skipping fig_size_mag')
+    fluxcol = f'FLUX_{band}'
+    if fluxcol not in cat.colnames:
+        print(f'Column {fluxcol} not found; skipping fig_size_mag')
         return
 
-    good = (cat['D26'] > 0) & np.isfinite(cat[magcol]) & (cat[magcol] > 0)
+    good = (cat['D26'] > 0) & (cat[fluxcol] > 0)
     sub  = cat[good]
+    mag  = 22.5 - 2.5 * np.log10(sub[fluxcol])
 
     fig, ax = plt.subplots(figsize=(7, 6))
 
-    hb = ax.hexbin(sub[magcol], np.log10(sub['D26']),
+    hb = ax.hexbin(mag, np.log10(sub['D26']),
                    gridsize=200, bins='log', cmap='viridis',
                    mincnt=1, linewidths=0)
     plt.colorbar(hb, ax=ax, label='log$_{10}$(N / bin)')
@@ -340,17 +343,18 @@ def fig_size_mag(cat, band='R', png='sga2025-size-mag.png'):
 
 
 def fig_redshifts(cat, png='sga2025-redshifts.png'):
-    """Redshift distribution color-coded by source (LVD / DESI / NED)."""
+    """Redshift distribution color-coded by source (LVD / DESI / SDSS / NED)."""
     _, colors = plot_style()
 
     hasz = cat['Z_IVAR'] > 0
-    print(f'  {hasz.sum():,} / {len(cat):,} primaries have a redshift')
+    print(f'  {hasz.sum():,} / {len(cat):,} galaxies have a redshift')
 
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
 
     # --- left: sky map of redshift sources ---
     ax = axes[0]
-    source_map = {'LVD': colors[2], 'DESI': colors[0], 'NED': colors[1]}
+    source_map = {'LVD': colors[2], 'DESI': colors[0], 'SDSS': colors[4],
+                  'NED': colors[1]}
     noz = ~hasz
     ra_all = cat['RA'].data.copy()
     ra_all[ra_all > 300] -= 360
@@ -666,6 +670,298 @@ def fig_sga_vs_wxsc100(cat, png='sga2025-vs-wxsc100.png', match_radius=10.0):
 
 
 # ---------------------------------------------------------------------------
+# Overview schematic
+# ---------------------------------------------------------------------------
+
+# Fiducial size-luminosity relation for the overview schematic,
+#   log10(D26 / kpc) = SIZELUM_LOGD0 + SIZELUM_SLOPE * (M_r - SIZELUM_MR0);
+# placeholder values (an L* galaxy is ~30 kpc across), not a fit.
+SIZELUM_MR0   = -21.0
+SIZELUM_LOGD0 = np.log10(30.)
+SIZELUM_SLOPE = -0.175
+
+# Cutouts to show in the overview schematic, {(absmag, theta): SGAID}; cells
+# not listed here use the first candidate in data/cutouts/cutouts.csv.
+# OVERVIEW_PICKS = {(-21., 180.): 123456}
+OVERVIEW_PICKS = {}
+
+
+def _overview_cosmo(zmin=1e-4, zmax=1., nz=400):
+    """Redshift, luminosity-distance, and angular-diameter-distance grids (Mpc)."""
+    from astropy.cosmology import FlatLambdaCDM
+    cosmo = FlatLambdaCDM(H0=70, Om0=0.3)
+    zgrid = np.logspace(np.log10(zmin), np.log10(zmax), nz)
+    dlum  = cosmo.luminosity_distance(zgrid).value
+    dang  = cosmo.angular_diameter_distance(zgrid).value
+    return zgrid, dlum, dang
+
+
+def _seam_absmag(theta, dang):
+    """M_r of the fiducial galaxy that subtends theta (arcsec) at each dang (Mpc)."""
+    size = np.radians(theta / 3600.) * dang * 1e3 # [kpc]
+    return SIZELUM_MR0 + (np.log10(size) - SIZELUM_LOGD0) / SIZELUM_SLOPE
+
+
+def _track_dlum(absmag, theta, dlum, dang):
+    """Luminosity distance (Mpc) at which a galaxy of absmag subtends theta (arcsec)."""
+    size = 10.**(SIZELUM_LOGD0 + SIZELUM_SLOPE * (absmag - SIZELUM_MR0)) # [kpc]
+    da   = size / 1e3 / np.radians(np.asarray(theta, dtype=float) / 3600.) # [Mpc]
+    return np.interp(da, dang, dlum)
+
+
+def _theta_label(theta):
+    """Format an angular diameter in arcsec as a mathtext label."""
+    if theta >= 60.:
+        return rf'${np.round(theta / 60., 1):g}^{{\prime}}$'
+    return rf'${theta:g}^{{\prime\prime}}$'
+
+
+def _cutout_placeholder(ax, theta, color, framecolor, fov_scale=2.5,
+                        psf_fwhm=1.2):
+    """Placeholder cutout: an ellipse of diameter theta (arcsec) in a field of
+    view of fov_scale*theta, with the PSF FWHM drawn to scale in the corner."""
+    from matplotlib.patches import Ellipse, Circle
+
+    fov = fov_scale * theta
+    ax.set_xlim(-fov / 2., fov / 2.)
+    ax.set_ylim(-fov / 2., fov / 2.)
+    ax.set_aspect('equal')
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_facecolor('0.93')
+    ax.add_patch(Ellipse((0., 0.), theta, 0.6 * theta, angle=30.,
+                         facecolor='0.78', edgecolor=color, lw=1.5))
+    ax.add_patch(Circle((-0.38 * fov, -0.38 * fov), psf_fwhm / 2.,
+                        facecolor='k', edgecolor='none'))
+    for spine in ax.spines.values():
+        spine.set_edgecolor(framecolor)
+        spine.set_linewidth(2.5)
+
+
+def _read_cutouts(picks=None):
+    """Read the cutout manifest written by get-cutouts.py.
+
+    Parameters
+    ----------
+    picks : :class:`dict` or None
+        Optional mapping of ``(absmag, theta)`` to the ``SGAID`` to show in
+        that cell; defaults to ``OVERVIEW_PICKS``. Cells without a pick use
+        the first candidate in the manifest whose thumbnail is on disk.
+
+    Returns
+    -------
+    :class:`dict`
+        Mapping of ``(absmag, theta)`` to the chosen manifest row.
+
+    """
+    from astropy.table import Table
+
+    if picks is None:
+        picks = OVERVIEW_PICKS
+
+    manifest = os.path.join(CUTOUT_DIR, 'cutouts.csv')
+    if not os.path.isfile(manifest):
+        print(f'  {manifest} not found; drawing placeholder cutouts')
+        return {}
+
+    cutouts = {}
+    for one in Table.read(manifest, format='ascii.csv'):
+        if not os.path.isfile(os.path.join(CUTOUT_DIR, one['FILE'])):
+            continue
+        key = (float(one['ABSMAG_TARGET']), float(one['THETA_TARGET']))
+        if picks.get(key) == one['SGAID'] or (key not in picks and key not in cutouts):
+            cutouts[key] = one
+    for key in picks:
+        if key not in cutouts:
+            print(f'  Pick {picks[key]} for {key} not found; drawing a placeholder')
+    return cutouts
+
+
+def _cutout_image(ax, one, framecolor):
+    """Draw one downloaded thumbnail, labeled with the galaxy name and D26."""
+    ax.imshow(plt.imread(os.path.join(CUTOUT_DIR, one['FILE'])))
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.text(0.5, 0.03, f'{one["GALAXY"]}\n' + _theta_label(float(np.round(one['D26']))),
+            transform=ax.transAxes, ha='center', va='bottom', fontsize=6,
+            color='white')
+    for spine in ax.spines.values():
+        spine.set_edgecolor(framecolor)
+        spine.set_linewidth(2.5)
+
+
+def fig_overview(cat=None, png='sga2025-overview.png',
+                 thetas=(600., 180., 60., 30., 15., 8.),
+                 theta_tractor=10., theta_nominal=30., theta_complete=60.,
+                 xlim=(1., 2000.), ylim=(-12.5, -23.5), show_next=False):
+    """Schematic overview of how the SGA connects to well-selected samples.
+
+    The main panel shows the distance--luminosity plane, divided by the
+    angular-diameter "seam" between the regime where Tractor photometry is
+    reliable and the regime of large, resolved galaxies handled by the SGA,
+    together with example flux-, volume-, and luminosity-limited samples
+    that straddle it. The top rows are placeholder cutouts of two fiducial
+    galaxies placed at the distances where they subtend each angular
+    diameter in thetas.
+
+    Parameters
+    ----------
+    cat : :class:`astropy.table.Table` or None
+        SGA-2025 catalog; if given, the observed distribution of galaxies
+        with a distance is drawn in the background.
+    png : :class:`str`
+        Output file name.
+    thetas : :class:`tuple`
+        Angular diameters (arcsec) of the cutout columns.
+    theta_tractor, theta_nominal, theta_complete : :class:`float`
+        Angular diameters (arcsec) below which Tractor is assumed reliable,
+        of the nominal SGA limit, and above which the SGA is assumed
+        complete. Placeholder values.
+    xlim, ylim : :class:`tuple`
+        Luminosity-distance (Mpc) and absolute-magnitude limits.
+    show_next : :class:`bool`
+        Annotate the "next steps" arrow.
+
+    """
+    from matplotlib.colors import LogNorm
+
+    _, colors = plot_style()
+    col_sga, col_tractor, col_trans = colors[0], colors[1], '0.55'
+    tracks = [
+        (-21., colors[3], r'$L^{*}$ galaxy' '\n' r'($M_r=-21$)'),
+        (-18., colors[2], 'dwarf' '\n' r'($M_r=-18$)'),
+    ]
+    samples = [
+        (200.,  -17.,  '-',  r'Volume-limited: $d<200$ Mpc, $M_r<-17$'),
+        (1000., -20.5, '--', r'Luminosity-limited: $M_r<-20.5$, $d<1$ Gpc'),
+    ]
+    fluxlimits = [
+        (20.2, ':', r'Flux-limited: $r<20.2$ (DESI BGS)'),
+    ]
+
+    def _regime(theta):
+        if theta >= theta_complete:
+            return 'SGA', col_sga
+        if theta < theta_tractor:
+            return 'Tractor', col_tractor
+        return 'transition', col_trans
+
+    zgrid, dlum, dang = _overview_cosmo()
+    cutouts = _read_cutouts()
+
+    fig = plt.figure(figsize=(10, 11))
+    ncol = len(thetas)
+    gs_top  = fig.add_gridspec(len(tracks), ncol, left=0.11, right=0.97,
+                               top=0.95, bottom=0.69, wspace=0.06, hspace=0.06)
+    gs_main = fig.add_gridspec(1, 1, left=0.11, right=0.97, top=0.59, bottom=0.07)
+
+    # --- top: placeholder cutouts ---
+    for irow, (absmag, color, label) in enumerate(tracks):
+        for icol, theta in enumerate(thetas):
+            cax = fig.add_subplot(gs_top[irow, icol])
+            regime, framecolor = _regime(theta)
+            if (float(absmag), float(theta)) in cutouts:
+                _cutout_image(cax, cutouts[(float(absmag), float(theta))], framecolor)
+            else:
+                _cutout_placeholder(cax, theta, color, framecolor)
+            if irow == 0:
+                cax.set_title(f'{_theta_label(theta)}\n{regime}', fontsize=11,
+                              color=framecolor)
+            if icol == 0:
+                cax.set_ylabel(label, fontsize=10, color=color)
+
+    # --- bottom: distance-luminosity plane ---
+    ax = fig.add_subplot(gs_main[0, 0])
+
+    # observed SGA-2025 distribution
+    need = ('DIST', 'DIST_IVAR', 'FLUX_R', 'MW_TRANSMISSION_R')
+    if cat is not None and all(col in cat.colnames for col in need):
+        dist = np.asarray(cat['DIST'], dtype=float)
+        flux = np.asarray(cat['FLUX_R'], dtype=float)
+        mwtrans = np.asarray(cat['MW_TRANSMISSION_R'], dtype=float)
+        good = ((np.asarray(cat['DIST_IVAR']) > 0) & (dist > 0) &
+                (flux > 0) & (mwtrans > 0))
+        absmag = (22.5 - 2.5 * np.log10(flux[good] / mwtrans[good]) -
+                  5. * np.log10(dist[good]) - 25.)
+        print(f'  {good.sum():,} / {len(cat):,} galaxies with a distance '
+              'and r-band magnitude')
+        H, xedges, yedges = np.histogram2d(
+            np.log10(dist[good]), absmag, bins=(150, 120),
+            range=[np.log10(xlim), sorted(ylim)])
+        ax.pcolormesh(10.**xedges, yedges, ma.masked_equal(H.T, 0),
+                      norm=LogNorm(), cmap='Greys', alpha=0.6,
+                      rasterized=True, zorder=1)
+    elif cat is not None:
+        print('  Missing distance/photometry columns; skipping data overlay')
+
+    # regimes
+    m_complete = _seam_absmag(theta_complete, dang)
+    m_nominal  = _seam_absmag(theta_nominal, dang)
+    m_tractor  = _seam_absmag(theta_tractor, dang)
+    ax.fill_between(dlum, m_complete, ylim[1], color=col_sga, alpha=0.2,
+                    lw=0, zorder=0)
+    ax.fill_between(dlum, m_tractor, m_complete, color='0.9', lw=0, zorder=0)
+    for m_edge in (m_tractor, m_complete):
+        ax.plot(dlum, m_edge, color='0.4', lw=1, zorder=3)
+    ax.fill_between(dlum, ylim[0], m_tractor, color=col_tractor, alpha=0.2,
+                    lw=0, zorder=0)
+    ax.plot(dlum, m_nominal, color='k', lw=2, ls=(0, (5, 2)), zorder=4,
+            label=rf'$D=${_theta_label(theta_nominal)} (nominal SGA limit)')
+
+    # flux limits
+    for maglim, ls, label in fluxlimits:
+        ax.plot(dlum, maglim - 5. * np.log10(dlum) - 25., color='0.3', lw=1.5,
+                ls=ls, zorder=3, label=label)
+
+    # example samples
+    for (dmax, mfaint, ls, label), color in zip(samples, ('k', colors[4])):
+        ax.plot([xlim[0], dmax, dmax], [mfaint, mfaint, ylim[1]], color=color,
+                lw=2.5, ls=ls, zorder=5, label=label)
+
+    # fiducial galaxies at the distances of the cutouts
+    for absmag, color, label in tracks:
+        dtrack = _track_dlum(absmag, thetas, dlum, dang)
+        ax.plot(dtrack, np.full(len(dtrack), absmag), color=color, lw=1,
+                marker='o', ms=8, mec='k', mew=0.8, zorder=6,
+                label=label.replace('\n', ' '))
+
+    # annotations
+    ax.text(4, -22.6, 'SGA regime\n(resolved; shredding)', color=col_sga,
+            fontsize=13, fontweight='bold', ha='center', va='center', zorder=7)
+    ax.text(450., -14.8, 'Tractor regime\n(compact; reliable)',
+            color=col_tractor, fontsize=13, fontweight='bold', ha='center',
+            va='center', zorder=7)
+    ax.text(450., -22.6, 'transition\n(color dependent)', color='0.25',
+            fontsize=10, fontweight='bold', ha='center', va='center', zorder=8,
+            bbox=dict(boxstyle='round,pad=0.25', facecolor='white',
+                      edgecolor='0.4', alpha=0.9))
+    if show_next:
+        ax.annotate('next: extend the SGA\nto smaller diameters',
+                    xy=(110., -17.4), xytext=(6., -19.6), fontsize=11,
+                    ha='center', va='center', zorder=7,
+                    arrowprops=dict(arrowstyle='-|>', color='k', lw=2))
+
+    ax.set_xscale('log')
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
+    ax.set_xlabel('Luminosity Distance (Mpc)')
+    ax.set_ylabel(r'$M_r$ (AB mag)')
+    ax.xaxis.set_major_formatter(ticker.ScalarFormatter())
+    ax.legend(loc='lower left', fontsize=9, framealpha=0.95)
+
+    secax = ax.secondary_xaxis(
+        'top', functions=(lambda d: np.interp(d, dlum, zgrid),
+                          lambda z: np.interp(z, zgrid, dlum)))
+    secax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda val, pos: f'{val:g}'))
+    secax.set_xlabel('Redshift')
+
+    outfile = os.path.join(FIG_DIR, png)
+    fig.savefig(outfile, dpi=150)
+    print(f'Wrote {outfile}')
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -679,7 +975,8 @@ def main():
     parser.add_argument('--redshift-completeness', action='store_true')
     parser.add_argument('--sga2025-vs-sga2020', action='store_true')
     parser.add_argument('--wxsc100',            action='store_true')
-    parser.add_argument('--all',              action='store_true',
+    parser.add_argument('--overview',           action='store_true')
+    parser.add_argument('--all',             action='store_true',
                         help='Run all figures')
     args = parser.parse_args()
 
@@ -688,10 +985,11 @@ def main():
     run_all = args.all or not any([
         args.sky, args.sample, args.size_mag, args.redshifts,
         args.redshift_completeness, args.sga2025_vs_sga2020, args.wxsc100,
+        args.overview,
     ])
 
     cat = read_catalogs()
-    print(f'Loaded {len(cat):,} group primaries total')
+    print(f'Loaded {len(cat):,} galaxies total')
 
     if args.sky or run_all:
         south = cat[(cat['REGION'] & REGIONBITS['dr11-south']) != 0]
@@ -719,6 +1017,9 @@ def main():
 
     if args.wxsc100 or run_all:
         fig_sga_vs_wxsc100(cat)
+
+    if args.overview or run_all:
+        fig_overview(cat)
 
 
 if __name__ == '__main__':

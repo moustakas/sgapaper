@@ -28,7 +28,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from SGA.SGA import read_sga_sample
-from util import hess_contours, running_binstat
+from util import hess_contours, running_binstat, join_ellipsephot
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -43,9 +43,14 @@ COLOR_PAIRS = [('G', 'R'), ('R', 'Z'), ('R', 'W1'), ('NUV', 'R')]
 
 
 def read_catalogs(primary_only=False):
-    """Read the merged (region-combined) SGA2025 catalog."""
+    """Read the merged (region-combined) SGA2025 catalog, together with the
+    row-matched ELLIPSEPHOT extension (aperture and curve-of-growth photometry)."""
     sample, fullsample = read_sga_sample(beta=False, verbose=True)
-    return sample if primary_only else fullsample
+    photsample, photfullsample = read_sga_sample(beta=False, ellipsephot=True,
+                                                 verbose=True)
+    if primary_only:
+        return join_ellipsephot(sample, photsample)
+    return join_ellipsephot(fullsample, photfullsample)
 
 
 def plot_style(font_scale=0.8, paper=False, talk=True):
