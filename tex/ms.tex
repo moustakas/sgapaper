@@ -31,6 +31,11 @@
 \affiliation{Department of Physics and Astronomy, Siena University,
   515 Loudon Road, Loudonville, NY 12211, USA}
 
+\author[0000-0002-1172-0754]{Dustin Lang}
+\email{dlang@perimeterinstitute.ca}
+\affiliation{Perimeter Institute for Theoretical Physics, 31 Caroline
+  Street North, Waterloo, ON N2L 2Y5, Canada}
+
 % \author{...}
 % \affiliation{...}
 
@@ -42,7 +47,7 @@
 \begin{abstract}
 
 We present the Siena Galaxy Atlas 2025 (SGA-2025), a photometric
-catalog of $470,625$ large, angularly resolved galaxies selected from
+catalog of $470{,}625$ large, angularly resolved galaxies selected from
 the DESI Legacy Imaging Surveys Data Release 11 (DR11). The SGA-2025
 covers $\sim\!30{,}000$~deg$^{2}$ of the extragalactic sky and
 delivers multiwavelength imaging mosaics and ellipse photometry in up
@@ -53,12 +58,13 @@ curve-of-growth total magnitudes, the isophotal diameter at a
 surface-brightness threshold of $\mu = 26~\mathrm{mag~arcsec^{-2}}$
 ($D_{26}$), the half-light semi-major axis, isophotal sizes at several
 other thresholds, and fitted ellipse geometry. We cross-match
-spectroscopic redshifts from DESI DR1, the NASA/IPAC Extragalactic
-Database (NED), and the Local Volume Database (LVD) and include them
-in the catalog. The SGA-2025 supersedes the SGA-2020
-\citep{moustakas23a}, more than doubling the number of catalogued
-galaxies while extending coverage into the ultraviolet and
-mid-infrared. We make the full catalog, mosaics, and companion
+spectroscopic redshifts from the Local Volume Database (LVD), DESI DR1,
+SDSS DR17, and the NASA/IPAC Extragalactic Database (NED) and include
+them in the catalog. The SGA-2025 supersedes the SGA-2020
+\citep{moustakas23a}, increasing the number of cataloged galaxies from
+$383{,}620$ to $470{,}625$, expanding the footprint from
+$\approx\!20{,}000$ to $\approx\!30{,}000$~deg$^{2}$, and adding $i$-band
+and ultraviolet photometry. We make the full catalog, mosaics, and companion
 analysis code publicly available at
 \url{https://sga.legacysurvey.org}.
 
@@ -74,10 +80,10 @@ parameters --- surveys}
 
 The Siena Galaxy Atlas (SGA) pursues a goal distinct from that of most
 galaxy catalogs: rather than selecting objects by apparent magnitude
-or spectroscopic redshift, we assemble the most complete
-angular-diameter-limited sample of large, resolved galaxies ever
-built, spanning the full extragalactic sky accessible to modern
-digital imaging. This selection function matters because spatially
+or spectroscopic redshift, we aim to build the most complete
+angular-diameter-limited sample of large, resolved galaxies possible
+over the $\approx\!30{,}000$~deg$^{2}$ extragalactic footprint of the
+DESI Legacy Imaging Surveys. This selection function matters because spatially
 resolved photometry of nearby, angularly large galaxies---precise
 sizes, shapes, and fluxes measured homogeneously across the
 sky---underpins a wide range of extragalactic astrophysics: the galaxy
@@ -111,7 +117,7 @@ for the full lineage, and \citealt{christie24a} for a recent review of the
 broader landscape of nearby-galaxy surveys). With the exception of the
 NASA-Sloan Atlas, however, these atlases' optical sizes, shapes, and total
 magnitudes still trace back to the RC3's photographic-plate measurements.
-No comprehensive, all-sky photometric catalog of resolved galaxies built
+No comprehensive, wide-area photometric catalog of resolved galaxies built
 entirely from modern, wide-field digital imaging existed until the Siena
 Galaxy Atlas 2020 (SGA-2020; \citealt{moustakas23a}), a $grz$+$W1$--$W4$
 atlas of $383{,}620$ galaxies over the $\approx\!20{,}000$~deg$^2$ DESI
@@ -122,7 +128,7 @@ HECATEv2 \citep{kyritsis26a}, both aimed principally at time-domain and
 multi-messenger applications (below)---but these are volume- or
 magnitude-limited to a few hundred megaparsecs rather than
 angular-diameter-selected, and to our knowledge none has yet matched the
-SGA's combination of all-sky coverage, multiwavelength depth, and
+SGA's combination of wide-area coverage, multiwavelength depth, and
 angular-diameter completeness for large, resolved galaxies.
 
 The DESI Legacy Imaging Surveys have since concluded observations with
@@ -135,8 +141,8 @@ catalog of large-diameter galaxies to guard against the shredding and
 spectroscopic incompleteness that such objects otherwise cause. We
 combine the DR11 optical imaging with full-depth unWISE mid-infrared
 coadds \citep{lang14a, meisner21a} and the GALEX ultraviolet sky
-\citep{martin05a} to assemble large-galaxy photometry spanning four
-decades in wavelength, from the far-ultraviolet to $22~\mu$m.
+\citep{martin05a} to assemble large-galaxy photometry spanning more than
+two decades in wavelength, from the far-ultraviolet to $22~\mu$m.
 
 In the years since its release, the SGA-2020 has already served as the
 foundation for a broad range of extragalactic science, underscoring the
@@ -156,9 +162,9 @@ galaxy spin and the cosmic web using, in the words of one such study,
 \citep{muralichandran25a}. Cosmological simulations, in turn, use the
 SGA-2020's homogeneous sizes and colors as an observational benchmark
 against which to validate predicted galaxy structural properties
-\citep{baes24a, baes24b}. We expect the SGA-2025's larger sample size, extended
-ultraviolet and mid-infrared coverage, and improved completeness to
-support an even wider range of such applications.
+\citep{baes24a, baes24b}. We expect the SGA-2025's larger sample and
+footprint, together with its added $i$-band and ultraviolet photometry,
+to support an even wider range of such applications.
 
 A large, angular-diameter-selected sample is also well matched to the
 demands of time-domain and multi-messenger astrophysics: because
@@ -187,14 +193,58 @@ bursts \citep{law24a} and to galaxy-catalog-based dark-siren cosmology
 \citep{abbott23a}, both of which trade directly on catalog
 completeness and depth. We designed the SGA-2025 with these
 applications explicitly in mind: the parent-sample improvements we
-describe below (Section~\ref{sec:parent}) close exactly the
+describe below (Section~\ref{sec:parent}) target the
 completeness gaps that limit a galaxy catalog's value for real-time
 transient follow-up, while its uniform, multiwavelength photometry
 supports the host-galaxy characterization that such follow-up
 requires.
 
+These applications rarely call for an angular-diameter-limited sample
+in its own right. Studies of galaxy evolution and searches for
+transient host galaxies instead rely on volume-, flux-, luminosity-, or
+stellar-mass-limited samples, and building these samples requires
+reliable photometry for every galaxy regardless of its apparent size.
+The angular-diameter selection of the SGA is therefore a means to that
+end. Tractor measures the shapes and fluxes of small galaxies reliably,
+so the SGA only needs to supply measurements for the large, resolved
+galaxies that Tractor shreds. We illustrate this connection in
+Figure~\ref{fig:overview}, which shows the SGA-2025 in the plane of
+luminosity distance and $r$-band absolute magnitude. A fixed angular
+diameter corresponds to a physical diameter that increases with
+distance. Consequently, the $30\arcsec$ nominal diameter limit of the
+SGA-2025 crosses this plane diagonally, and a luminous galaxy exceeds
+the limit out to a larger distance than a dwarf galaxy does. The
+volume-, luminosity-, and flux-limited samples outlined in
+Figure~\ref{fig:overview} each draw galaxies from both sides of this
+limit. Most of these samples also require redshifts, which we compile
+in Section~\ref{sec:catalog:redshifts}.
+\todo{Quantify the distances at which the fiducial galaxies cross the
+  $30\arcsec$ limit once the size--luminosity relation is final.}
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/sga2025-overview.png}
+  \caption{Overview of how the SGA-2025 relates to volume-, luminosity-,
+    and flux-limited galaxy samples. \textit{Top:} Optical cutouts of
+    galaxies with $M_r\approx-21$ (upper row) and $M_r\approx-18$ (lower
+    row) whose angular diameters range from $10\arcmin$ to $8\arcsec$.
+    \textit{Bottom:} Absolute $r$-band magnitude versus luminosity
+    distance for the SGA-2025 galaxies with a measured distance
+    (grayscale). The dashed black line shows the $30\arcsec$ nominal
+    diameter limit of the SGA-2025 for a fiducial size--luminosity
+    relation, and the gray band spans angular diameters between
+    $10\arcsec$ and $1\arcmin$. The filled circles mark the distances
+    at which the two fiducial galaxies subtend the angular diameters of
+    the cutouts. We also show the $r<20.2$ flux limit of the DESI Bright
+    Galaxy Survey (dotted line) and examples of a volume-limited sample
+    (solid black outline) and a luminosity-limited sample (dashed purple
+    outline). \todo{The $15\arcsec$ and $8\arcsec$ cutouts, the edges of
+      the gray band, and the size--luminosity relation are placeholders.}}
+  \label{fig:overview}
+\end{figure*}
+
 Here we present the SGA-2025, which exploits this improved imaging to
-deliver mosaics and ellipse photometry for $\sim\!486{,}000$ galaxies
+deliver mosaics and ellipse photometry for $470{,}625$ galaxies
 across the DR11 extragalactic footprint. Concluding the SGA-2020, we
 identified its principal limitation as the heterogeneity and
 incompleteness it inherited from relying on HyperLeda \citep{makarov14a}
@@ -219,16 +269,17 @@ train a photometric-redshift model on the resulting spectroscopic
 subsample (Section~\ref{sec:catalog}).
 
 We organize the remainder of the paper as follows.
-In Section~\ref{sec:imaging} we describe the sky footprint and the
-optical, mid-infrared, and ultraviolet imaging data.
-In Section~\ref{sec:parent} we describe the input catalog, sample
-selection, and group catalog.
-In Section~\ref{sec:pipeline} we describe the photometric pipeline,
-including image coaddition, Tractor source detection, and ellipse fitting.
-In Section~\ref{sec:catalog} we describe the construction, structure, and
-data model of the released catalog, together with our spectroscopic
-redshift cross-matching and adopted-distance compilation.
-We summarize in Section~\ref{sec:summary}.
+In Section~\ref{sec:parent}, we describe the parent sample and the group
+catalog, deferring the details of their construction to
+Appendix~\ref{sec:appendix:parent}.
+In Section~\ref{sec:pipeline}, we describe the optical, mid-infrared, and
+ultraviolet imaging data and the photometric pipeline, including the
+image coadds, Tractor modeling, ellipse fitting, and curve-of-growth
+photometry.
+In Section~\ref{sec:catalog}, we describe the construction, structure, and
+validation of the released catalog, together with our redshift and
+distance compilations.
+Finally, we summarize in Section~\ref{sec:summary}.
 
 Throughout we adopt a flat $\Lambda$CDM cosmology with
 $H_0 = 70~\mathrm{km~s^{-1}~Mpc^{-1}}$ and $\Omega_m = 0.3$.
